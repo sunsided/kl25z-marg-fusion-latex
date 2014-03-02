@@ -7,32 +7,54 @@
 
 Auf jedem Freescale Freedom-Entwicklungsboard wie dem \gls{frdm-kl25z} ist  außerdem ein \gls{ocd} verbaut, welcher zusätzlich zum Debugging die 
 Fähigkeit besitzt, die \gls{mcu} zu programmieren. Freescale nennt diese Einheit \gls{OpenSDA} (ganz im Sinne der "`Freedom"'-Benamung der Boards), 
-die proprietärer Natur ist, jedoch die zusätzliche Beschaffung eines externen Programmers erspart.
+die zwar entgegen ihres Namens proprietärer Natur ist, jedoch die zusätzliche Beschaffung eines externen Programmers erspart.
 
 \section{Freescale OpenSDA}
 
 Der \gls{OpenSDA}-Chip auf dem  kommuniziert dabei mit der im \gls{Cortex}-Kern integrierten \gls{CoreSight}-Einheit über das \gls{JTAG}-Protokoll.
+Der Chip selbst kann dabei mit einer alternativen Firmware geflasht werden (vgl. Abb. \ref{fig:opensda-block}), welche eine spezialisierte 
+(d.h. treiberspezifische) Ansteuerung der \gls{CoreSight}-Einheit ermöglicht.
 
 \begin{figure}[htbp]
 		\centering
 		\includegraphics{./images/opensda-block-diagram.png}
     \caption[OpenSDA-Blockdiagramm]{OpenSDA-Blockdiagramm}
 		Quelle: \texttt{http://mcuoneclipse.com/2012/09/20/opensda-on-the-freedom-kl25z-board/}
-    \label{fig:cmsis-dap}
+    \label{fig:opensda-block}
 \end{figure}
+
+Die Standard-Firmware (PEmicro OpenSDA MSD) repräsentiert sich dabei nach dem Verbinden mit dem USB-Host als \gls{msd} und ist in der Lage, die \gls{mcu}
+durch einfaches Drag \& Drop einer \gls{elf}-Datei programmiert werden. Debugging-Funktionalität bietet dieses Interface jedoch nicht, wodurch der
+erste Schritt der Inbetriebnahme in den meisten Fällen darin bestehen wird, eine alternative Firmware (z.B. PEmicro OpenSDA DEBUG) zu flashen. Hierdurch
+verliert man zwar die Funktionalität des USB-\gls{msd} und ist somit auf eine Programmersoftware angewiesen, diese ist jedoch z.B. in Form der Toolchain
+der Freescale CodeWarrior-IDE (siehe Abschnitt~\ref{subsec:codewarrior} auf Seite~\pageref{subsec:codewarrior}) gegeben.
 
 Eine Gegenüberstellung der alternativen SDA-Firmwares ohne Anspruch auf Vollständigkeit kann Tabelle \ref{tab:opensda-options} entnommen werden.
 
+\subsection{OpenSDA unter Windows 8.1}
+\label{subsec:opensda_windows8.1}
+
+Beachtet werden muss, dass die \gls{msd}-Schnittstelle der \gls{OpenSDA}-Firmware unter Windows 8.1 nicht korrekt funktioniert! Dies ist der strengeren Handhabung
+der USB Device-Deskriptoren unter der neueren Windows-Version geschuldet, wodurch die Antwort der OpenSDA-Firmware abgelehnt wird, was zu abbrechenden
+Dateitransfers und damit fehlerhaft geflashter Firmware führt.
+
+Um den \gls{msd}-Modus zum Programmieren zu verwenden oder die Firmware selbst umzuflashen muss demnach wahlweise Windows 7 oder niedriger oder ein Linux-basiertes System
+verwendet werden, um das Laufwerk zu mounten. Die Verwendung einer virtuellen Maschine zum umprogrammieren der \gls{OpenSDA}-Firmware wurde versucht,
+verlief jedoch aufgrund der Handhabung des USB-redirects erfolglos.
+
+Eine Beschreibung des Vorgehens zur umprogrammierung des \gls{OpenSDA}-Chips unter Linux ist in Anhang~\ref{chap:opensda_linux} gegeben.
+
 \begin{table}
-\begin{tabular}{llll} 
+\begin{tabular}{lllll} 
 \toprule
 Gegenüberstellung von OpenSDA-Firmwares\\  
 \midrule 
-Name & Art & Breakpoints & UART \\ 
+Name & Art & Breakpoints & UART & MSD \\ 
 \midrule 
-OpenSDA & proprietär & hardware & ja\\
-CMSIS-DAP & open source & hardware & nein \\
-Segger J-Link & proprietär & unbegrenzt & nein \\ 
+P\&E OpenSDA MSD & proprietär & (kein Debugging) & ja & ja\\
+P\&E OpenSDA & proprietär & hardware & ja & nein \\
+CMSIS-DAP & open source & hardware & nein & nein \\
+Segger J-Link & proprietär & unbegrenzt & nein & nein \\ 
 \bottomrule
 \end{tabular}
 \caption{Gegenüberstellung von OpenSDA-Firmwares}
@@ -58,11 +80,13 @@ Eine alternative (und quelloffene) Firmware für den \gls{OpenSDA}-Chip ist die 
 
 \lipsum[2]
 
+\section{Integrierte Entwicklungsumgebungen}
 
-\section{Freescale CodeWarrior}
+\subsection{Freescale CodeWarrior}
+\label{subsec:codewarrior}
 
 \lipsum[3]
 
-\section{SysProgs VisualGDB}
+\subsection{SysProgs VisualGDB}
 
 \lipsum[4]

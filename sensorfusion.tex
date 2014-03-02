@@ -59,7 +59,7 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 %%   .eps  .ps  .bmp  .pict  .pntg
 
 %% Farbanpassungen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{color}
+\usepackage{xcolor}
 \definecolor{unigruen}{rgb}{0,0.5961,0.6314}
 \definecolor{unirot}{rgb}{0.373,0.0941,0.1176}
 
@@ -97,6 +97,9 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 
 %% Absatz-Einstellungen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{parskip}
+
+%% Code-Listings %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{listings}
 
 %% Hyperlinks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% http://www.tug.org/applications/hyperref/ftp/doc/manual.pdf
@@ -158,7 +161,7 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 \input{./content/kapitel3.tex}
 
 \appendix							% Beginn des Anhangs
-\input{./content/anhanga.tex}
+\input{./content/anhang_opensda.tex}
 
 \backmatter					% Nachspann 
 \input{./content/backmatter.tex}

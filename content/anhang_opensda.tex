@@ -1,0 +1,167 @@
+\chapter{Umprogrammieren der OpenSDA-Firmware unter Linux}
+\label{chap:opensda_linux}
+
+\lstdefinestyle{lolbash}{
+    language={bash}, 
+		basicstyle=\ttfamily\tiny,
+		frame=single,
+    moredelim=**[is][\slshape]{`}{`},
+    moredelim=**[is][\color{orange}]{°}{°},
+}
+
+Wie in Abschnitt~\ref{subsec:opensda_windows8.1} erwähnt, kann das \gls{frdm-kl25z} unter Windows 8.1 nicht ordnungsgemäß
+in Betrieb genommen werden, sobald die Firmware einen \gls{msd}-Modus verwendet. Dies betrifft sowohl den Programmer
+der \gls{mcu}, als auch den Programmer des \gls{OpenSDA}-Chips selbst.
+
+Im Folgenden findet sich eine Beschreibung des Flashvorganges unter Linux, nachdem das Board auch unter Windows 8.1
+wieder verwendet werden kann. Dieser Vorgang sollte auch dann zum Erfolg führen, wenn das Board unter Windows 8.1
+bereits fehlerhaft (d.h. mit Abbruch des Dateitransfers) geflasht wurde.
+
+Zuerst wird das Board bei gedrückter Reset-Taste angeschlossen, wodurch es im Bootloader-Modus startet. Die Ausgabe 
+von \texttt{lsusb} sollte das Gerät mit der ID \texttt{2504:0200} auflisten.
+
+\begin{lstlisting}[style=lolbash]
+user@host:~$ lsusb
+Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 007 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 006 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+°Bus 005 Device 008: ID 2504:0200°
+Bus 005 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 004 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 003 Device 002: ID 0483:2016 STMicroelectronics Fingerprint Reader
+Bus 003 Device 003: ID 0a5c:2110 Broadcom Corp. BCM2045B (BDC-2) [Bluetooth Controller]
+Bus 003 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+\end{lstlisting}
+
+Mittels \texttt{dmesg} wird nun ermittelt, als welches Device das USB-Gerät angemeldet wurde.
+
+\begin{lstlisting}[style=lolbash]
+user@host:~$ dmesg
+[ 2178.532100] usb 5-2: new full-speed USB device number 10 using uhci_hcd
+[ 2178.703183] usb 5-2: New USB device found, idVendor=2504, idProduct=0200
+[ 2178.703193] usb 5-2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+°[ 2178.703201] usb 5-2: Product: OpenSDA MSD APP°
+°[ 2178.703207] usb 5-2: Manufacturer: FREESCALE SEMICONDUCTOR INC.°
+°[ 2178.703213] usb 5-2: SerialNumber: 0123456789ABCDEF°
+°[ 2178.706301] usb-storage 5-2:1.0: USB Mass Storage device detected°
+[ 2178.706467] scsi11 : usb-storage 5-2:1.0
+°[ 2179.709257] scsi 11:0:0:0: Direct-Access     FSL      FSL/PEMICRO MSD  0001 PQ: 0 ANSI: 4°
+[ 2179.709869] sd 11:0:0:0: Attached scsi generic sg2 type 0
+°[ 2179.718217] sd 11:0:0:0: [sdb] 1983999 512-byte logical blocks: (1.01 GB/968 MiB)°
+[ 2179.721525] sd 11:0:0:0: [sdb] Write Protect is off
+[ 2179.721531] sd 11:0:0:0: [sdb] Mode Sense: 00 00 00 00
+[ 2179.724171] sd 11:0:0:0: [sdb] Asking for cache data failed
+[ 2179.724183] sd 11:0:0:0: [sdb] Assuming drive cache: write through
+[ 2179.742182] sd 11:0:0:0: [sdb] Asking for cache data failed
+[ 2179.742187] sd 11:0:0:0: [sdb] Assuming drive cache: write through
+[ 2179.766202]  sdb:
+[ 2179.783187] sd 11:0:0:0: [sdb] Asking for cache data failed
+[ 2179.783193] sd 11:0:0:0: [sdb] Assuming drive cache: write through
+[ 2179.783197] sd 11:0:0:0: [sdb] Attached SCSI removable disk
+\end{lstlisting}
+
+Man kann erkennen, dass das Laufwerk als \texttt{/dev/sdb} angemeldet wurde.
+Es kann nun mittels \texttt{mount -t vfat} gemountet und der Erfolg überprüft werden.
+
+\begin{lstlisting}[style=lolbash]
+user@host:~$ sudo mount -t vfat /dev/sdb /mnt
+user@host:~$ ls -lisa /mnt
+insgesamt 84
+  1 16 drwxr-xr-x  2 root root 16384 Jan  1  1970 .
+  2  4 drwxr-xr-x 23 root root  4096 Nov 21 02:12 ..
+102 16 -r-xr-xr-x  1 root root   512 Aug  8  2012 FSL_WEB.HTM
+100 16 -r-xr-xr-x  1 root root    68 Aug  8  2012 LASTSTAT.TXT
+101 16 -r-xr-xr-x  1 root root  1536 Aug  8  2012 SDA_INFO.HTM
+103 16 -r-xr-xr-x  1 root root   512 Aug  8  2012 TOOLS.HTM
+\end{lstlisting}
+
+Es ist zu beachten, dass der Mountvorgang durchaus mehrere Minuten dauern kann.
+
+Die Datei \texttt{LASTSTAT.TXT} beinhaltet den letzten Status der Firmware, womit man
+den erfolgreichen Verlauf des Mountvorganges überprüfen kann.
+
+\begin{lstlisting}[style=lolbash]
+user@host:~$ cat /mnt/LASTSTAT.TXT
+°Ready.°
+\end{lstlisting}
+
+Die neue Firmware kann nun durch einen Kopierbefehl an das Gerät gesendet werden; Im Falle
+der \emph{Segger J-Link}-Variante könnte dies etwa wie folgt aussehen:
+
+\begin{lstlisting}[style=lolbash]
+user@host:~$ sudo cp JLink_OpenSDA.sda /mnt
+user@host:~$ cat /mnt/LASTSTAT.TXT
+°Completed.°
+\end{lstlisting}
+
+Ein \texttt{Completed.} signalisiert den erfolgreichen Flash-Vorgang.
+
+Nach dem Auswerfen des Laufwerkes mittels \texttt{umount}
+
+\begin{lstlisting}[style=lolbash]
+user@ahost:~$ sudo umount /mnt
+\end{lstlisting}
+
+und einem Neustart des Boards im regulären Modus (d.h. ohne gedrückten Reset-Taster) meldet 
+sich das Board mit der neuen Firmware an:
+
+\begin{lstlisting}[style=lolbash]
+user@host:~$ lsusb
+Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 007 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 006 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+°Bus 005 Device 011: ID 1366:0101 SEGGER J-Link ARM°
+Bus 005 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 004 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 003 Device 002: ID 0483:2016 STMicroelectronics Fingerprint Reader
+Bus 003 Device 003: ID 0a5c:2110 Broadcom Corp. BCM2045B (BDC-2) [Bluetooth Controller]
+Bus 003 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+\end{lstlisting}
+
+Analog kann die Ausgabe mittels \texttt{dmesg} überprüft werden.
+
+\begin{lstlisting}[style=lolbash]
+user@host:~$ dmesg
+[ 2637.380139] usb 5-2: USB disconnect, device number 10
+[ 2638.312070] usb 5-2: new full-speed USB device number 11 using uhci_hcd
+[ 2638.479164] usb 5-2: New USB device found, idVendor=1366, idProduct=0101
+[ 2638.479176] usb 5-2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+°[ 2638.479183] usb 5-2: Product: J-Link°
+°[ 2638.479189] usb 5-2: Manufacturer: SEGGER°
+°[ 2638.479195] usb 5-2: SerialNumber: 000621000000°
+\end{lstlisting}
+
+Wird stattdessen die \emph{P\&E Microcomputer Debug OpenSDA}-Variante geflasht, lauten die letzten
+Ausgaben sinngemäß
+
+\begin{lstlisting}[style=lolbash]
+user@host:~$ lsusb
+Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 007 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 006 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+°Bus 005 Device 013: ID 1357:0089 P&E Microcomputer Systems°
+Bus 005 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 004 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+Bus 003 Device 002: ID 0483:2016 STMicroelectronics Fingerprint Reader
+Bus 003 Device 003: ID 0a5c:2110 Broadcom Corp. BCM2045B (BDC-2) [Bluetooth Controller]
+Bus 003 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
+\end{lstlisting}
+
+und 
+
+\begin{lstlisting}[style=lolbash]
+sunside@aquitaine:~$ dmesg | tail
+[ 3015.141218] sd 12:0:0:0: [sdb] Attached SCSI removable disk
+[ 3346.412156] usb 5-2: USB disconnect, device number 12
+[ 3347.768119] usb 5-2: new full-speed USB device number 13 using uhci_hcd
+[ 3347.950185] usb 5-2: New USB device found, idVendor=1357, idProduct=0089
+[ 3347.950195] usb 5-2: New USB device strings: Mfr=1, Product=3, SerialNumber=5
+°[ 3347.950202] usb 5-2: Product: OpenSDA Hardware°
+°[ 3347.950208] usb 5-2: Manufacturer: P&E Microcomputer Systems Inc.°
+°[ 3347.950214] usb 5-2: SerialNumber: SDADBB27E5D°
+[ 3347.953292] cdc_acm 5-2:1.0: This device cannot do calls on its own. It is not a modem.
+[ 3347.953332] cdc_acm 5-2:1.0: ttyACM0: USB ACM device
+\end{lstlisting}
