@@ -1,5 +1,28 @@
 \chapter{Einleitung}
 
-Bei der Book-Klasse\index{Klasse!Book} des KOMA-Script wird durch den Gliederungsbefehl \verb#\frontmatter# automatisch auf römische Seitennummerierung gewechselt und die Nummerierung der Kapitel unterdrückt. In der Regel sollte der Vorspann nur aus einem Kapitel -- dem Vorwort -- bestehen.
+Ein häufiges Problem in der mobilen Robotik und eine zunehmende Notwendigkeit in der \gls{hci} --- etwa bei der Entwicklung 
+von modernen Controllern für Unterhaltungssysteme --- ist die robuste Erkennung der Orientierung eines
+beweglichen Systems, sei es einer autonomen Plattform (z.B. Roboter, Quadrocopter, ...) oder eines Eingabegerätes
+(z.B. Nintendo Wiimote).
 
-Der Vorspann endet für scrbook, wenn durch \verb#\mainmatter# der Hauptteil beginnt.
+Während hochpräzise Inertialsensoren (\gls{imu}) wie Gyroskope in ihrer ursprünglichen Bauart rein mechanische Systeme sind, halten seit
+einigen Jahren zunehmend \glspl{mems} Einzug in die Sensortechnik und stehen dabei in unterschiedlichen Genauigkeits-
+und Kostengraden sowohl für Low-End, als auch High-End-Anwendungen zur Verfügung.
+
+Hierbei werden grundlegend zwei Typen von Sensoren unterschieden: Inertialsensoren (\glspl{imu}), welche auf der Messung der Trägheit
+des Systems beruhen --- klassische Vertreter sind der Accelerometer zur Messung von Beschleunigungen, 
+sowie der Gyrosensor zur Messung von Drehraten --- als auch magnetische Sensoren, welche die Auswirkungen eines Magnetfeldes auf das 
+System messen. Werden solche drei Sensoren in einem System kombiniert, spricht man von einem sogenannten \gls{marg}-Sensorsystem.
+
+Dieses Projekt beschäftigt sich mit der Fusionierung eines \gls{marg}-Sensorsystems zur robusten Orientierungserkennung. Ziel ist
+es, ein Maß für die Ausrichtung des Systemes im Raum zu ermitteln, welches
+
+\begin{itemize}
+	\item unanfällig gegenüber Messrauschen der Sensoren,
+	\item stabil gegenüber externen Beschleunigungen und
+	\item frei von Singulatitäten (\gls{Gimbal Lock}) ist.
+\end{itemize}
+
+Hierbei wird ein reguläres \gls{Kalman-Filter} zum Einsatz auf einem \gls{cortex-m0} entwickelt, welches adaptiv auf vorliegende
+Messwerte reagiert und für den Echtzeiteinsatz geeignet ist. Die Implementierung erfolgt hierbei auf einem \gls{kl25z},
+einem Mikrocontroller der Kinetis-Serie von Freescale auf Basis des ARM Cortex-M0+.

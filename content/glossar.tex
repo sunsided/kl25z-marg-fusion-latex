@@ -2,8 +2,20 @@
   \renewcommand{\acronymname}{Abkürzungen}
 }
 
-\newglossaryentry{Cortex}{name = {Cortex}, description={Mikrocontrollerarchitekture von ARM, Inc.}}
-\newglossaryentry{kl25z}{name = {KL25Z}, description={Mikrocontroller der Kinetis-Serie von Freescale auf Basis des ARM Cortex-M0+}}
+\addto{\captionsngerman}{
+  \renewcommand{\glossaryname}{Glossar}
+}
+
+\newglossaryentry{Cortex}{name = {Cortex}, description={32bit-Mikrocontrollerarchitektur von ARM, Inc}}
+\newglossaryentry{cortex-m0}{name = {Cortex-M0}, description={Mikroprozessor der M0-Serie der ARM \gls{Cortex}-Architektur}}
+
+\newglossaryentry{Kinetis}{name = {Kinetis}, description={32bit-Mikrocontrollertyp von Freescale Semiconductor}}
+\newglossaryentry{kl25z}{name = {KL25Z}, description={Mikrocontroller der \gls{Kinetis}-L-Serie von Freescale auf Basis des ARM Cortex-M0+}}
+
+\newglossaryentry{Gimbal Lock}{name = {Gimbal Lock}, description={Kardanische Blockade eines Systemes bei der Verwendung von Euler'schen Winkeln, die bei ungünstiger Kombination von Rotationen zum Verlust eines Freiheitsgrades führt}}
+
+\newglossaryentry{Kalman-Filter}{name = {Kalman-Filter}, description={Rekursives, lineares Filter zur Schätzung stochastischer Systemparameter, dessen Entwicklung auf Rudolf Emil Kálmán zurückgeht}}
+
 
 \newacronym[
 	\glsshortpluralkey={MEMS},
@@ -12,4 +24,10 @@
 
 \newacronym{marg}{MARG}{Magnetic, Angular Rate and Gravitational}
 
-\newacronym{imu}{IMU}{Inertial Measurement Unit}
+\newacronym[
+	\glsshortpluralkey={IMUs},
+	\glslongpluralkey={Inertial Measurement Units}
+]{imu}{IMU}{Inertial Measurement Unit}
+
+\newacronym{hci}{HCI}{Human-Computer Interaction}
+\newacronym{hid}{HID}{Human Interface Device}
