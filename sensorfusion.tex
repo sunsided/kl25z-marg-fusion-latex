@@ -72,17 +72,13 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 
 %% Hyperlinks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % http://www.tug.org/applications/hyperref/ftp/doc/manual.pdf
-\usepackage{hyperref}
+\usepackage[backref,bookmarks=true]{hyperref}
 
-\hypersetup{backref,
-						colorlinks=true
+\hypersetup{colorlinks=true
 						}
 
 %% PDF-spezifische Einstellungen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\hypersetup{bookmarks=true,
-						bookmarksopen=true,
-						pdfpagemode=UseOutlines
-						}
+\hypersetup{pdfpagemode=UseOutlines}
 
 \makeatletter
 \AtBeginDocument{
