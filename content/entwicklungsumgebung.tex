@@ -1,0 +1,68 @@
+%\setpartpreamble[Position][Breite]{Text}
+\setpartpreamble[u, r][6cm]{Dies ist ein Beispiel für eine Part-Präambel.}
+\part[]{Entwicklungsumgebung}
+\chapter{Entwicklungsumgebung}
+
+\section{Freescale Kinetis KL25Z}
+
+Auf jedem Freescale Freedom-Entwicklungsboard wie dem \gls{frdm-kl25z} ist  außerdem ein \gls{ocd} verbaut, welcher zusätzlich zum Debugging die 
+Fähigkeit besitzt, die \gls{mcu} zu programmieren. Freescale nennt diese Einheit \gls{OpenSDA} (ganz im Sinne der "`Freedom"'-Benamung der Boards), 
+die proprietärer Natur ist, jedoch die zusätzliche Beschaffung eines externen Programmers erspart.
+
+\section{Freescale OpenSDA}
+
+Der \gls{OpenSDA}-Chip auf dem  kommuniziert dabei mit der im \gls{Cortex}-Kern integrierten \gls{CoreSight}-Einheit über das \gls{JTAG}-Protokoll.
+
+\begin{figure}[htbp]
+		\centering
+		\includegraphics{./images/opensda-block-diagram.png}
+    \caption[OpenSDA-Blockdiagramm]{OpenSDA-Blockdiagramm}
+		Quelle: \texttt{http://mcuoneclipse.com/2012/09/20/opensda-on-the-freedom-kl25z-board/}
+    \label{fig:cmsis-dap}
+\end{figure}
+
+Eine Gegenüberstellung der alternativen SDA-Firmwares ohne Anspruch auf Vollständigkeit kann Tabelle \ref{tab:opensda-options} entnommen werden.
+
+\begin{table}
+\begin{tabular}{llll} 
+\toprule
+Gegenüberstellung von OpenSDA-Firmwares\\  
+\midrule 
+Name & Art & Breakpoints & UART \\ 
+\midrule 
+OpenSDA & proprietär & hardware & ja\\
+CMSIS-DAP & open source & hardware & nein \\
+Segger J-Link & proprietär & unbegrenzt & nein \\ 
+\bottomrule
+\end{tabular}
+\caption{Gegenüberstellung von OpenSDA-Firmwares}
+\label{tab:opensda-options}
+\end{table}
+
+\subsection{CMSIS-DAP}
+
+Eine alternative (und quelloffene) Firmware für den \gls{OpenSDA}-Chip ist die \gls{cmsis-dap}-Firmware.
+
+--> Verwendung mit \gls{OpenOCD}
+
+\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=0.8\textwidth]{./images/cmsis_dap_interface.png}
+    \caption[CMSIS-DAP]{CMSIS-DAP}
+		Quelle: \texttt{http://nimblemachines.com/cmsis-dap/}
+    \label{fig:cmsis-dap}
+\end{figure}
+
+
+\subsection{Segger J-Link}
+
+\lipsum[2]
+
+
+\section{Freescale CodeWarrior}
+
+\lipsum[3]
+
+\section{SysProgs VisualGDB}
+
+\lipsum[4]

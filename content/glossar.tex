@@ -7,15 +7,19 @@
 }
 
 \newglossaryentry{Cortex}{name = {Cortex}, description={32bit-Mikrocontrollerarchitektur von ARM, Inc}}
-\newglossaryentry{cortex-m0}{name = {Cortex-M0}, description={Mikroprozessor der M0-Serie der ARM \gls{Cortex}-Architektur}}
+\newglossaryentry{cortex-m0}{name = {Cortex-M0}, description={\gls{mcu} der M0-Serie der ARM \gls{Cortex}-Architektur}}
+\newglossaryentry{CoreSight}{name = {CoreSight}, description={Debug-Schnittstelle in \gls{Cortex}-\glspl{mcu}}}
 
 \newglossaryentry{Kinetis}{name = {Kinetis}, description={32bit-Mikrocontrollertyp von Freescale Semiconductor}}
 \newglossaryentry{kl25z}{name = {KL25Z}, description={Mikrocontroller der \gls{Kinetis}-L-Serie von Freescale auf Basis des ARM Cortex-M0+}}
+\newglossaryentry{frdm-kl25z}{name = {FRDM-KL25Z}, description={Freescale Freedom Development Board mit KL25Z-\gls{mcu}}}
 
 \newglossaryentry{Gimbal Lock}{name = {Gimbal Lock}, description={Kardanische Blockade eines Systemes bei der Verwendung von Euler'schen Winkeln, die bei ungünstiger Kombination von Rotationen zum Verlust eines Freiheitsgrades führt}}
 
 \newglossaryentry{Kalman-Filter}{name = {Kalman-Filter}, description={Rekursives, lineares Filter zur Schätzung stochastischer Systemparameter, dessen Entwicklung auf Rudolf Emil Kálmán zurückgeht}}
-
+\newglossaryentry{OpenSDA}{name = {OpenSDA}, description={Proprietäre, erweiterbare Programmierschnittstelle von Freescale}}
+\newglossaryentry{OpenOCD}{name = {OpenOCD}, description={Quelloffene Programmierschnittstelle}}
+\newglossaryentry{JTAG}{name = {JTAG}, description={Schnittstelle für Tests von Controllerschnittstellen und Programmierung}}
 
 \newacronym[
 	\glsshortpluralkey={MEMS},
@@ -31,3 +35,10 @@
 
 \newacronym{hci}{HCI}{Human-Computer Interaction}
 \newacronym{hid}{HID}{Human Interface Device}
+\newacronym{cmsis}{CMSIS}{Cortex Microcontroller Software Interface Standard}
+\newacronym{cmsis-dap}{CMSIS-DAP}{\gls{cmsis} Debug Access Port}
+\newacronym[
+	\glsshortpluralkey={MCUs},
+	\glslongpluralkey={Microcontroller Units}
+]{mcu}{MCU}{Microcontroller Unit}
+\newacronym{ocd}{OCD}{On-Chip-Debugger}
