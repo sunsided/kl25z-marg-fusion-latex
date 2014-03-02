@@ -45,3 +45,8 @@
 *.idx
 *.ilg
 *.ind
+*.ac[nr]
+*.alg
+*.glg
+*.gl[osg]
+*.ist

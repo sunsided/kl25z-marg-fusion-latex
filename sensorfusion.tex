@@ -78,11 +78,15 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 \usepackage{lipsum}
 
 %% Hyperlinks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% http://www.tug.org/applications/hyperref/ftp/doc/manual.pdf
+%% http://www.tug.org/applications/hyperref/ftp/doc/manual.pdf
 \usepackage[backref,bookmarks=true,pdfpagelabels,plainpages=false]{hyperref}
 
-\hypersetup{colorlinks=true
-						}
+\hypersetup{colorlinks=true}
+
+%% Glossaries  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% http://ctan.org/pkg/glossaries
+\usepackage[acronym]{glossaries}
+\input{./content/glossar.tex}
 
 %% PDF-spezifische Einstellungen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \hypersetup{
@@ -113,6 +117,9 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 
 %% Stichwortverzeichnis anfordern %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \makeindex
+
+%% Glossar anfordern %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeglossaries
 
 \begin{document}
 
