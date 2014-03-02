@@ -20,7 +20,7 @@ appendixprefix,				% Anhang wird "Anhang" vor die Überschrift gesetzt
 %normalheadings,			% Überschriften etwas kleiner (smallheadings)
 %leqno,								% Nummerierung von Gleichungen links
 fleqn,								% Ausgabe von Gleichungen linksbündig
-draft								  % überlangen Zeilen in Ausgabe gekennzeichnet
+%draft								  % überlangen Zeilen in Ausgabe gekennzeichnet
 ]
 {scrbook}
 
@@ -70,6 +70,25 @@ draft								  % überlangen Zeilen in Ausgabe gekennzeichnet
 %% ftp://ftp.tex.ac.uk/tex-archive/macros/latex/contrib/natbib/natbib.pdf
 \usepackage{natbib}
 
+%% Hyperlinks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% http://www.tug.org/applications/hyperref/ftp/doc/manual.pdf
+\usepackage{hyperref}
+
+\hypersetup{backref,
+						colorlinks=true
+						}
+
+%% PDF-spezifische Einstellungen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\hypersetup{bookmarks=true,
+						bookmarksopen=true,
+						pdfpagemode=UseOutlines
+						}
+
+\hypersetup{
+						pdftitle = {MARG Sensor Fusion mittels Kalman-Filter auf ARM Cortex-M0},
+						pdfauthor = {Markus Mayer \& Julian Dombrow}
+					}
+
 \begin{document}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,13 +104,16 @@ draft								  % überlangen Zeilen in Ausgabe gekennzeichnet
 
 %% Angaben zur Standardformatierung des Titels %%%%%%%%%%%%%%%%%%%%%%%%
 %\titlehead{Titelkopf}
-%\subject{Typisierung}
-\title{Der Name Ihrer Arbeit}
-\author{Ihr Name}
-%\and{Der Name des Co-Autoren}
-%\thanks{Fußnote}			% entspr. \footnote im Fließtext
-%\date{}							% falls anderes, als das aktuelle gewünscht
-%\publishers{Herausgeber}
+\subject{Fortgeschrittene ARM-Microcontroller-Programmierung}
+\title{MARG Sensor Fusion mittels Kalman-Filter auf ARM Cortex-M0}
+\author{Markus Mayer
+				\and
+				Julian Dombrow
+				}
+
+\publishers{Beuth-Hochschule für Technik, Berlin}
+\date{\today}							% falls anderes, als das aktuelle gewünscht
+%\thanks{Fußnote}					% entspr. \footnote im Fließtext
 
 %% Rückseite der Titelseite %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\uppertitleback{Titelrückseitenkopf}
