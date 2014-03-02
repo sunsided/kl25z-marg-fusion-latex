@@ -120,55 +120,17 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 
 %% Der Text %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \frontmatter					% Vorspann (z.B. römische Seitenzahlen)
-\chapter{Einleitung}
-
-Bei der Book-Klasse\index{Klasse!Book} des KOMA-Script wird durch den Gliederungsbefehl \verb#\frontmatter# automatisch auf römische Seitennummerierung gewechselt und die Nummerierung der Kapitel unterdrückt. In der Regel sollte der Vorspann nur aus einem Kapitel -- dem Vorwort -- bestehen.
-
-Der Vorspann endet für scrbook, wenn durch \verb#\mainmatter# der Hauptteil beginnt.
+\input{./content/einleitung.tex}
 
 \mainmatter						% Hauptteil
-%\setpartpreamble[Position][Breite]{Text}
-\setpartpreamble[u, r][6cm]{Dies ist ein Beispiel für eine Part-Präambel.}
-\part[]{Hauptteil}
-\chapter{Gliederung}
-
-In den report- und book-Klassen steht, im Vergleich zu den article-Klassen als zusätzliche Gliederungseinheit \verb#\chapter[Kurzform]{Langform}# zur Verfügung. 
-
-Kapitel beginnen in der Regel in Büchern auf einer ungeraden, d.\,h. rechten Seite. Will man fortlaufenden Textsatz erreichen und also den Beginn auch auf linken Seiten zulassen, verwendet man die Option \verb#openany# gleich in der Dokumenten-Präambel. Hier finden sich auch andere Optionen zur Regelung der Überschriftengröße und deren Beschriftung.
-
-
-\chapter{Präambeln}
-
-Durch den Befehl \verb#\setpartpreamble[Position][Breite]{Präambel}# wird zusammen mit der Angabe des Teils (part) zudem der angegebene Text gesetzt. Dies kann z.\,B. eine kurze Inhaltsangabe sein. Ein Beipiel ist unter Hauptteil zu sehen.  Die Präambel wird in eine Box gesetzt, deren Position und Breite angegeben werden kann. Unterbleibt dies, wird sie unterhalb der Überschriften im normalen Blocksatz über den gesamten Textbereich gesetzt.
-
-Eine ähnliche Funktion findet sich auch für Kapitel (chapter). Die Anweisung lautet hier entsprechend \verb#\setchapterpreamble[Position][Breite]{Präambel}#. 
-
-Für ein einleitendes Zitat, ein sog. Diktum bietet das KOMA-Script die Anweisung \verb#\dictum[Urheber]{Spruch}#. Sie wird in der Regel in eine \verb#\setchapterpreamble# oder \verb#\setpartpreamble# gesetzt. Ein Beispiel soll folgen:
-
-\setchapterpreamble[u]{%
-\dictum[Luhmann]{Die Klassiker sind Klassiker, weil sie Klassiker sind \dots}}
-\chapter{Diktum}
-
-Übrigens wird ohne weitere Angaben ein Drittel der aktuellen Textbreite verwendet. Wie fast alles bei der Verwendung von \LaTeX , kann dies natürlich angepasst werden. Wie das geht und auch alles andere zur Verwendung von Präambeln steht im scrguide 3.\,6.\,2.
-
+\input{./content/kapitel1.tex}
+\input{./content/kapitel2.tex}
+\input{./content/kapitel3.tex}
 
 \appendix							% Beginn des Anhangs
-\chapter{Schluss}
-
-Für den Schluss ist zu überlegen, wie man den Anhang formatiert haben möchte: Das KOMA-Script kennt den Befehl \verb#\backmatter#. Hierdurch wird die Nummerierung der Gliederungseinheiten im Text und im Inhaltsverzeichnis unterdrückt. Erwartet man die übliche Beschriftung mit "`Anhang A"' bzw. "`A."' so verwendet man den Befehl \verb#\appendix# und verzichte auf \verb#\backmatter# oder setze es zu einem späteren Punkt ein.
-
-Viel Spaß! Für Rückfragen, die diese Vorlage betreffen, stehe ich Ihnen gern in der Mailingliste von TXC zur Verfügung. Ansonsten sind die Dokumente \texttt{lshort}, \texttt{l2tabu}, die \texttt{FAQ der Newsgroup de.text.tex} und natürlich der \texttt{scrguide} immer sehr hilfreich.
+\input{./content/anhanga.tex}
 
 \backmatter					% Nachspann 
-
-%% Stichwortverzeichnis anzeigen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\printindex
-
-%% Bibliographie unter Verwendung von dinnat %%%%%%%%%%%%%%%%%%%%%%%%%%
-\setbibpreamble{Präambel}		% Text vor dem Verzeichnis
-\bibliographystyle{dinat}
-\bibliography{./bib/quellen}	% Sie benötigen einen *.bib-Datei
-
-
+\input{./content/backmatter.tex}
 
 \end{document}
