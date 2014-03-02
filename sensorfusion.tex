@@ -116,44 +116,7 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 
 \begin{document}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Ihr Buch                                                          %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%% Schmutztitel-Seite %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\extratitle{Schmutztitel}
-
-%% eigene Titelseitengestaltung %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
-\pagenumbering{gobble} % Seitenzahl entfernen! fix für pdflatex "identifier ... has been already used"'
-\begin{titlepage}
-\lipsum[1]
-\end{titlepage}
-
-%% Angaben zur Standardformatierung des Titels %%%%%%%%%%%%%%%%%%%%%%%%
-%\titlehead{Titelkopf}
-%\thanks{Fußnote}					% entspr. \footnote im Fließtext
-
-%% Rückseite der Titelseite %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\uppertitleback{Titelrückseitenkopf}
-\lowertitleback{Titelrückseitenfuß}
-
-%% Widmungsseite %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\dedication{Widmung}
-
-\pagenumbering{Alph}
-\maketitle 						% Titelei wird erzeugt
-\thispagestyle{empty}
-
-%% Erzeugung von Verzeichnissen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\tableofcontents			% Inhaltsverzeichnis
-\thispagestyle{empty}
-
-\listoftables				% Tabellenverzeichnis
-\thispagestyle{empty}
-
-\listoffigures				% Abbildungsverzeichnis
-\thispagestyle{empty}
-
+\input{./content/titel.tex}
 
 %% Der Text %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \frontmatter					% Vorspann (z.B. römische Seitenzahlen)
