@@ -58,6 +58,24 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 %% können Sie u.a. folgende Grafikformate verwenden:
 %%   .eps  .ps  .bmp  .pict  .pntg
 
+%% Farbanpassungen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{color}
+\definecolor{unigruen}{rgb}{0,0.5961,0.6314}
+\definecolor{unirot}{rgb}{0.373,0.0941,0.1176}
+
+%% Seitenränder %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[left=40mm, right=30mm, bottom=30mm]{geometry}
+
+%% Kopf- und Fußzeilen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{scrpage2}
+\clearscrheadfoot %% löscht standard einstellungen
+\ohead{\pagemark} %kopf rechts Seitennummer
+%%\ihead{\thechapter\ \thesection\ \sectionmark} %Kopf links
+\ihead{\leftmark}
+\automark{section} 
+\setheadsepline{0.2pt} %% horizontale linie im Kopf
+\setfootsepline{0.2pt} %% horizontale linie im Fuß
+
 %% Extended UTF-8 support  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{ucs}
 
@@ -108,7 +126,7 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 
 %% Dokumenten-Titel und verwandtes %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subject{Fortgeschrittene ARM-Microcontroller-Programmierung}
-\title{MARG Sensor Fusion mittels Kalman-Filter auf ARM Cortex-M0}
+\title{Orientierungserkennung durch MARG-Sensorfusion mittels eines Kalman-Filters auf dem Freescale Kinetis KL25Z}
 \author{Markus Mayer
 				\and
 				Julian Dombrow}
@@ -123,7 +141,9 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 
 \begin{document}
 
+\input{./content/beuth.tex}
 \input{./content/titel.tex}
+\input{./content/directories.tex}
 
 %% Der Text %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \frontmatter					% Vorspann (z.B. römische Seitenzahlen)

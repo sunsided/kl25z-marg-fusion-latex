@@ -1,0 +1,49 @@
+\pagenumbering{gobble} % Seitenzahl entfernen! fix für pdflatex "identifier ... has been already used"'
+\clearpage
+\setlength{\voffset}{-15mm}
+%\setlength{\hoffset}{10mm}
+\thispagestyle{empty}
+
+\makeatletter
+\begin{titlepage}
+
+\begin{flushright}
+\includegraphics[height=2cm]{./images/Beuth_Logo_basis.pdf}
+\end{flushright}
+
+\textcolor{unigruen}{
+	{\hrule height 1.5pt }
+}
+
+\begin{centering}
+\vspace{2cm}
+\textsc{\huge{Beuth Hochschule \\ für Technik Berlin}}\\
+\vspace{2cm}
+\textsc{\large{Fachbereich VI \\ Technische Informatik \\ Master of Embedded Systems}}\\
+\vspace{0.6cm}
+\textsc{\large{Fach: \\ Fortgeschrittene ARM-Microcontroller-Programmierung}}\\
+\textsc{\large{WS 2013/14}}\\
+\vspace{0.6cm}
+\textsc{\large{Projekt: \\ \@title}}\\
+\end{centering}
+
+\vspace{2cm}
+\begin{table}[h]
+\begin{center}
+\textsc{
+\begin{tabular}{l l}
+	\@author
+\end{tabular}
+}
+\end{center}
+\end{table}
+
+\vfill
+
+\begin{center}
+\textsc{\large{Berlin, den \today}}
+\end{center}
+
+\end{titlepage}
+\makeatother
+
