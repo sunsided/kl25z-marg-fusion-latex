@@ -4,7 +4,7 @@
 \documentclass[
 a4paper,							% alle weiteren Papierformat einstellbar
 %landscape,						% Querformat
-10pt,								  % Schriftgröße (12pt, 11pt (Standard))
+11pt,								  % Schriftgröße (12pt, 11pt (Standard))
 %BCOR1cm,							% Bindekorrektur, bspw. 1 cm
 %DIVcalc,							% führt die Satzspiegelberechnung neu aus
 %											  s. scrguide 2.4
@@ -70,15 +70,21 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 %% ftp://ftp.tex.ac.uk/tex-archive/macros/latex/contrib/natbib/natbib.pdf
 \usepackage{natbib}
 
+%% Lorem Ipsum %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% http://ctan.org/pkg/lipsum
+\usepackage{lipsum}
+
 %% Hyperlinks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % http://www.tug.org/applications/hyperref/ftp/doc/manual.pdf
-\usepackage[backref,bookmarks=true]{hyperref}
+\usepackage[backref,bookmarks=true,pdfpagelabels,plainpages=false]{hyperref}
 
 \hypersetup{colorlinks=true
 						}
 
 %% PDF-spezifische Einstellungen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\hypersetup{pdfpagemode=UseOutlines}
+\hypersetup{
+						pdfpagemode=UseOutlines
+						}
 
 \makeatletter
 \AtBeginDocument{
@@ -107,12 +113,14 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Ihr Buch                                                          %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %% Schmutztitel-Seite %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\extratitle{Schmutztitel}
 
 %% eigene Titelseitengestaltung %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+\pagenumbering{gobble} % Seitenzahl entfernen! fix für pdflatex "identifier ... has been already used"'
 \begin{titlepage}
-Einsetzen der TXC Vorlage "Deckblatt" möglich
+\lipsum[1]
 \end{titlepage}
 
 %% Angaben zur Standardformatierung des Titels %%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,12 +134,19 @@ Einsetzen der TXC Vorlage "Deckblatt" möglich
 %% Widmungsseite %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \dedication{Widmung}
 
+\pagenumbering{Alph}
 \maketitle 						% Titelei wird erzeugt
+\thispagestyle{empty}
 
 %% Erzeugung von Verzeichnissen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \tableofcontents			% Inhaltsverzeichnis
-%\listoftables				% Tabellenverzeichnis
-%\listoffigures				% Abbildungsverzeichnis
+\thispagestyle{empty}
+
+\listoftables				% Tabellenverzeichnis
+\thispagestyle{empty}
+
+\listoffigures				% Abbildungsverzeichnis
+\thispagestyle{empty}
 
 
 %% Der Text %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
