@@ -84,10 +84,27 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 						pdfpagemode=UseOutlines
 						}
 
-\hypersetup{
-						pdftitle = {MARG Sensor Fusion mittels Kalman-Filter auf ARM Cortex-M0},
-						pdfauthor = {Markus Mayer \& Julian Dombrow}
-					}
+\makeatletter
+\AtBeginDocument{
+	\let\oldand\and\def\and{and }
+	\hypersetup{
+							pdftitle = {\@title},
+							pdfauthor = {\@author},
+							pdfsubject = {\@subject},
+							pdfkeywords = {BHT, ARM, Cortex-M0, Kalman-Filter, MARG, IMU, Sensor Fusion, Signal Processing}
+						}
+	\let\and\oldand
+}
+\makeatother
+
+%% Dokumenten-Titel und verwandtes %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subject{Fortgeschrittene ARM-Microcontroller-Programmierung}
+\title{MARG Sensor Fusion mittels Kalman-Filter auf ARM Cortex-M0}
+\author{Markus Mayer
+				\and
+				Julian Dombrow}
+\publishers{Beuth-Hochschule für Technik, Berlin}
+\date{\today}
 
 \begin{document}
 
@@ -98,29 +115,20 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 %\extratitle{Schmutztitel}
 
 %% eigene Titelseitengestaltung %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
-%\begin{titlepage}
-%Einsetzen der TXC Vorlage "Deckblatt" möglich
-%\end{titlepage}
+\begin{titlepage}
+Einsetzen der TXC Vorlage "Deckblatt" möglich
+\end{titlepage}
 
 %% Angaben zur Standardformatierung des Titels %%%%%%%%%%%%%%%%%%%%%%%%
 %\titlehead{Titelkopf}
-\subject{Fortgeschrittene ARM-Microcontroller-Programmierung}
-\title{MARG Sensor Fusion mittels Kalman-Filter auf ARM Cortex-M0}
-\author{Markus Mayer
-				\and
-				Julian Dombrow
-				}
-
-\publishers{Beuth-Hochschule für Technik, Berlin}
-\date{\today}							% falls anderes, als das aktuelle gewünscht
 %\thanks{Fußnote}					% entspr. \footnote im Fließtext
 
 %% Rückseite der Titelseite %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\uppertitleback{Titelrückseitenkopf}
-%\lowertitleback{Titelrückseitenfuß}
+\uppertitleback{Titelrückseitenkopf}
+\lowertitleback{Titelrückseitenfuß}
 
 %% Widmungsseite %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\dedication{Widmung}
+\dedication{Widmung}
 
 \maketitle 						% Titelei wird erzeugt
 
