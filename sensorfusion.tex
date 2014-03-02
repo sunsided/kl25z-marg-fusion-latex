@@ -18,9 +18,6 @@ a4paper,							% alle weiteren Papierformat einstellbar
 %chapterprefix,				% vor Kapitelüberschrift wird "Kapitel Nummer" gesetzt
 appendixprefix,				% Anhang wird "Anhang" vor die Überschrift gesetzt 
 %normalheadings,			% Überschriften etwas kleiner (smallheadings)
-idxtotoc,						  % Index im Inhaltsverzeichnis
-liststotoc,					  % Abb.- und Tab.verzeichnis im Inhalt
-bibtotoc,						  % Literaturverzeichnis im Inhalt
 %leqno,								% Nummerierung von Gleichungen links
 fleqn,								% Ausgabe von Gleichungen linksbündig
 draft								  % überlangen Zeilen in Ausgabe gekennzeichnet
@@ -31,8 +28,10 @@ draft								  % überlangen Zeilen in Ausgabe gekennzeichnet
 %\pagestyle{headings}	% lebender Kolumnentitel  
 
 %% Deutsche Anpassungen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage[ngerman]{babel}
-\usepackage[ansinew]{inputenc}
+\usepackage{lmodern}
 
 %% Falls die automatische Worttrennung in Wörtern mit Umlauten
 %% nicht funktionieren sollte oder der Text pixelig aussieht:
@@ -58,12 +57,6 @@ draft								  % überlangen Zeilen in Ausgabe gekennzeichnet
 
 %% Extended UTF-8 support  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{ucs}
-
-%% Für konkrete Deutschness  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage[utf8x]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage[ngerman]{babel}
-\usepackage{lmodern}
 
 %% Tabellen  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% http://webdocs.cs.ualberta.ca/~c603/latex/tabularx.pdf
