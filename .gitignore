@@ -27,3 +27,15 @@
 *.tps 
 *blx.bib 
 *.run.xml
+*.log
+
+# Ausgaben ignorieren #
+####################### 
+*.pdf
+
+# Zusätzliche intermediates #
+############################# 
+*.toc
+*.aux
+*.bbl
+*.blg
