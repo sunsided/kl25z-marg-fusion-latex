@@ -5,7 +5,7 @@
 
 \section{Freescale Kinetis KL25Z}
 
-Auf jedem Freescale Freedom-Entwicklungsboard wie dem \gls{frdm-kl25z} ist  außerdem ein \gls{ocd} verbaut, welcher zusätzlich zum Debugging die 
+Auf jedem Freescale Freedom-Entwicklungsboard wie dem \gls{frdm-kl25z} ist außerdem ein \gls{ocd} verbaut, welcher zusätzlich zum Debugging die 
 Fähigkeit besitzt, die \gls{mcu} zu programmieren. Freescale nennt diese Einheit \gls{OpenSDA} (ganz im Sinne der "`Freedom"'-Benamung der Boards), 
 die zwar entgegen ihres Namens proprietärer Natur ist, jedoch die zusätzliche Beschaffung eines externen Programmers erspart.
 
@@ -31,6 +31,23 @@ der Freescale CodeWarrior-IDE (siehe Abschnitt~\ref{subsec:codewarrior} auf Seit
 
 Eine Gegenüberstellung der alternativen SDA-Firmwares ohne Anspruch auf Vollständigkeit kann Tabelle \ref{tab:opensda-options} entnommen werden.
 
+\begin{table}
+\begin{tabular}{lllll} 
+\toprule
+Gegenüberstellung von OpenSDA-Firmwares\\  
+\midrule 
+Name & Art & Breakpoints & UART & MSD \\ 
+\midrule 
+PEmicro MSD OpenSDA & proprietär & (kein Debugging) & ja & ja\\
+PEmicro DEBUG OpenSDA & proprietär & hardware & ja & nein \\
+CMSIS-DAP & open source & hardware & nein & nein \\
+Segger J-Link & proprietär & unbegrenzt & nein & nein \\ 
+\bottomrule
+\end{tabular}
+\caption{Gegenüberstellung von OpenSDA-Firmwares}
+\label{tab:opensda-options}
+\end{table}
+
 \subsection{OpenSDA unter Windows 8.1}
 \label{subsec:opensda_windows8.1}
 
@@ -44,28 +61,10 @@ verlief jedoch aufgrund der Handhabung des USB-redirects erfolglos.
 
 Eine Beschreibung des Vorgehens zur umprogrammierung des \gls{OpenSDA}-Chips unter Linux ist in Anhang~\ref{chap:opensda_linux} gegeben.
 
-\begin{table}
-\begin{tabular}{lllll} 
-\toprule
-Gegenüberstellung von OpenSDA-Firmwares\\  
-\midrule 
-Name & Art & Breakpoints & UART & MSD \\ 
-\midrule 
-P\&E OpenSDA MSD & proprietär & (kein Debugging) & ja & ja\\
-P\&E OpenSDA & proprietär & hardware & ja & nein \\
-CMSIS-DAP & open source & hardware & nein & nein \\
-Segger J-Link & proprietär & unbegrenzt & nein & nein \\ 
-\bottomrule
-\end{tabular}
-\caption{Gegenüberstellung von OpenSDA-Firmwares}
-\label{tab:opensda-options}
-\end{table}
-
 \subsection{CMSIS-DAP}
 
-Eine alternative (und quelloffene) Firmware für den \gls{OpenSDA}-Chip ist die \gls{cmsis-dap}-Firmware.
-
---> Verwendung mit \gls{OpenOCD}
+Eine alternative (und quelloffene) Firmware für den \gls{OpenSDA}-Chip ist die \gls{cmsis-dap}-Firmware. Diese wird unter anderem für das \gls{mbed}-Projekt, 
+sowie für die Interaktion mit dem \gls{OpenOCD}-Programmer/Debugger verwendet.
 
 \begin{figure}[htbp]
 		\centering
@@ -78,7 +77,9 @@ Eine alternative (und quelloffene) Firmware für den \gls{OpenSDA}-Chip ist die 
 
 \subsection{Segger J-Link}
 
-\lipsum[2]
+Weiterhin stellt auch Segger eine \gls{OpenSDA}-Variante seines proprietären J-Link-Programmers/Debuggers zur Verfügung. Einer der wesentlichen Vorteile dieser
+Variante besteht in der hohen Programmiergeschwindigkeit, sowie der Unterstützung beliebig vieler Breakpoints über die Anzahl an Hardware-Breakpoints des Cores hinaus,
+sofern die Lizenzbedingungen (Entwicklung nur für nichtkommerzielle Produkte und auf Freescale-\glspl{mcu}s auf Evaluation-Boards).
 
 \section{Integrierte Entwicklungsumgebungen}
 
@@ -87,6 +88,43 @@ Eine alternative (und quelloffene) Firmware für den \gls{OpenSDA}-Chip ist die 
 
 \lipsum[3]
 
-\subsection{SysProgs VisualGDB}
+\subsection{Microsoft Visual Studio mit SysProgs VisualGDB}
 
-\lipsum[4]
+VisualGDB ist ein kommerzielles Add-On für Microsoft Visual Studio und ermöglicht die Entwicklung und das Debugging von embedded- und Linuxapplikationen unter Windows. 
+Neben einem \gls{gdb}-Server stellt es Vorlagen und Konfigurationsdateien für verschiedene Systeme und Microcontroller zur Verfügung, so unter anderem für
+die STM32-Serie von STMicroelectronics, die Kinetis-Serie von Freescale, sowie einige AVR-Prozessoren. Durch die Verwendung der freien \texttt{arm-gcc}-Toolchain
+existieren keine Codegrößenbeschränkungen und der volle Funktionsumfang der Visual Studio-IDE kann für die Entwicklung verwendet werden. 
+
+VisualGDB wurde in der weiteren Entwicklung des Projektes in Kombination mit der Segger J-Link-Firmware aufgrund deren "`unlimited breakpoint"'-Feature genutzt, 
+um einen schnellen Entwicklungsprozess zu ermöglichen.  Bei der Konfiguration ist dabei darauf zu achten, den Chip im \gls{swd}-Modus (d.h. \emph{nicht} 
+im \gls{JTAG}-Modus) anzusprechen.
+
+Wie in Abb.~\ref{fig:visualgdb_programmer} ersichtlich, wäre die Verwendung der \gls{OpenOCD}-Firmware ebenfalls
+theoretisch möglich, zum Zeitpunkt der Entwicklung lagen jedoch keine \gls{OpenOCD}-Konfigurationsdateien für Freescale-Boards vor.
+
+Eine Hürde bei der C-Entwicklung mit Visual Studio kann dabei der msvc-Compiler darstellen, da dieser bis einschließlich Visual Studio 2012 den C99-Standard 
+nicht\footnote{Siehe http://herbsutter.com/2012/05/03/reader-qa-what-about-vc-and-c99/} unterstützt. Einen Workaround dafür stellt die Kompilierung im 
+C++-Modus dar. Dies ist jedoch nur bei der Prototypen-Entwicklung (ohne VisualGDB) ein Ärgernis, da zur Compilierung für das Embedded-Target der arm-gcc-Compiler 
+verwendet wird. Dieser lag zum Zeitpunkt der Entwicklung in der Version 4.8.2 vor, wodurch die Verwendung von C++11-Features möglich wäre; Hierauf wurde 
+während der Entwicklung jedoch verzichtet.
+
+\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=\textwidth]{./images/visualgdb_project.png}
+    \caption{VisualGDB: Auswahl des Controllers}
+    \label{fig:visualgdb_controller}
+\end{figure}
+
+\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=\textwidth]{./images/visualgdb_programmer.png}
+    \caption{VisualGDB: Auswahl des Programmers}
+    \label{fig:visualgdb_programmer}
+\end{figure}
+
+\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=\textwidth]{./images/visualgd_makefile.png}
+    \caption{VisualGDB: Make-Optionen}
+    \label{fig:visualgd_makefile}
+\end{figure}
