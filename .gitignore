@@ -41,3 +41,7 @@
 *.toc
 *.aux
 *.lo[ft]
+*.brf
+*.idx
+*.ilg
+*.ind

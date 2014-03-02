@@ -15,7 +15,8 @@ a4paper,							% alle weiteren Papierformat einstellbar
 %headsepline,					% Trennline zum Seitenkopf	
 %footsepline,					% Trennline zum Seitenfuß
 %notitlepage,					% in-page-Titel, keine eigene Titelseite
-%chapterprefix,				% vor Kapitelüberschrift wird "Kapitel Nummer" gesetzt
+bibliography=totoc,
+chapterprefix,				% vor Kapitelüberschrift wird "Kapitel Nummer" gesetzt
 appendixprefix,				% Anhang wird "Anhang" vor die Überschrift gesetzt 
 %normalheadings,			% Überschriften etwas kleiner (smallheadings)
 %leqno,								% Nummerierung von Gleichungen links
@@ -39,6 +40,8 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 %% Eine nicht ganz vollwertige Alternative ist die Verwendung dieses Pakets:
 %\usepackage{ae, aeguill}
 
+%% Stichwortverzeichnis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{makeidx}
 
 %% Packages für Grafiken & Abbildungen %%%%%%%%%%%%%%%%%%%%%%
 \usepackage{graphicx}
@@ -99,7 +102,7 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 }
 \makeatother
 
-%% Dokumenten-Titel und verwandtes %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Dokumenten-Titel und verwandtes %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subject{Fortgeschrittene ARM-Microcontroller-Programmierung}
 \title{MARG Sensor Fusion mittels Kalman-Filter auf ARM Cortex-M0}
 \author{Markus Mayer
@@ -107,6 +110,9 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 				Julian Dombrow}
 \publishers{Beuth-Hochschule für Technik, Berlin}
 \date{\today}
+
+%% Stichwortverzeichnis anfordern %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeindex
 
 \begin{document}
 
@@ -153,7 +159,7 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 \frontmatter					% Vorspann (z.B. römische Seitenzahlen)
 \chapter{Einleitung}
 
-Bei der Book-Klasse des KOMA-Script wird durch den Gliederungsbefehl \verb#\frontmatter# automatisch auf römische Seitennummerierung gewechselt und die Nummerierung der Kapitel unterdrückt. In der Regel sollte der Vorspann nur aus einem Kapitel -- dem Vorwort -- bestehen.
+Bei der Book-Klasse\index{Klasse!Book} des KOMA-Script wird durch den Gliederungsbefehl \verb#\frontmatter# automatisch auf römische Seitennummerierung gewechselt und die Nummerierung der Kapitel unterdrückt. In der Regel sollte der Vorspann nur aus einem Kapitel -- dem Vorwort -- bestehen.
 
 Der Vorspann endet für scrbook, wenn durch \verb#\mainmatter# der Hauptteil beginnt.
 
@@ -190,12 +196,15 @@ Für den Schluss ist zu überlegen, wie man den Anhang formatiert haben möchte:
 
 Viel Spaß! Für Rückfragen, die diese Vorlage betreffen, stehe ich Ihnen gern in der Mailingliste von TXC zur Verfügung. Ansonsten sind die Dokumente \texttt{lshort}, \texttt{l2tabu}, die \texttt{FAQ der Newsgroup de.text.tex} und natürlich der \texttt{scrguide} immer sehr hilfreich.
 
-%\backmatter					% Nachspann 
+\backmatter					% Nachspann 
+
+%% Stichwortverzeichnis anzeigen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\printindex
 
 %% Bibliographie unter Verwendung von dinnat %%%%%%%%%%%%%%%%%%%%%%%%%%
-%\setbibpreamble{Präambel}		% Text vor dem Verzeichnis
-%\bibliographystyle{dinat}
-%\bibliography{bibliographie}	% Sie benötigen einen *.bib-Datei
+\setbibpreamble{Präambel}		% Text vor dem Verzeichnis
+\bibliographystyle{dinat}
+\bibliography{./bib/quellen}	% Sie benötigen einen *.bib-Datei
 
 
 
