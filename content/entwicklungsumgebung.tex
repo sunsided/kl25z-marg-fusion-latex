@@ -2,11 +2,24 @@
 \part[]{Entwicklungsumgebung}
 \chapter{Entwicklungsumgebung}
 
-\section{Freescale Kinetis KL25Z}
+\section{Freescale FRDM-KL25Z}
 
-Auf jedem Freescale Freedom-Entwicklungsboard wie dem \gls{frdm-kl25z} ist außerdem ein \gls{ocd} verbaut, welcher zusätzlich zum Debugging die 
+Das \gls{frdm-kl25z} ist ein Evaluationsboard für die \gls{kl25z}-Serie \glspl{mcu} von Freescale, welche auf dem ARM \gls{cortex-m0+}-Core basiert.
+Das Board besitzt neben 54 \glspl{gpio}, einen USB-Controller, eine RGB-LED, einen kapazitiven Touch-Bereich, sowie einen Freescale MMA8451Q accelerometer.
+
+\todo{Konfiguration des ARM-Cores!}
+
+Auf jedem Freescale Freedom-Entwicklungsboard ist weiterhin ein \gls{ocd} verbaut, welcher zusätzlich zum Debugging die 
 Fähigkeit besitzt, die \gls{mcu} zu programmieren. Freescale nennt diese Einheit \gls{OpenSDA} (ganz im Sinne der "`Freedom"'-Benamung der Boards), 
 die zwar entgegen ihres Namens proprietärer Natur ist, jedoch die zusätzliche Beschaffung eines externen Programmers erspart.
+
+\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=\textwidth]{./images/kl25z.jpg}
+    \caption{Freescale FRDM-KL25Z}
+		Quelle: Freescale
+    \label{fig:kl25z}
+\end{figure}
 
 \section{Freescale OpenSDA}
 
@@ -18,7 +31,7 @@ Der Chip selbst kann dabei mit einer alternativen Firmware geflasht werden (vgl.
 		\centering
 		\includegraphics{./images/opensda-block-diagram.png}
     \caption[OpenSDA-Blockdiagramm]{OpenSDA-Blockdiagramm}
-		Quelle: \texttt{http://mcuoneclipse.com/2012/09/20/opensda-on-the-freedom-kl25z-board/}
+		Quelle: \texttt{http://mcuoneclipse.com}
     \label{fig:opensda-block}
 \end{figure}
 
