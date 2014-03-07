@@ -50,3 +50,5 @@
 *.glg
 *.gl[osg]
 *.ist
+
+*.tps
