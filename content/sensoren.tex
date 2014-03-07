@@ -16,6 +16,19 @@ Der Invensense MPU6050 ist eine \gls{imu}, die einen Beschleunigungs- und einen 
 
 \subsection{Treiber}
 
+\subsection{Lessons Learned}
+
+Bei der Kommunikation mit der MPU6050 trat das Problem auf, dass bei aktiviertem Interrupt-Signal und reduzierter Samplingrate nach einem Kaltstart keinerlei nennenswerte Verzögerung (d.h. nur wenige Millisekunden \todo{Verifizieren}) zwischen aufienander folgenden Interruptsignalen festzustellen war. 
+Dies führte zu der Problematik, dass die durch den Interrupt-Handler freigeschaltete Routine zum Beziehen der Sensordaten über \gls{i2c} und die anschließende Verarbeitung direkt durch einen erneuten Interrupt unterbrochen wurde. Da die serielle Ausgabe der Werte nur mit deutlich geringerer Taktung laufen kann, führte dies zu einem Engpass am vorgeschalteten Ringpuffer, wodurch die Verarbeitung deutlich inperformant wurde.
+
+Wurde das System jedoch durch einen Reset (d.h. durch einen Warmstart) neu initialisiert, verlief die Kommunikation wie gewünscht. Durch einen weiteren Kaltstart konnte der Zustand erneut herbeigeführt werden.
+
+\todo{Bild mit Freifeuer vom Logan}
+
+Dieses Problem war erst dadurch zu beheben, dass zu Beginn der Konfiguration der \gls{imu} die interne Takteinheit deaktiviert wurde, um sie dann im Zuge der folgenden Konfiguration erneut auf den gewünschten Betriebsmodus zu stellen.
+
+\todo{Bild ohne Freifeuer vom Logan}
+
 \section{HMC5883L - Magnetometer}
 
 Der HMC5883L von Honeywell liefert bei einer Auflösung von 12 Bit (inkl. Vorzeichen) bei einem Wertebereich von $\pm$ 8 Gauss, wodurch er für den Einsatz in Präsenz starker lokaler Magnetfelder geeignet ist.
@@ -29,7 +42,24 @@ das andere dagegen in der Interpretation der Messwerte begründet.
 
 \subsubsection{Reihenfolge der Messwerte}
 
-Während in sämtlichen anderen Sensoren die Messwerte in üblicher $X$,$Y$,$Z$-Reihenfolge vorlagen, speichert der HMC5883L die Messwerte in der Reihenfolge $X$,$Z$,$Y$. Dies ist aus dem Datenblatt nur
-dann ersichtlich, wenn die im Datenblatt auf Seite 11 vorliegende --- sehr kurze --- Registerliste (Form no. 900405, Revision E) genau beachtet wird. Das Problem entstand hierbei daraus, dass in sämtlichen
-anderen Stellen des Datenblattes (insbesondere im Absatz Data Output Registers, Seite 15) die reguläre Reihenfolge beschrieben wurde.
+Während in sämtlichen anderen Sensoren die Messwerte in üblicher $X$,$Y$,$Z$-Reihenfolge vorlagen, speichert der HMC5883L die Messwerte in der Reihenfolge $X$,$Z$,$Y$. Dies ist aus dem Datenblatt (\citealp{hmc5883l}) nur
+dann ersichtlich, wenn die im Datenblatt vorliegende --- sehr kurze --- Registerliste (S. 11) sehr genau beachtet wird. Im Gegensatz zu der dort aufgeführten Reihenfolge, verweisen sämtlichen
+anderen Stellen des Datenblattes (insbesondere im Abschnitt Data Output Registers, S. 15) auf die reguläre Anordnung.
 
+\subsubsection{Interpretation der Messergebnisse}
+
+\begin{figure}[htbp]
+		\centering
+		\begin{subfigure}[b]{0.5\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{./images/earth_magnetic_field_poles_shutterstock.jpg}
+			\caption{Populistische Darstellung \\ Quelle: Shutterstock}
+		\end{subfigure}%
+		~
+		\begin{subfigure}[b]{0.5\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{./images/Dipole_field_wikibooks.jpg}
+			\caption{Vereinfachte realistische Darstellung \\ Quelle: Wikibooks}
+		\end{subfigure}%
+		\caption[Darstellungen des Erdmagnetfeldes]{Darstellungen des Erdmagnetfeldes.\\Links: Die Feldlinien treffen sich an den Polen.\\Rechts: Die Feldlinien durchdringen den Erdmantel.}
+\end{figure}
