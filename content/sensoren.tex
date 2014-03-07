@@ -12,7 +12,7 @@ Der Freescale MMA8451Q ist der auf dem Freedom-Board verbaute Beschleunigungssen
 \section{MPU6050 - Accelerometer und Gyrosensor}
 \label{sec:mpu6050}
 
-Der Invensense MPU6050 ist eine \gls{imu}, die einen Beschleunigungs- und einen Drehratensensor vereinigt.
+Die Invensense MPU6050 ist eine \gls{imu}, die einen Beschleunigungs- und einen Drehratensensor vereinigt. Diese \gls{mpu} umfasst sowohl einen Beschleunigungs-, als auch einen Drehratensensor und bietet die Möglichkeit, über einen als slave betriebenen, zusätzlichen \gls{i2c}-Bus weitere Sensoren zu verarbeiten, wodurch Aufwand vom Hauptcontroller abfällt. Der \gls{mpu} zugeschaltet ist ein sog. \gls{dmp}, welcher die internen Daten, sowie die über den slave-Bus bezogenen externen Daten fusionieren kann. Während die Ergebnisregister des \gls{dmp} frei zugänglich sind, sind die Inhalte dieser Felder nicht dokumentiert. Der Zugriff auf sie erfolgt stattdessen --- sofern erwünscht --- über eine proprietäre MotionsApps-Firmware\footnote{\url{http://www.invensense.com/developers/forum/viewtopic.php?f=3&t=142}}.
 
 \subsection{Treiber}
 
