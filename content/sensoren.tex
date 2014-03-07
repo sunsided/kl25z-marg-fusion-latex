@@ -1,0 +1,35 @@
+\chapter{Sensoren}
+
+Alle in diesem Projekt verwendeten Sensoren verfügen über eine \gls{i2c}-Schnittstelle, über welche die Kommunikation abgewickelt wurde. Einige Module, wie die MPU6050 (siehe Abschnitt~\ref{sec:mpu6050})
+verfügen darüberhinaus über Interrupt-Leitungen, welche das Vorliegen neuer Messwerte signalisieren.
+
+\section{MMA8451Q - Accelerometer}
+
+Der Freescale MMA8451Q ist der auf dem Freedom-Board verbaute Beschleunigungssensor. Er bietet eine Auflösung von X bei einer maximalen Samplingrate von Y. 
+
+\subsection{Treiber}
+
+\section{MPU6050 - Accelerometer und Gyrosensor}
+\label{sec:mpu6050}
+
+Der Invensense MPU6050 ist eine \gls{imu}, die einen Beschleunigungs- und einen Drehratensensor vereinigt.
+
+\subsection{Treiber}
+
+\section{HMC5883L - Magnetometer}
+
+Der HMC5883L von Honeywell liefert bei einer Auflösung von 12 Bit (inkl. Vorzeichen) bei einem Wertebereich von $\pm$ 8 Gauss, wodurch er für den Einsatz in Präsenz starker lokaler Magnetfelder geeignet ist.
+
+\subsection{Treiber}
+
+\subsection{Lessons Learned}
+
+Bei der Auswertung der Sensordaten des HMC5883L traten zwei kleine bis mittlere Komplikationen auf. Eines dieser Probleme lag in der Ansteuerung des Sensors, 
+das andere dagegen in der Interpretation der Messwerte begründet.
+
+\subsubsection{Reihenfolge der Messwerte}
+
+Während in sämtlichen anderen Sensoren die Messwerte in üblicher $X$,$Y$,$Z$-Reihenfolge vorlagen, speichert der HMC5883L die Messwerte in der Reihenfolge $X$,$Z$,$Y$. Dies ist aus dem Datenblatt nur
+dann ersichtlich, wenn die im Datenblatt auf Seite 11 vorliegende --- sehr kurze --- Registerliste (Form no. 900405, Revision E) genau beachtet wird. Das Problem entstand hierbei daraus, dass in sämtlichen
+anderen Stellen des Datenblattes (insbesondere im Absatz Data Output Registers, Seite 15) die reguläre Reihenfolge beschrieben wurde.
+
