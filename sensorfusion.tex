@@ -113,8 +113,18 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 
 %% Glossaries  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% http://ctan.org/pkg/glossaries
+
+%\usepackage[nonumberlist,acronym,toc,section]{glossaries}
 \usepackage[acronym]{glossaries}
-\input{./content/glossar.tex}
+
+%% Stichwortverzeichnis anfordern %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeindex
+
+%% Glossar anfordern %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeglossaries
+
+% Glossar einbinden
+\input{./glossary/glossar.tex}
 
 %% PDF-spezifische Einstellungen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \hypersetup{
@@ -142,12 +152,6 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 				Julian Dombrow}
 \publishers{Beuth-Hochschule für Technik, Berlin}
 \date{\today}
-
-%% Stichwortverzeichnis anfordern %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\makeindex
-
-%% Glossar anfordern %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\makeglossaries
 
 \begin{document}
 
