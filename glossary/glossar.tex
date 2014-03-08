@@ -7,8 +7,8 @@
 }
 
 \newglossaryentry{Cortex}{name = {Cortex}, description={32bit-Mikrocontrollerarchitektur von ARM, Inc}}
-\newglossaryentry{cortex-m0}{name = {Cortex-M0}, description={\gls{mcu} der M0-Serie der ARM \gls{Cortex}-Architektur}}
-\newglossaryentry{cortex-m0+}{name = {Cortex-M0+}, description={\gls{mcu} der M0+-Serie der ARM \gls{Cortex}-Architektur}}
+\newglossaryentry{cortex-m0}{name = {Cortex-M0}, description={Mikroprozessor der M0-Serie der ARM \gls{Cortex}-Architektur}}
+\newglossaryentry{cortex-m0+}{name = {Cortex-M0+}, description={Mikroprozessor der M0+-Serie der ARM \gls{Cortex}-Architektur}}
 \newglossaryentry{CoreSight}{name = {CoreSight}, description={Debug-Schnittstelle in \gls{Cortex}-\glspl{mcu}}}
 
 \newglossaryentry{Kinetis}{name = {Kinetis}, description={32bit-Mikrocontrollertyp von Freescale Semiconductor}}
@@ -23,15 +23,25 @@
 \newglossaryentry{JTAG}{name = {JTAG}, description={Schnittstelle für Tests von Controllerschnittstellen und Programmierung}}
 \newglossaryentry{elf}{name = {ELF}, description={Executable and Linking Format, eine ausführbare Datei}}
 \newglossaryentry{mbed}{name = {mbed}, description={Plattform für die Entwicklung auf Cortex-M-MCUs}}
+\newglossaryentry{Thumb2}{name = {Thumb2}, description={Befehlssatz von \glslink{Cortex}{ARM Cortex-M}-Prozessoren}}
+
+\newglossaryentry{hard iron}{name = {Hard-Iron-Effekt}, description={Lineare Verzerrung im Magnetfeld durch Einwirkung "`harter"' ferromagnetischer Metalle, vgl. Soft-Iron-Effekt}}
+\newglossaryentry{soft iron}{name = {Soft-Iron-Effekt}, description={Nichtlineare Verzerrung im Magnetfeld durch Einwirkung "`weicher"' ferromagnetischer Metalle, vgl. Hard-Iron-Effekt}}
+
 
 \newglossaryentry{mpug}{name = {MPU}, description={Motion Processing Unit, eine durch Kopplung externer Sensoren erweiterbare Sensorserie von Invensense zur Verarbeitung und Fusion von Inertialdaten.}}
 
 \newglossaryentry{i2cg}{name = {I\textsuperscript{2}C}, description={(auch IIC) Inter-Integrated Circuit. Ein von Philips entworfenes Bussystem für Inter-Chip-Kommunikation}}
 
+\newglossaryentry{imug}{name = {IMU}, description={Inertial Measurement Unit, dt. Inertialmesseinheit; Ein Sensorsystem bestehend aus mehreren kombinierten Inertialsensoren}}
+
 \newacronym{i2c}{I\textsuperscript{2}C}{Inter-Integrated Circuit\glsadd{i2cg}}
 \newacronym{mpu}{MPU}{Motion Processing Unit\glsadd{mpug}}
 
+\newacronym{spi}{SPI}{Serial Peripheral Interface}
+
 \newacronym{dmp}{DMP}{Digital Motion Processor}
+\newacronym{mac}{MAC}{Multiply and Accumulate}
 
 %\newacronym{i2c}{I2C}{Inter-Integrated Circuit}
 
@@ -45,7 +55,7 @@
 \newacronym[
 	\glsshortpluralkey={IMUs},
 	\glslongpluralkey={Inertial Measurement Units}
-]{imu}{IMU}{Inertial Measurement Unit}
+]{imu}{IMU}{Inertial Measurement Unit\glsadd{imug}}
 
 \newacronym{hci}{HCI}{Human-Computer Interaction}
 \newacronym{hid}{HID}{Human Interface Device}
@@ -60,6 +70,8 @@
 \newacronym{usb}{USB}{Universal Serial Bus}
 \newacronym{gdb}{GDB}{GNU Debugger}
 \newacronym{swd}{SWD}{Serial Wire Debug}
+
+\newacronym{uart}{UART}{Universal Asynchronous Receiver Transmitter}
 
 \newacronym[
 	\glsshortpluralkey={GPIOs},

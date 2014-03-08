@@ -4,49 +4,280 @@ Alle in diesem Projekt verwendeten Sensoren verfügen über eine \gls{i2c}-Schni
 verfügen darüberhinaus über Interrupt-Leitungen, welche das Vorliegen neuer Messwerte signalisieren.
 
 \section{MMA8451Q - Accelerometer}
+\label{sec:mma8451q}
 
-Der Freescale MMA8451Q ist der auf dem Freedom-Board verbaute Beschleunigungssensor. Er bietet eine Auflösung von X bei einer maximalen Samplingrate von Y. 
+Der Freescale MMA8451Q ist der auf dem Freedom-Board verbaute Beschleunigungssensor. Er bietet eine Auflösung von 8 oder 14 Bit (inklusive Vorzeichen) bei einer maximalen 
+Samplingrate von 800 Hz (\citealp{mma8451q}) und kann mit bis zu 2.25 MHz Taktung über den \gls{i2c}-Bus 
+ausgelesen werden\footnote{Dies entspricht dem sog. "`High Speed Mode \gls{i2c}"', welcher bis 3,4 Mbit/s spezifiziert ist.}.
 
 \subsection{Treiber}
 
-\section{MPU6050 - Accelerometer und Gyrosensor}
+\subsection{Kalibrierung}
+
+
+
+
+
+
+
+
+\section{MPU6050 - Accelerometer, Gyro- und Temperatursensor}
 \label{sec:mpu6050}
 
-Die Invensense MPU6050 ist eine \gls{imu}, die einen Beschleunigungs- und einen Drehratensensor vereinigt. Diese \gls{mpu} umfasst sowohl einen Beschleunigungs-, als auch einen Drehratensensor und bietet die Möglichkeit, über einen als slave betriebenen, zusätzlichen \gls{i2c}-Bus weitere Sensoren zu verarbeiten, wodurch Aufwand vom Hauptcontroller abfällt. Der \gls{mpu} zugeschaltet ist ein sog. \gls{dmp}, welcher die internen Daten, sowie die über den slave-Bus bezogenen externen Daten fusionieren kann. Während die Ergebnisregister des \gls{dmp} frei zugänglich sind, sind die Inhalte dieser Felder nicht dokumentiert. Der Zugriff auf sie erfolgt stattdessen --- sofern erwünscht --- über eine proprietäre MotionsApps-Firmware\footnote{\url{http://www.invensense.com/developers/forum/viewtopic.php?f=3&t=142}}.
+Die Invensense MPU6050 ist eine \gls{imu}, die einen 16 Bit genauen Beschleunigungs- und Drehratensensor mit einem Temperatursensor vereinigt (\citealp{mpu6050}). 
+
+\todo{8 kHz Gyro etc.}
+
+Die \gls{mpu} bietet zusätzlich die Möglichkeit, über einen als slave betriebenen, zusätzlichen \gls{i2c}-Bus weitere Sensoren zu verarbeiten, wodurch Aufwand 
+vom Hauptcontroller abfällt. Der \gls{mpu} zugeschaltet ist ein sog. \gls{dmp}, welcher die internen Daten, sowie die über den slave-Bus bezogenen externen Daten fusionieren kann. 
+Obschon die Ergebnisregister des \gls{dmp} frei zugänglich sind, sind die Inhalte dieser Felder nicht dokumentiert. Der Zugriff auf sie erfolgt stattdessen --- sofern erwünscht --- 
+über eine proprietäre MotionsApps-Firmware\footnote{\url{http://www.invensense.com/developers/forum/viewtopic.php?f=3&t=142}}. 
+Diese wurde ob der Aufgabenstellung des Projektes explizit nicht verwendet.
+
+Im Gegensatz zur MPU6000 verzichtet die MPU6050 auf den bis zu 20 MHz schnellen \gls{spi}-Bus, wodurch sich die maximale Zugriffsgeschwindigkeit auf 400 kHz auf dem \gls{i2c}-Bus 
+beschränkt\footnote{Dies entspricht dem sog. "`Fast Mode \gls{i2c}"', welcher bis 400 kbit/s spezifiziert ist.}; Stattdessen ist der Logiklevel über einen \texttt{VLOGIC}-Pin frei wählbar. 
+Diese vergleichsweise geringe Geschwindigkeit ist jedoch ausreichend, um den Sensor selbst bei voller Samplingrate auszulesen.
 
 \subsection{Treiber}
+
+\subsection{Kalibrierung}
+
+\begin{figure}[htbp]
+		\centering
+		\begin{subfigure}[b]{\textwidth}
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/mpu6050/uncalib_3d.png}
+				%\caption{Unkalibrierter Sensor\\Übersicht}
+			\end{subfigure}~\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/mpu6050/calib_3d.png}
+				%\caption{Kalibrierter Sensor\\Übersicht}
+			\end{subfigure}
+			\caption{Übersicht des Ellipsoiden}
+		\end{subfigure}
+		
+		\begin{subfigure}[b]{\textwidth}
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/mpu6050/uncalib_xy.png}
+				%\caption{Unkalibrierter Sensor\\X/Y-Ebene}
+			\end{subfigure}%
+			~
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/mpu6050/calib_xy.png}
+				%\caption{Kalibrierter Sensor\\X/Y-Ebene}
+			\end{subfigure}
+			\caption{$X/Y$-Projektion}
+		\end{subfigure}
+		
+		\begin{subfigure}[b]{\textwidth}
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/mpu6050/uncalib_xz.png}
+				%\caption{Unkalibrierter Sensor\\X/Z-Ebene}
+			\end{subfigure}%
+			~
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/mpu6050/calib_xz.png}
+				%\caption{Kalibrierter Sensor\\X/Z-Ebene}
+			\end{subfigure}
+			\caption{$X/Z$-Projektion}
+		\end{subfigure}
+		
+		\begin{subfigure}[b]{\textwidth}
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/mpu6050/uncalib_yz.png}
+				%\caption{Unkalibrierter Sensor\\Y/Z-Ebene}
+			\end{subfigure}%
+			~
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/mpu6050/calib_yz.png}
+				%\caption{Kalibrierter Sensor\\Y/Z-Ebene}
+			\end{subfigure}
+			\caption{$Y/Z$-Projektion}
+		\end{subfigure}
+		
+		\caption[MPU6050: Kalibrierte und unkalibrierte Sensordaten]{MPU6050: Unkalibrierte (links) und kalibrierte Sensordaten (rechts) mit den Ellipsoid-Halbachsen.}
+		\label{fig:mpu6050_calib}
+\end{figure}
 
 \subsection{Lessons Learned}
 
-Bei der Kommunikation mit der MPU6050 trat das Problem auf, dass bei aktiviertem Interrupt-Signal und reduzierter Samplingrate nach einem Kaltstart keinerlei nennenswerte Verzögerung (d.h. nur wenige Millisekunden \todo{Verifizieren}) zwischen aufienander folgenden Interruptsignalen festzustellen war. 
-Dies führte zu der Problematik, dass die durch den Interrupt-Handler freigeschaltete Routine zum Beziehen der Sensordaten über \gls{i2c} und die anschließende Verarbeitung direkt durch einen erneuten Interrupt unterbrochen wurde. Da die serielle Ausgabe der Werte nur mit deutlich geringerer Taktung laufen kann, führte dies zu einem Engpass am vorgeschalteten Ringpuffer, wodurch die Verarbeitung deutlich inperformant wurde.
+Bei der Kommunikation mit der MPU6050 trat das Problem auf, dass bei aktiviertem Interrupt-Signal und reduzierter Samplingrate nach einem Kaltstart keinerlei nennenswerte 
+Verzögerung (d.h. nur wenige Millisekunden \todo{Verifizieren}) zwischen aufeinander folgenden Interruptsignalen festzustellen war. 
+Dies führte zu der Problematik, dass die durch den Interrupt-Handler freigeschaltete Routine zum Beziehen der Sensordaten über \gls{i2c} und die anschließende Verarbeitung 
+direkt durch einen erneuten Interrupt unterbrochen wurde. Da die serielle Ausgabe der Werte über die \gls{uart}-Schnittstelle nur mit deutlich geringerer Taktung laufen
+kann\footnote{Bis zu 230.4 kbaud konnten umgesetzt werden}, führte dies zu einem Engpass am vorgeschalteten Ausgabepuffer, wodurch die Verarbeitung deutlich blockiert wurde.
 
-Wurde das System jedoch durch einen Reset (d.h. durch einen Warmstart) neu initialisiert, verlief die Kommunikation wie gewünscht. Durch einen weiteren Kaltstart konnte der Zustand erneut herbeigeführt werden.
+Wurde das System anschließend jedoch durch einen Reset (d.h. einen Warmstart) neu initialisiert, verlief die Kommunikation wie gewünscht. Ein weiterer Kaltstart führte den
+fehlerhaften Zustand erneut herbei und konnte dann ebenso durch einen Reset aufgelöst werden.
 
 \todo{Bild mit Freifeuer vom Logan}
 
-Dieses Problem war erst dadurch zu beheben, dass zu Beginn der Konfiguration der \gls{imu} die interne Takteinheit deaktiviert wurde, um sie dann im Zuge der folgenden Konfiguration erneut auf den gewünschten Betriebsmodus zu stellen.
+Dieses Problem war erst dadurch zu beheben, dass zu Beginn der Konfiguration der \gls{imu} die interne Takteinheit deaktiviert wurde, um sie dann im Zuge der folgenden 
+Konfiguration erneut auf den gewünschten Betriebsmodus zu stellen.
 
 \todo{Bild ohne Freifeuer vom Logan}
 
+
+
+
+
+
+
+
+
 \section{HMC5883L - Magnetometer}
 
-Der HMC5883L von Honeywell liefert bei einer Auflösung von 12 Bit (inkl. Vorzeichen) bei einem Wertebereich von $\pm$ 8 Gauss, wodurch er für den Einsatz in Präsenz starker lokaler Magnetfelder geeignet ist.
+Der HMC5883L von Honeywell liefert bei einer Auflösung von 12 Bit (inkl. Vorzeichen) Messwerte in einem Bereich von bis zu $\pm$8 Gauss, wodurch er für den Einsatz in Präsenz starker 
+lokaler Magnetfelder geeignet ist. Er arbeitet mit einer maximalen Samplingrate von 160 Hz und kann mit maximal 400 kHz über den \gls{i2c}-Bus ausgelesen 
+werden\footnote{Dies entspricht dem sog. "`Fast Mode \gls{i2c}"'', welcher bis 400 kbit/s spezifiziert ist.}.
 
 \subsection{Treiber}
 
+\subsection{Kalibrierung}
+
+Auf das magnetische Feld wirken zwei Effekte, denen hinsichtlich der Auswertung und Kalibrierung der Sensordaten besondere Aufmerksamkeit geschenkt werden muss. 
+Diese nennt man entsprechend ihrer verursachenden ferromagnetischen Stoffe \glslink{hard iron}{Hard-} bzw. \glslink{soft iron}{Soft-Iron-Effekt}.
+
+Beim \gls{hard iron} handelt es sich um eine durch "`harte"' ferromagnetische Stoffe verursachte lineare Verschiebung des Magnetfeldes; 
+Im Gegensatz hierzu handelt es sich beim \gls{soft iron} um eine durch "`weiche"' ferromagnetische Stoffe verursachte nichtlineare Verzerrung der Feldlinien (vgl. Abbildung~\ref{fig:navpers_hi}).
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.5\textwidth]{./images/soft-iron-magnetic-field-navy.png}
+	\caption[Soft-Iron-Effekt]{Soft-Iron-Effekt, Quelle: \cite{NAVPERS10548}}
+	\label{fig:navpers_hi}
+\end{figure}
+
+Während sich ersterer Effekt im Sensor noch als reine Offsetverschiebung bemerkbar macht, äußert sich letzterer als eine Stauchung und Rotation der Messfeldkugel in einen rotierten
+Ellipsoiden im $\mathbb{R}^3$. In Abbildung~\ref{fig:hmc5883l_calib} findet sich eine Gegenüberstellung der unkalibrierten und kalibrierten Sensordaten; Hier sind die Auswirkungen 
+solcher vorherrschenden \glslink{hard iron}{Hard-Iron}- und \glslink{soft iron}{Soft-Iron}-Verzerrungen deutlich zu erkennen.
+
+Aufgrund der hohen Komplexität der Analyse des Magnetfeldes ist eine dynamische Kalibrierung on-the-fly, wie sie etwa von Smartphones bekannt ist, nicht ohne weiteres umzusetzen. Aus diesem
+Grunde wurde die Kalibrierung auf eine statische Auswertung der durch das messende System selbst --- etwa durch Leiterbahnen --- bedingten Verzerrungen beschränkt. Liegen die hieraus
+gewonnenen Koeffizienten vor,  können die Effekte zur Laufzeit mittels einer affinen Transformation ($\mathbb{R}^{3 \times 4}$) kompensiert werden.
+
+Zur Kalibrierung wurden daher über einen Zeitraum von mehreren Minuten Daten des Magnetometers in MATLAB aufgezeichnet. Während dieser Zeit wurde die Orientierung des Sensors
+so verändert, dass ein frei gewählter Punkt im Raum (in vorliegenden Fall die magnetische Nord-Richtung) auf jeder Sensorachse positiv, wie negativ messbar wurde.
+Hierbei war anzunehmen, dass sich das stärkste Magnetfeld in der Umgebung des Sensors --- das Erdmagnetfeld --- über den Verlauf der Messung nicht veränderte.
+Da der Sensor jedoch gerade die Richtung und Amplitude des stärksten Magnetfeldes in Form eines Vektors im $\mathbb{R}^3$ misst, musste dies über die Zeit der Messung zur Abbildung 
+einer Kugelschale durch die Messwerte führen (vgl Abb.~\ref{fig:hmc5883l_calib}, links).
+
+Die so vorliegende $3 \times N$-Matrix der $N$ Messwerte wurde dann mittels der MATLAB-Funktion \texttt{eig} in Eigenwerte und -Vektoren zerlegt. Da es sich (per eben festgelegter Definition) 
+bei den aufgezeichneten Daten um Punkte auf einer Ellipsoidenhülle handelt, entsprechen die so gewonnenen Eigenvektoren den jeweiligen Richtungsvektoren der Halbachsen 
+$\vec{x}_V, \vec{y}_V, \vec{z}_V$ des Ellipsoiden, wobei die Eigenwerte den zugehörigen Längen der Halbachsen entsprechen. Mit der Kenntnis der Halbachsen lässt sich weiterhin der Mittelpunkt
+des Ellipsoiden ermitteln, wodurch der \gls{hard iron} kompensiert werden kann.
+
+Zur Gewinnung der Koeffizienten der affinen Korrekturmatrix wurde nun wie folgt vorgegangen:
+
+ \begin{enumerate}
+		\item Die Orientierung des Ellipsoids wird aus den Eigenvektoren gewonnen.
+		\item Mittels einer inversen Rotation $\underline{R}^T$ wird der Ellipsoid mit dem Referenzkoordinatensystem in Übereinstimmung gebracht.
+		\item Die Achsen des Ellipsoiden werden nun anhand der Eigenwerte auf einen beliebigen Wert\footnote{Die Wahl dieses Wertes ist abhängig davon, ob die Kenntnis der echten Stärke des Magnetfeldes für die weitere Verarbeitung notwendig ist. Im vorliegenden Fall sind nur die Richtungen von Belang.} $\underline{S}$ normalisiert.
+		\item Die Rotation $\underline{R}$ wird in nicht-invers angewandt, um die ursprüngliche Orientierung des Ellipsoiden wiederherzustellen.
+		\item Die Offset-Korrektur $\underline{T}$ wird angewandt.
+\end{enumerate}
+
+Die Orientierung wird dabei als Winkelkosinusmatrix $\underline{R}$ \todo{Referenz auf später!} zwischen Referenzsystem $\underline{E}$ und Eigenvektor $\underline{V}$ bezogen, so dass
+
+\begin{align}
+\underline{R} = \underline{E} \cdot \underline{V}
+\end{align}
+
+Die Kombination der Operationen führt zur einer affinen $3 \times 4$-Transformationsmatrix
+
+\begin{align}
+\underline{A} = \underline{R} \cdot \underline{S} \cdot \underline{R}^T - \underline{T}
+\end{align}
+
+mittels welcher nun jeder neue Messwert hinsichtlich der o.g. Effekte korrigiert werden kann. Hilfreich ist hierbei die \gls{mac}-Struktur der Operation, welche durch 
+die \texttt{(U)MLA(L)}\footnote{multiply and (unsigned) accumulate (long)}- bzw. \texttt{(U)MLS}\footnote{multiply and (unsigned) subtract}-Operationen des \gls{Thumb2}-Befehlssatzes effizient verbeitet werden kann.
+
+\begin{figure}[htbp]
+		\centering
+		\begin{subfigure}[b]{\textwidth}
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/hmc5883l/uncalib_3d.png}
+				%\caption{Unkalibrierter Sensor\\Übersicht}
+			\end{subfigure}~\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/hmc5883l/calib_3d.png}
+				%\caption{Kalibrierter Sensor\\Übersicht}
+			\end{subfigure}
+			\caption{Übersicht des Ellipsoiden}
+		\end{subfigure}
+		
+		\begin{subfigure}[b]{\textwidth}
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/hmc5883l/uncalib_xy.png}
+				%\caption{Unkalibrierter Sensor\\X/Y-Ebene}
+			\end{subfigure}%
+			~
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/hmc5883l/calib_xy.png}
+				%\caption{Kalibrierter Sensor\\X/Y-Ebene}
+			\end{subfigure}
+			\caption{$X/Y$-Projektion}
+		\end{subfigure}
+		
+		\begin{subfigure}[b]{\textwidth}
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/hmc5883l/uncalib_xz.png}
+				%\caption{Unkalibrierter Sensor\\X/Z-Ebene}
+			\end{subfigure}%
+			~
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/hmc5883l/calib_xz.png}
+				%\caption{Kalibrierter Sensor\\X/Z-Ebene}
+			\end{subfigure}
+			\caption{$X/Z$-Projektion}
+		\end{subfigure}
+		
+		\begin{subfigure}[b]{\textwidth}
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/hmc5883l/uncalib_yz.png}
+				%\caption{Unkalibrierter Sensor\\Y/Z-Ebene}
+			\end{subfigure}%
+			~
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/hmc5883l/calib_yz.png}
+				%\caption{Kalibrierter Sensor\\Y/Z-Ebene}
+			\end{subfigure}
+			\caption{$Y/Z$-Projektion}
+		\end{subfigure}
+		
+		\caption[HMC5883L: Kalibrierte und unkalibrierte Sensordaten]{HMC5883L: Unkalibrierte (links) und kalibrierte Sensordaten (rechts) mit den Ellipsoid-Halbachsen.}
+		\label{fig:hmc5883l_calib}
+\end{figure}
+
+
+
 \subsection{Lessons Learned}
 
-Bei der Auswertung der Sensordaten des HMC5883L traten zwei kleine bis mittlere Komplikationen auf. Eines dieser Probleme lag in der Ansteuerung des Sensors, 
-das andere dagegen in der Interpretation der Messwerte begründet.
+Bei der Auswertung der Sensordaten des HMC5883L traten Komplikationen auf. Eines dieser Probleme lag in der Ansteuerung des Sensors, das andere dagegen in der Interpretation der Messwerte begründet.
 
 \subsubsection{Reihenfolge der Messwerte}
 
-Während in sämtlichen anderen Sensoren die Messwerte in üblicher $X$,$Y$,$Z$-Reihenfolge vorlagen, speichert der HMC5883L die Messwerte in der Reihenfolge $X$,$Z$,$Y$. Dies ist aus dem Datenblatt (\citealp{hmc5883l}) nur
-dann ersichtlich, wenn die im Datenblatt vorliegende --- sehr kurze --- Registerliste (S. 11) sehr genau beachtet wird. Im Gegensatz zu der dort aufgeführten Reihenfolge, verweisen sämtlichen
-anderen Stellen des Datenblattes (insbesondere im Abschnitt Data Output Registers, S. 15) auf die reguläre Anordnung.
+Während in anderen getesteten Sensoren die Messwerte in üblicher $X,Y,Z$-Reihenfolge vorlagen, speichert der HMC5883L die Messwerte in der Reihenfolge $X,Z,Y$. 
+Dies ist aus dem Datenblatt (\citealp{hmc5883l}) nur dann ersichtlich, wenn die dort vorliegende --- extrem kurze --- Registerliste (S. 11) sehr genau beachtet wird. 
+Im Gegensatz zu der dort aufgeführten korrekten Reihenfolge, benennen sämtliche übrigen Stellen des Datenblattes (insbesondere im Abschnitt Data Output Registers, S. 15) die reguläre Anordnung.
+Dieser Fehler wäre schnell aufgefallen, überlagerte sich jedoch mit der auf Seite~\pageref{subsec:hmc5885l_interpretation} beschriebenen Interpretationsproblematik.
 
 \subsubsection{Interpretation der Messergebnisse}
+\label{subsec:hmc5885l_interpretation}
 
 \begin{figure}[htbp]
 		\centering

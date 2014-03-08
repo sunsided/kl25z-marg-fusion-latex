@@ -30,7 +30,7 @@
 
 # Ausgaben ignorieren #
 ####################### 
-*.pdf
+/*.pdf
 
 # Zusätzliche intermediates #
 ############################# 
