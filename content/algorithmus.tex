@@ -2,7 +2,19 @@
 \dictum[Luhmann]{Die Klassiker sind Klassiker, weil sie Klassiker sind \dots}}
 \chapter{Fusionsalgorithmus}
 
-Exemplarischer Verweis auf ein Buch mit dieser Aussage, vgl. \cite{Filieri}, außerdem \cite{Tsang}. Dort werden \glspl{mems} erwähnt. So ein \gls{mems} ist toll.
+Verschiedene Ansätze zur Orientierungserkennung werden in der Literatur beschrieben. 
+\cite{madgwick_quat} formuliert einen \gls{Quaternion}-basierten \gls{marg}-Fusionsalgorithmus auf Basis eines Gradientenabstiegsverfahrens.
+In der Quadrocopter-Bastlerszene großer Beliebtheit erfreut sich aufgrund seiner geringen Komplexität der von \cite{dcmdraft} vorgeschlagene 
+Fusionsalgorithmus auf Basis der Winkelkosinusmatrix (\gls{dcm}) in Kombination mit einem \gls{Komplementaerfilter}, wie er von \cite{mahony_comp_eucl}, 
+\cite{mahony_coupled} und \cite{mahony_compl} beschrieben wird.
+
+Viele Untersuchungen wurden zu erweiterten \glslink{Kalman-Filter}{Kalman-Filtern}, sowie unscented \glslink{Kalman-Filter}{Kalman-Filtern} vorgenommen,
+welche die nichtlinearen Zusammenhänge der Sensoren direkt abzubilden versuchen. \todo{Quellen für diesen Unfug}
+
+\cite{Tsang} beschreibt einen Filter auf Basis des regulären \gls{Kalman-Filter} zur direkten Schätzung der \gls{dcm} anstelle des sonst üblichen Verfahrens
+zur Schätzung der \textsc{Euler}'schen Winkel. \todo{Dies wegen Singularitäten}
+
+\cite{Filieri} und, außerdem . Dort werden \glspl{mems} erwähnt. So ein \gls{mems} ist toll.
 
 \begin{figure}[htbp]
 	\centering
