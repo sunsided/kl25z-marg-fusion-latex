@@ -268,17 +268,38 @@ des \gls{Thumb2}-Befehlssatzes effizient verarbeitet werden kann (vgl. \citealp{
 
 \subsection{Lessons Learned}
 
-Bei der Auswertung der Sensordaten des HMC5883L traten Komplikationen auf. Eines dieser Probleme lag in der Ansteuerung des Sensors, das andere dagegen in der Interpretation der Messwerte begründet.
+Bei der Auswertung der Sensordaten des HMC5883L traten zweierlei Komplikationen auf. Eines dieser Probleme lag in der Ansteuerung des Sensors, das andere dagegen in der Interpretation der Messwerte begründet.
 
 \subsubsection{Reihenfolge der Messwerte}
+\label{subsec:hmc5885l_reihenfolge}
 
 Während in anderen getesteten Sensoren die Messwerte in üblicher $X,Y,Z$-Reihenfolge vorlagen, speichert der HMC5883L die Messwerte in der Reihenfolge $X,Z,Y$. 
 Dies ist aus dem Datenblatt (\citealp{hmc5883l}) nur dann ersichtlich, wenn die dort vorliegende --- extrem kurze --- Registerliste (S. 11) sehr genau beachtet wird. 
 Im Gegensatz zu der dort aufgeführten korrekten Reihenfolge, benennen sämtliche übrigen Stellen des Datenblattes (insbesondere im Abschnitt Data Output Registers, S. 15) die reguläre Anordnung.
-Dieser Fehler wäre schnell aufgefallen, überlagerte sich jedoch mit der auf Seite~\pageref{subsec:hmc5885l_interpretation} beschriebenen Interpretationsproblematik.
+Dieser Fehler allein wäre schnell aufgefallen, überlagerte sich jedoch mit der auf Seite~\pageref{subsec:hmc5885l_interpretation} beschriebenen Interpretationsproblematik.
 
-\subsubsection{Interpretation der Messergebnisse}
+\subsubsection{Interpretation der unkalibrierten Messergebnisse}
 \label{subsec:hmc5885l_interpretation}
+
+Das zweite Problem bei der Verarbeitung der Magnetometerdaten bestand in der Verweigerung des Erdmagnetfeldes, die erwartete Form anzunehmen.
+
+Der Grund für die Fehlannahme bezüglich der Ergebnisse lag hierbei allein in der visuellen Vorstellung des Verlaufes der Magnetfeldlinien. Dies wird durch die große Menge an qualitativ stark
+divergierenden Darstellungen des Erdmagnetfeldes, in Lehrbüchern wie Infografiken als stilisierter Stabmagnet o.ä., nicht erleichtert. Ein Beispiel hierfür findet sich 
+in Abbildung~\ref{fig:magnetfeld_erde_hmpf}. Es wurde angenommen, dass eine Rotation um die Hochachse $Z$ des Sensors zu einer Anordnung der Messwerte auf einer Kreisbahn signifikanten Radius' führen
+würde. Der hierfür angenommene flache Eintrittswinkel der Magnetfeldlinien entsprach jedoch nicht der Realität. Wie stark die erwartete Richtung ("`nord"', "`in etwa vorwärts"', "`durch den Erdball zum Nordpol"')
+von der tatsächlich Richtung des Magnetfeldvektors abweichen kann\footnote{Messung in Berlin, Deutschland}, ist in Abbildung~\ref{fig:vektorobs_visual_coord} ersichtlich: Der Winkel zwischen 
+Gravitations- und Magnetfeldvektor beträgt dort nur knapp $45^\circ$.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{./images/sensors/hmc5883l/raw_uncalib_around_z_up.png}
+	\caption[HMC5883L: Rotation um angenommene $Z$-Achse bei unkalibriertem Sensor]{HMC5883L: Rotation um angenommene $Z$-Achse bei unkalibriertem Sensor}
+	\label{fig:hmc5883l_idiotenmessung}
+\end{figure}
+
+In Verbindung mit dem im Abschnitt~\ref{subsec:hmc5885l_reihenfolge} beschriebenen Achsenproblem fiel es schwer, aus den so gewonnenen Messdaten (siehe Abbildung~\ref{fig:hmc5883l_idiotenmessung}) Nutzen zu gewinnen, da sowohl die Orientierung, als auch der erwartete Radius des Messwertkreises aus dem Rahmen fielen.
+
+Ein Vergleich mit der korrekten und kalibrierten Anordnung der Messwerte in Abbildung~\ref{fig:hmc5883l_calib_raw} zeigt den Ist- und Soll-Zustand. In beiden Fällen wurden die Messungen einmal in normaler (d.h. aufrechter) Ausrichtung des Sensors, sowie in inverser Ausrichtung desselben ("`auf dem Kopf"') ausgemessen.
 
 \begin{figure}[htbp]
 		\centering
@@ -294,4 +315,55 @@ Dieser Fehler wäre schnell aufgefallen, überlagerte sich jedoch mit der auf Se
 			\caption{Vereinfachte realistische Darstellung \\ Quelle: Wikibooks}
 		\end{subfigure}%
 		\caption[Darstellungen des Erdmagnetfeldes]{Darstellungen des Erdmagnetfeldes.\\Links: Die Feldlinien treffen sich an den Polen.\\Rechts: Die Feldlinien durchdringen den Erdmantel.}
+		\label{fig:magnetfeld_erde_hmpf}
+\end{figure}
+
+
+\begin{figure}[htbp]
+		\centering
+		\begin{subfigure}[b]{\textwidth}
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/hmc5883l/raw_uncalib_around_x_fwd.png}
+				%\caption{Unkalibrierter Sensor\\Übersicht}
+			\end{subfigure}~\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/hmc5883l/raw_calib_around_x_fwd.png}
+				%\caption{Kalibrierter Sensor\\Übersicht}
+			\end{subfigure}
+			\caption{Rotation um die $X$-Achse (vor- und rückwärtsgerichtet)}
+		\end{subfigure}
+		
+		\begin{subfigure}[b]{\textwidth}
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/hmc5883l/raw_uncalib_around_y_lft.png}
+				%\caption{Unkalibrierter Sensor\\X/Y-Ebene}
+			\end{subfigure}%
+			~
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/hmc5883l/raw_calib_around_y_lft.png}
+				%\caption{Kalibrierter Sensor\\X/Y-Ebene}
+			\end{subfigure}
+			\caption{Rotation um die $Y$-Achse (links- und rechtsgerichtet)}
+		\end{subfigure}
+		
+		\begin{subfigure}[b]{\textwidth}
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/hmc5883l/raw_uncalib_around_z_up.png}
+				%\caption{Unkalibrierter Sensor\\X/Z-Ebene}
+			\end{subfigure}%
+			~
+			\begin{subfigure}[b]{0.5\textwidth}
+				\centering
+				\includegraphics[width=\textwidth]{./images/sensors/hmc5883l/raw_calib_around_z_up.png}
+				%\caption{Kalibrierter Sensor\\X/Z-Ebene}
+			\end{subfigure}
+			\caption{Rotation um die $Z$-Achse (auf- und abwärtsgerichtet)}
+		\end{subfigure}
+				
+		\caption[HMC5883L: Messungen einzelner Rotationen]{HMC5883L: Unkalibrierte (links) und kalibrierte Sensordaten (rechts). Jeweils normale und inverse Orientierung des Sensors überlagert.}
+		\label{fig:hmc5883l_calib_raw}
 \end{figure}
