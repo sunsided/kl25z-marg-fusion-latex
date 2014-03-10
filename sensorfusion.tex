@@ -166,6 +166,34 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 \publishers{Beuth-Hochschule für Technik, Berlin}
 \date{\today}
 
+% Code-Stile
+\lstdefinestyle{lolbash}{
+    language={bash}, 
+		basicstyle=\ttfamily\tiny,
+		frame=single,
+    moredelim=**[is][\slshape]{`}{`},
+    moredelim=**[is][\color{orange}]{°}{°},
+}
+
+\lstdefinestyle{lolc}{
+    language={C}, 
+		basicstyle=\ttfamily\tiny,
+		frame=single,
+    moredelim=**[is][\slshape]{`}{`},
+    moredelim=**[is][\color{orange}]{°}{°},
+		showstringspaces=false,
+		keywordstyle=\bfseries\color{green!40!black},
+		commentstyle=\itshape\color{purple!40!black},
+		identifierstyle=\color{black},
+		stringstyle=\color{blue},
+		breakatwhitespace=true,
+		breaklines=true,
+		morekeywords={uint8_t, uint16_t, uint_fast8_t, uint_least8_t, uint_fast16_t, uint_least8_t,
+									mma8451q_confreg_t, mma8451q_acc_t,
+									mpu6050_confreg_t}
+}
+
+
 \begin{document}
 
 \input{./content/beuth.tex}

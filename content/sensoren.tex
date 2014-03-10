@@ -3,6 +3,14 @@
 Alle in diesem Projekt verwendeten Sensoren verfügen über eine \gls{i2c}-Schnittstelle, über welche die Kommunikation abgewickelt wurde. Einige Module, wie die MPU6050 (siehe Abschnitt~\ref{sec:mpu6050})
 verfügen darüberhinaus über Interrupt-Leitungen, welche das Vorliegen neuer Messwerte signalisieren.
 
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{./images/sensors/uncalibrated.png}
+	\caption[Sensordaten in Ruhelage]{10-Minuten-Aufnahme der Sensordaten in Ruhelage}
+	\label{fig:sensors_unagitated}
+\end{figure}
+
+
 \section{MMA8451Q - Accelerometer}
 \label{sec:mma8451q}
 
@@ -12,10 +20,105 @@ ausgelesen werden\footnote{Dies entspricht dem sog. "`High Speed Mode \gls{i2c}"
 
 \subsection{Treiber}
 
+\begin{lstlisting}[style=lolc]
+typedef struct {
+	uint8_t F_SETUP;		/*< FIFO setup */
+	uint8_t TRIG_CFG;		/*< Map of FIFO data capture events */
+	const uint8_t SYSMOD;		/*< Current System Mode */
+	/* skipped 1 register */
+	const uint8_t WHO_AM_I;		/*< Device ID (0x1A) */
+	uint8_t XYZ_DATA_CFG;		/*< Dynamic Range Settings */
+	uint8_t HP_FILTER_CUTOFF;	/*< Cutoff frequency */
+	/* skipped 1 register */
+	uint8_t PL_CFG;			/*< Landscape/Portrait configuration */
+	uint8_t PL_COUNT;		/*< Landscape/Portrait debounce counter */
+	uint8_t PL_BF_ZCOMP;		/*< Back/Front, Z-Lock Trip threshold */
+	uint8_t P_L_THS_REG;		/*< Portrait to Landscape Trip Angle */
+	uint8_t FF_MT_CFG;		/*< Freefall/Motion functional block configuration */
+	/* skipped 1 register */ 
+	uint8_t FF_MT_THS;		/*< Freefall/Motion threshold register */
+	uint8_t FF_MT_COUNT;		/*< Freefall/Motion debounce counter */
+	/* skipped 4 registers */
+	uint8_t TRANSIENT_CFG;		/*< Transient functional block configuration */
+	uint8_t TRANSIENT_SCR;		/*< Transient event status register */
+	uint8_t TRANSIENT_THS;		/*< Transient event threshold */
+	uint8_t TRANSIENT_COUNT;	/*< Transient debounce counter */
+	uint8_t PULSE_CFG;		/*< ELE, Double_XYZ or Single_XYZ */
+	/* skipped 1 register */
+	uint8_t PULSE_THSX;		/*< X pulse threshold */
+	uint8_t PULSE_THSY;		/*< Y pulse threshold */
+	uint8_t PULSE_THSZ;		/*< Z pulse threshold */
+	uint8_t PULSE_TMLT;		/*< Time limit for pulse */
+	uint8_t PULSE_LTCY;		/*< Latency time for 2nd pulse */
+	uint8_t PULSE_WIND;		/*< Window time for 2nd pulse */
+	uint8_t ASLP_COUNT;		/*< Counter setting for Auto-SLEEP */
+	uint8_t CTRL_REG1;		/*< ODR, Active/Standby mode */
+	uint8_t CTRL_REG2;		/*< Sleep Enable, OS Modes */
+	uint8_t CTRL_REG3;		/*< Wake from Sleep, IPOL, PP_OD */
+	uint8_t CTRL_REG4;		/*< Interrupt enable register */
+	uint8_t CTRL_REG5;		/*< Interrupt pin (INT1/INT2) map */
+	uint8_t OFF_X;			/*< X-axis offset adjust */
+	uint8_t OFF_Y;			/*< Y-axis offset adjust */
+	uint8_t OFF_Z;			/*< Z-axis offset adjust */
+} mma8451q_confreg_t;
+\end{lstlisting}
+
+Die Initialisierung des MMA8451Q fiel dabei wie folgt aus:
+
+\begin{lstlisting}[style=lolc]
+/* Referenz auf statischen shared buffer */
+mpu6050_confreg_t *configuration = &config_buffer.mma8451q_configuration;
+
+/* Sensor zuruecksetzen, wenn System aus dem Warmstart kommt */
+MMA8451Q_EnterPassiveMode();
+MMA8451Q_Reset();
+delay_ms(20);
+
+/* Konfiguration lesen */
+MMA8451Q_FetchConfiguration(configuration);
+
+/* 2g Sensitivitaet, Ausgabe-Hochpassfilter deaktiviert */
+MMA8451Q_SetSensitivity(configuration, MMA8451Q_SENSITIVITY_2G, MMA8451Q_HPO_DISABLED);
+
+/* 100 Hz Samplingrate, Low-Noise-Modus aktiviert */
+MMA8451Q_SetDataRate(configuration, MMA8451Q_DATARATE_100Hz, MMA8451Q_LOWNOISE_ENABLED);
+
+/* Oversamplingsmodus fuer hohe Aufloesung aktivieren */
+MMA8451Q_SetOversampling(configuration, MMA8451Q_OVERSAMPLING_HIGHRESOLUTION);
+
+/* Interrupt zuruecksetzen */
+MMA8451Q_ClearInterruptConfiguration(configuration);
+
+/* Interrupt auf Open Drain, Active Low setzen */
+MMA8451Q_SetInterruptMode(configuration, MMA8451Q_INTMODE_OPENDRAIN, MMA8451Q_INTPOL_ACTIVELOW);
+
+/* Data Ready-Interrupt auf Pin 2 legen */
+MMA8451Q_ConfigureInterrupt(configuration, MMA8451Q_INT_DRDY, MMA8451Q_INTPIN_INT2);
+
+/* Konfiguration senden und Sensor aktivieren */
+MMA8451Q_StoreConfiguration(configuration);
+MMA8451Q_EnterActiveMode();
+\end{lstlisting}
+
 \subsection{Kalibrierung}
+\label{subsec:mma8451q_kalibrierung}
 
+Eine Möglichkeit zur Offsetkalibrierung der Beschleunigungssensoren besteht darin, diese in Ruhelage so zu positionieren, dass der gesamte Betrag der durch die Gravitation bedingten
+Beschleunigungskraft von nur einer Sensorachse gemessen wird. In dieser Lage werden Messwerte über den Verlauf einiger Minuten aufgenommen und das Verfahren für jede andere Achse und
+Richtung wiederholt, so dass Messwerte für positive und negative Halbachsen vorliegen. Da die beiden jeweils nicht von der Gravitation beeinträchtigten Achsen nun mittelwertfrei sein müssen,
+lässt sich aus den Messwerten direkt der Offsetfehler, sowie Drift und Varianz ablesen.
 
+Da für jede Achse nun zwei Varianzmessungen vorliegen, können diese mittels der "`pooled"'-Varianzmethode als erwartungstreu gewichtete Mittelung zusammengeführt werden, so dass
 
+\begin{align}
+\mathrm{Var} \left[s_p \mid s_1, s_1\right] = \frac{(n_1 - 1)\mathrm{Var} \left[s_1\right] + (n_2 - 1)\mathrm{Var} \left[s_2\right]}{n_1 + n_2 - 2} \label{eq:pooled_variance}
+\end{align}
+
+wobei $n_{1,2}$ die Anzahl der vorliegenden Messwerte beziffert. Da diese Methode jedoch insgesamt fehleranfällig aufgrund der Notwendigkeit einer exakten Ausrichtung des Sensors ist 
+und aufgrund der Natur der Aufgabe ohnehin nur unter Laborbedingungen durchgeführt werden kann, wurde im späteren Projektverlauf die unter Abschnitt~\ref{subsec:hmc5883l_kalibrierung} 
+beschriebene Eigenvektormethode verwendet, wobei die Varianzen nach bekannten Offsetfehlern wie üblich aus einer Messung in Ruhelage gewonnen wurden. 
+
+Da der Sensor im weiteren Verlauf des Projektes nicht mehr verwendet wurde, soll an dieser Stelle nicht tiefer auf die Vorgehensweise eingegangen werden.
 
 
 
@@ -40,7 +143,132 @@ Diese vergleichsweise geringe Geschwindigkeit ist jedoch ausreichend, um den Sen
 
 \subsection{Treiber}
 
+Die Registerstruktur der MPU6050 ist dabei bei weitem die komplexeste der verwendeten Sensoren.
+
+\begin{lstlisting}[style=lolc]
+#pragma pack(1)
+typedef struct __attribute__ ((__packed__))
+{
+	/* skipping registers 0x00 .. 0x0C */
+	
+	/* skipping self-test registers 0x0D .. 0x10 */
+	
+	/* skipping registers 0x11 .. 0x18 */
+	
+	uint8_t SMPLRT_DIV; 		/* Samplerate Divider */
+	uint8_t CONFIG; 		/* MPU-Konfiguration */
+	uint8_t GYRO_CONFIG; 		/* Gyro-Konfiguration */
+	uint8_t ACCEL_CONFIG; 		/* Accelerometer-Konfiguration */
+	
+	/* skipping registers 0x1D .. 0x12 */
+	
+	uint8_t FIFO_EN; 		/* FIFO-Register */
+	uint8_t I2C_MST_CTRL; 		/* Slave-I2C Control */
+	uint8_t I2C_SLV0_ADDR; 		/* Slave-I2C 0 */
+	uint8_t I2C_SLV0_REG; 		/* Slave-I2C 0 */
+	uint8_t I2C_SLV0_CTRL; 		/* Slave-I2C 0 */
+	uint8_t I2C_SLV1_ADDR; 		/* Slave-I2C 1 */
+	uint8_t I2C_SLV1_REG; 		/* Slave-I2C 1 */
+	uint8_t I2C_SLV1_CTRL; 		/* Slave-I2C 1 */
+	uint8_t I2C_SLV2_ADDR; 		/* Slave-I2C 2 */
+	uint8_t I2C_SLV2_REG; 		/* Slave-I2C 2 */
+	uint8_t I2C_SLV2_CTRL; 		/* Slave-I2C 2 */
+	uint8_t I2C_SLV3_ADDR; 		/* Slave-I2C 3 */
+	uint8_t I2C_SLV3_REG; 		/* Slave-I2C 3 */
+	uint8_t I2C_SLV3_CTRL; 		/* Slave-I2C 3 */
+	uint8_t I2C_SLV4_ADDR; 		/* Slave-I2C 4 */
+	uint8_t I2C_SLV4_REG; 		/* Slave-I2C 4 */
+	uint8_t I2C_SLV4_DO; 		/* Slave-I2C 4 */
+	uint8_t I2C_SLV4_CTRL; 		/* Slave-I2C 4 */
+	const uint8_t I2C_SLV4_DI; 	/* Slave-I2C 4 */
+	const uint8_t I2C_MST_STATUS;	/* Slave-I2C Status */
+	uint8_t INT_PIN_CFG; 		/* Interrupt-Konfiguration */
+	uint8_t INT_ENABLE; 		/* Interrupt-AKtivierung */
+
+	/* skipping register 0x39 */
+	
+	/* skipping data status and value registers 0x3A .. 0x60 */
+	
+	/* skipping registers 0x61 .. 0x63 */
+	
+	uint8_t I2C_SLV0_DO; 		/* Slave-I2C 0 */
+	uint8_t I2C_SLV1_DO; 		/* Slave-I2C 1 */
+	uint8_t I2C_SLV2_DO; 		/* Slave-I2C 2 */
+	uint8_t I2C_SLV3_DO; 		/* Slave-I2C 3 */
+	uint8_t I2C_MST_DELAY_CTRL; 	/* Slave-I2C Control */
+	uint8_t SIGNAL_PATH_RESET; 	/* Reset */
+	uint8_t MOT_DETECT_CTRL; 	/* Motion Detection */
+	uint8_t USER_CTRL; 		/* Erweiterte Konfiguration */
+	uint8_t PWR_MGMT_1; 		/* Energiemanagement */
+	uint8_t PWR_MGMT_2; 		/* Energiemanagement */
+
+	/* skipping registers 0x6D .. 0x71 */
+	
+	uint8_t FIFO_COUNTH; 		/* FIFO-Status */
+	uint8_t FIFO_COUNTL; 		/* FIFO-Status */
+	uint8_t FIFO_R_W; 		/* FIFO-Daten */
+	const uint8_t WHO_AM_I; 	/* Identifikation */
+} mpu6050_confreg_t;
+\end{lstlisting}
+
+Die Initialisierung des MMA8451Q fiel dabei wie folgt aus:
+
+\begin{lstlisting}[style=lolc]
+/* Referenz auf statischen shared buffer */
+mpu6050_confreg_t *configuration = &config_buffer.mpu6050_configuration;
+
+/* Test auf I2C-Bus */
+uint8_t value = MPU6050_WhoAmI();
+assert(value == 0x68);
+
+/* Interrupts deaktivieren und Clock auf internen Oszillator setzen */
+MPU6050_SelectClockSource(MPU6050_CONFIGURE_DIRECT, MPU6050_CLOCK_8MHZOSC);
+MPU6050_EnableInterrupts(MPU6050_CONFIGURE_DIRECT,
+		MPU6050_INT_DISABLED,
+		MPU6050_INT_DISABLED,
+		MPU6050_INT_DISABLED); /* disable data ready interrupt */
+
+/* Konfiguration beziehen */
+MPU6050_FetchConfiguration(configuration);
+
+/* Samplingrate setzen (8kHz, Division durch 40 --> 200Hz) */
+MPU6050_SetGyroscopeSampleRateDivider(configuration, 40);
+
+/* Wertebereich fuer Gyro: 2000 Grad/s */
+/* Wertebereich fuer Accelerometer: 4g*/
+MPU6050_SetGyroscopeFullScale(configuration, MPU6050_GYRO_FS_2000);
+MPU6050_SetAccelerometerFullScale(configuration, MPU6050_ACC_FS_4);
+
+/* Interrupts konfigurieren */
+MPU6050_ConfigureInterrupts(configuration,
+		MPU6050_INTLEVEL_ACTIVELOW,
+		MPU6050_INTOPEN_OPENDRAIN,
+		MPU6050_INTLATCH_LATCHED, /* if configured to PULSE the line goes postal */
+		MPU6050_INTRDCLEAR_READSTATUS);
+		
+/* Interrupts aktivieren */
+MPU6050_EnableInterrupts(configuration,
+		MPU6050_INT_DISABLED,
+		MPU6050_INT_DISABLED,
+		MPU6050_INT_ENABLED); /* enable data ready interrupt */
+		
+/* Clock wieder auf Gyro-PLL setzen */
+MPU6050_SelectClockSource(configuration, MPU6050_CLOCK_XGYROPLL);
+
+/* Sleep mode deaktivieren und Konfiguration setzen */
+MPU6050_SetSleepMode(configuration, MPU6050_SLEEP_DISABLED);
+MPU6050_StoreConfiguration(configuration);
+\end{lstlisting}
+
 \subsection{Kalibrierung}
+\label{subsec:mma8451q_kalibrierung}
+
+Der Accelerometer der MPU6050 wurde wie in Abschnitt~\ref{subsec:mma8451q_kalibrierung} beschrieben durchgeführt. Die Kalibrierung des Gyrosensors erfolgte durch Auswertung
+der in Ruhelage gewonnenen Messwerte mittels einer linearen Regression, wobei die Arbeitstemperatur des Sensors als konstant und identisch zur Kalibrierungstemperatur angenommen wurde.
+Da die lineare Regression sowohl Anstieg, als auch Verschiebung der Regressionsgerade liefert, sind damit Offset und Drift (in Form einer Winkelbeschleunigung) bekannt.
+Nach erfolgter Regressionsbereinigung wurden die Messwertvarianzen ermittelt.
+
+Eine Übersicht der unkalibrierten und kalibrierten Sensordaten ist in Abbildungen~\ref{fig:sensors_unagitated} und~\ref{fig:mpu6050_calib} zu finden.
 
 \begin{figure}[htbp]
 		\centering
@@ -140,7 +368,48 @@ werden\footnote{Dies entspricht dem sog. "`Fast Mode \gls{i2c}"'', welcher bis 4
 
 \subsection{Treiber}
 
+Im Gegensatz zu den anderen verwendeten Sensoren fällt die Registerstruktur beim HMC5885L überaus knapp aus.
+
+\begin{lstlisting}[style=lolc]
+typedef struct {
+	uint8_t CRA;	/*! Configuration Register A */
+	uint8_t CRB;	/*! Configuration Register B */
+	uint8_t MR;	/*! Mode Register */
+} hmc5883l_confreg_t;
+\end{lstlisting}
+
+Entsprechend überschaubar ist auch die Initialisierungsroutine.
+
+\begin{lstlisting}[style=lolc]
+/* Referenz auf statischen shared buffer */
+hmc5883l_confreg_t *configuration = &config_buffer.hmc5883l_configuration;
+
+/* I2C-Bustest */
+uint32_t ident = HMC5883L_Identification();
+assert(ident == 0x00483433);
+
+/* Konfiguration lesen */
+HMC5883L_FetchConfiguration(configuration);
+
+/* Wertemittelung deaktivieren */
+HMC5883L_SetAveraging(configuration, HMC5883L_MA_1);
+
+/* Samplingrate auf 75 Hz */
+HMC5883L_SetOutputRate(configuration, HMC5883L_DO_75Hz);
+
+/* Normalen Messmodus aktivieren */
+HMC5883L_SetMeasurementMode(configuration, HMC5883L_MS_NORMAL);
+
+/* Gain auf Standardwert setzen */
+HMC5883L_SetGain(configuration, HMC5883L_GN_1090_1p3Ga);
+
+/* Kontinuierliche Messung aktivieren und Daten sichern */
+HMC5883L_SetOperatingMode(configuration, HMC5883L_MD_CONT);
+HMC5883L_StoreConfiguration(configuration);
+\end{lstlisting}
+
 \subsection{Kalibrierung}
+\label{subsec:hmc5883l_kalibrierung}
 
 Auf das magnetische Feld wirken zwei Effekte, denen hinsichtlich der Auswertung und Kalibrierung der Sensordaten besondere Aufmerksamkeit geschenkt werden muss. 
 Diese nennt man entsprechend ihrer verursachenden ferromagnetischen Stoffe \glslink{hard iron}{Hard-} bzw. \glslink{soft iron}{Soft-Iron-Effekt}.
@@ -150,20 +419,22 @@ Im Gegensatz hierzu handelt es sich beim \gls{soft iron} um eine durch "`weiche"
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.3\textwidth]{./images/soft-iron-magnetic-field-navy.png}
+	\includegraphics[width=0.4\textwidth]{./images/soft-iron-magnetic-field-navy.png}
 	\caption[Soft-Iron-Effekt]{Soft-Iron-Effekt, Quelle: \cite{NAVPERS10548}}
 	\label{fig:navpers_hi}
 \end{figure}
 
-Während sich ersterer Effekt im Sensor noch als reine Offsetverschiebung bemerkbar macht, äußert sich letzterer als eine Stauchung und Rotation der Messfeldkugel in einen rotierten
-Ellipsoiden im $\mathbb{R}^3$. In Abbildung~\ref{fig:hmc5883l_calib} findet sich eine Gegenüberstellung der unkalibrierten und kalibrierten Sensordaten; Hier sind die Auswirkungen 
-solcher vorherrschenden \glslink{hard iron}{Hard-Iron}- und \glslink{soft iron}{Soft-Iron}-Verzerrungen deutlich zu erkennen.
+Während sich ersterer Effekt im Sensor noch als reine Offsetverschiebung bemerkbar macht (vgl. Abbildung~\ref{fig:sensors_unagitated}), äußert sich letzterer als eine 
+Streckung und Rotation der Messfeldkugel in einen rotierten Ellipsoiden im $\mathbb{R}^3$. In Abbildung~\ref{fig:hmc5883l_calib} findet sich eine Gegenüberstellung der 
+unkalibrierten und kalibrierten Sensordaten; Hier sind die Auswirkungen solcher vorherrschenden \glslink{hard iron}{Hard-Iron}- und \glslink{soft iron}{Soft-Iron}-Verzerrungen 
+deutlich zu erkennen.
 
 Aufgrund der hohen Komplexität der Analyse des Magnetfeldes ist eine dynamische Kalibrierung on-the-fly, wie sie etwa von Smartphones bekannt ist, nicht ohne weiteres umzusetzen. Aus diesem
 Grunde wurde die Kalibrierung auf eine statische Auswertung der durch das messende System selbst --- etwa durch Leiterbahnen --- bedingten Verzerrungen beschränkt. Liegen die hieraus
-gewonnenen Koeffizienten vor,  können die Effekte zur Laufzeit mittels einer affinen Transformation ($\mathbb{R}^{3 \times 4}$) kompensiert werden.
+gewonnenen Koeffizienten vor, können die Effekte zur Laufzeit mittels einer affinen Transformation ($\mathbb{R}^{3 \times 4}$) kompensiert werden. 
+Eine Übersicht der unkalibrierten und kalibrierten Sensordaten ist in Abbildungen~\ref{fig:sensors_unagitated} und~\ref{fig:hmc5883l_calib} zu finden.
 
-Zur Kalibrierung wurden daher über einen Zeitraum von mehreren Minuten Daten des Magnetometers in MATLAB aufgezeichnet. Während dieser Zeit wurde die Orientierung des Sensors
+Zur Kalibrierung wurden über einen Zeitraum von einigen Minuten Daten des Magnetometers in MATLAB aufgezeichnet. Während dieser Zeit wurde die Orientierung des Sensors
 so verändert, dass ein frei gewählter Punkt im Raum (in vorliegenden Fall die magnetische Nord-Richtung) auf jeder Sensorachse positiv, wie negativ messbar wurde.
 Hierbei war anzunehmen, dass sich das stärkste Magnetfeld in der Umgebung des Sensors --- das Erdmagnetfeld --- über den Verlauf der Messung nicht veränderte.
 Da der Sensor jedoch gerade die Richtung und Amplitude des stärksten Magnetfeldes in Form eines Vektors im $\mathbb{R}^3$ misst, musste dies über die Zeit der Messung zur Abbildung 
