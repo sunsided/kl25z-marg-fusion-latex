@@ -1,4 +1,4 @@
-\chapter{Sonstiger Code}
+\chapter{Serielle Kommunikation}
 
 \section{Serielle Übertragung}
 
@@ -167,7 +167,7 @@ static inline void encodeAndSend(register uint8_t byte, register void (*sendHand
 \subsection{P2PP-Decoder}
 \label{subsec:p2pp_decoder}
 
-Decoder für das \gls{p2pp}-Protokoll wurden sowohl in MATLAB, als auch in C\# geschrieben. Beispielimplementierungen in MATLAB können in 
+Decoder für das \gls{p2pp}-Protokoll wurden sowohl in MATLAB, als auch in C\# geschrieben. Beispielimplementierungen in MATLAB können in den
 Listings~\ref{lst:matlab-p2ppdecoder-setup} und \ref{lst:matlab-p2ppdecoder} gefunden werden, eine Implementierung für C\# findet sich in Listing~\ref{lst:csharp-p2ppdecoder}.
 
 Als wesentlich für den performanten Empfang von Daten über die serielle Schnittstelle in MATLAB stellten sich zwei Dinge heraus: Der Dekoder darf\footnote{Bis einschließlich MATLAB R2013b}
@@ -177,7 +177,7 @@ Zum anderen sollte die (üblicherweise empfohlene) Verwendung des \texttt{serial
 Parameter jenes Typs inperformant implementiert ist\footnote{Dies kann in MATLAB eingesehen werden.}. Um die (oft überflüssige, aber aufwendige) Konstruktion von Fehlerstrings und wiederkehrende
 Java-Calls zum Beziehen des Sockets zu vermeiden, schlagen wir den in Listing~\ref{lst:matlab-serial-conf} und \ref{lst:matlab-serial-grab} dargestellten Nutzungsweg vor.
 
-Zuerst wird das Serial-Objekt wie gehabt mittels \texttt{serial(...)} bezogen. In Listing~\ref{lst:matlab-serial-conf} wird exemplarisch der Port \texttt{COM3} mit 115,2 kbaud und 
+Zuerst wird das Serial-Objekt wie üblich mittels \texttt{serial(...)} bezogen. In Listing~\ref{lst:matlab-serial-conf} wird exemplarisch der Port \texttt{COM3} mit 115,2 kbaud und 
 der üblichen Einstellung "`8-N-1"' verwendet. Ein Interner Puffer von 1024 Byte wird eingerichtet und der Lesemodus auf \emph{continuous} geschaltet, um unnötiges Polling (Modus \emph{manual}) zu vermeiden.
 Anschließend wird der Socket geöffnet.
 
@@ -214,217 +214,4 @@ bytes = typecast(rawout(1), 'uint8');     % dies hat jedoch keinerlei Einfluss, 
 % schliessen wie ueblich
 fclose(s);
 delete(s);
-\end{lstlisting}
-
-\begin{lstlisting}[style=lolmatlab,caption={Setup des \gls{p2pp}-Decoders in MATLAB},label=lst:matlab-p2ppdecoder-setup]
-function prepareProtocolDecode
-        
-    % Definitions
-    global SOH EOT ESC ESC_XOR DA TA
-    SOH     = uint8(1);
-    EOT     = uint8(4);
-    ESC     = uint8(27);
-    ESC_XOR = uint8(66);
-    DA      = uint8(218);
-    TA      = uint8(122);
-
-    global state
-    state = 0;
-    
-    % Decoding variables
-    global dataLength data dataBytesRead escapeDetected dataReady lastByte
-    lastByte = NaN;
-    dataLength = 0;
-    data = [];
-    dataBytesRead = 0;
-    escapeDetected = false;
-    dataReady = false;
-    
-    % Data counters
-    global sensorDataCount RPY
-    RPY = 1;
-    sensorDataCount = zeros(3,1);
-end
-\end{lstlisting}
-
-\begin{lstlisting}[style=lolmatlab,caption={\gls{p2pp}-Decoder in MATLAB},label=lst:matlab-p2ppdecoder]
-function [availableData] = protocolDecode(byte)
-    global SOH EOT ESC ESC_XOR DA TA
-    global state
-    global dataLength data dataReady dataBytesRead escapeDetected lastByte
-
-    availableData = 0;
-    
-    % Switch states
-    switch state
-        % Await preamble
-        case 0
-            if byte == DA
-                % ignored
-            elseif (byte == TA) && (lastByte == DA)
-                state = 1; % preamble detected
-            else
-                % error state
-            end
-
-            lastByte = byte;
-
-        % Await SOH
-        case 1
-            if byte == SOH
-                state = 2;
-            else
-                % error state
-            end
-
-        % Read length
-        case 2
-            dataLength = byte;
-            dataBytesRead = 0;
-            data = zeros(dataLength, 1, 'uint8');
-            state = 3;
-
-        % Read data bytes
-        case 3
-            if byte == ESC
-                escapeDetected = true;
-            else
-                if escapeDetected
-                    byte = bitxor(byte, ESC_XOR);
-                    escapeDetected = false;
-                end
-
-                dataBytesRead = dataBytesRead + 1;
-                data(dataBytesRead) = byte;
-
-                if dataBytesRead == dataLength
-                    state = 4;
-                end
-            end
-
-        % Await EOT
-        case 4
-            if byte == EOT
-                state = 0;
-                dataReady = true;
-                availableData = dataBytesRead;
-            else
-                % error state
-            end
-    end
-end
-\end{lstlisting}
-
-\begin{lstlisting}[style=lolcsharp,caption={\gls{p2pp}-Decoder in C\#},label=lst:csharp-p2ppdecoder]
-class ProtocolDecoder
-{
-	private const int SOH = 1;
-	private const int EOT = 4;
-	private const int ESC = 27;
-	private const int ESC_XOR = 66;
-	private const int DA = 218;
-	private const int TA = 122;
-	
-	private int dataLength = 0;
-	private int dataBytesRead = 0;
-	private byte[] data;
-
-	private int lastdatum = 0;
-	private bool escapeDetected = false;
-	private int state = 0;
-
-	public event EventHandler<DataEvent> DataReady;
-
-	/// <summary>
-	/// Decodes the specified data btye.
-	/// </summary>
-	/// <param name="datum">The data byte.</param>
-	public void Decode(int datum)
-	{
-		switch (state)
-		{
-			case 0: // Await preamble
-			{
-				if (datum == DA) { /* ignored */ }
-				else if ((datum == TA) && (lastdatum == DA))
-				{
-					// preamble detected
-					state = 1;
-					break;
-				}
-				else { /* error case */ }
-
-				// Remember datum for protocol decoding
-				lastdatum = datum;
-				break;
-			}
-
-			case 1: // Await SOH
-			{
-				if (datum == SOH)
-				{
-					state = 2; break;
-				}
-				
-				state = 0; // error case
-				break;
-			}
-
-			case 2: // Read length
-			{
-				dataLength = datum;
-				dataBytesRead = 0;
-				data = new byte[dataLength];
-				state = 3;
-				break;
-			}
-
-			case 3: // Read datum
-			{
-				if (datum == ESC)
-				{
-					escapeDetected = true;
-				}
-				else
-				{
-					// decode escaped byte
-					if (escapeDetected)
-					{
-						datum = datum ^ ESC_XOR;
-						escapeDetected = false;
-					}
-
-					// store data byte and increment counter
-					data[dataBytesRead++] = (byte)datum;
-
-					// if all bytes are read, wait for EOT
-					if (dataBytesRead == dataLength)
-					{
-						state = 4;
-					}
-				}
-				break;
-			}
-			case 4: // await EOT
-			{
-				if (datum == EOT)
-				{
-					state = 0;
-
-					// raise event
-					var handler = DataReady;
-					if (handler != null)
-					{
-						handler(this, new DataEvent(data));
-					}
-					
-					break;
-				}
-				
-				state = 0; // error case
-				break;
-			}
-		}
-	}
-}
 \end{lstlisting}

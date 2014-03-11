@@ -28,6 +28,8 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 %\pagestyle{empty}		% keine Kopf und Fußzeile (k. Seitenzahl)
 %\pagestyle{headings}	% lebender Kolumnentitel  
 
+\usepackage[titletoc,title]{appendix}
+
 %% Deutsche Anpassungen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -257,7 +259,11 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 \input{./content/algorithmus.tex}
 
 \appendix							% Beginn des Anhangs
+
+\begin{appendices}
 \input{./content/anhang_opensda.tex}
+\input{./content/anhang_listings.tex}
+\end{appendices}
 
 \backmatter					% Nachspann 
 \input{./content/backmatter.tex}
