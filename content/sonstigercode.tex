@@ -3,15 +3,74 @@
 \section{Serielle Übertragung}
 
 \subsection{Streamingmodi}
+\label{subsec:streamingmodi}
 
-Die Firmware ist in der Lage, Sensor- und Fusionsdaten in verschiedenen Modi über die serielle Schnittstelle auszugeben.
+Die Firmware ist in der Lage, Sensor- und Fusionsdaten in verschiedenen Modi über die serielle Schnittstelle auszugeben. Zur Aktivierung dieser Modi siehe Abschnitt~\ref{subsubsec:transmission_host_to_client}.
+
+\subsubsection{Sensorrohdaten (Modus 0)}
+
+Im Rohdatenmodus (Prefix \emph{0\textsubscript{dec}}) werden die ungefilterten Sensordaten des MPU6050-Accelerometers, sowie des HMC5883L-Magnetometers übertragen. Zur Unterstützung der Verarbeitung
+und um Unabhängigkeit von der Konfiguration zu erreichen, werden die Daten konvertiert in das \gls{q16}-Format übertragen.
+
+\begin{bytefield}[bitwidth=1.2em]{25}
+	\bitheader{0-24} \\
+	\colorbitbox{lightgreen}{1}{0} & 
+	\bitbox{4}{A\textsubscript{x}} & \bitbox{4}{A\textsubscript{y}} & \bitbox{4}{A\textsubscript{z}} &
+	\bitbox{4}{M\textsubscript{x}} & \bitbox{4}{M\textsubscript{y}} & \bitbox{4}{M\textsubscript{z}}% \\
+	%\bitbox[t]{1}{} & \bitbox[t]{6}{$\underbrace{\hspace{6.6em}}_{\text{\normalsize Accelerometer}}$} & \bitbox[t]{6}{$\underbrace{\hspace{6.6em}}_{\text{\normalsize Magnetometer}}$}
+\end{bytefield}
+
+Dieser Modus wird auch aktiv, wenn kein gültiger Modusbefehl erkannt wurde.
+
+\subsubsection{Roll-Pitch-Yaw (Modus 42)}
+
+In diesem Modus (Prefix \emph{42\textsubscript{dec}}) werden die aus der \gls{dcm} extrahierten \textsc{Euler}'schen Winkel\todo{howto - Verweis auf Fusion!} (Tait-Bryan $X\text{--}Y\text{--}Z$) übertragen.
+Die Winkel liegen im \gls{q16}-Format vor.
+
+\begin{bytefield}[bitwidth=1.2em]{13}
+	\bitheader{0-12} \\
+	\colorbitbox{lightgreen}{1}{42} & 
+	\bitbox{4}{Roll $\theta$} & \bitbox{4}{Pitch $\phi$} & \bitbox{4}{Yaw $\psi$}
+\end{bytefield}
+
+\subsubsection{Orientierungs-Quaternion (Modus 43)}
+
+In diesem Modus (Prefix \emph{43\textsubscript{dec}}) wird zur effizienten Übertragung der singularitätsfreien Orientierung anstelle der vollständigen \gls{dcm} ein
+Orientierungs-Quaternion übertragen\todo{howto - Verweis auf Fusion!}, wobei die Komponenten im \gls{q16}-Format vorliegen.
+
+\begin{bytefield}[bitwidth=1.2em]{17}
+	\bitheader{0-16} \\
+	\colorbitbox{lightgreen}{1}{43} & 
+	\bitbox{4}{W} & \bitbox{4}{X} & \bitbox{4}{Y} & \bitbox{4}{Z}
+\end{bytefield}
+
+\subsubsection{Orientierungs-Quaternion und Roll-Pitch-Yaw (Modus 44)}
+
+Dieser Modus (Prefix \emph{44\textsubscript{dec}}) ist eine Kombination aus den Modi 42 und 43 und kann verwendet werden, um die eigenständige Berechnung der \textsc{Euler}'schen Winkel
+auf dem Hostrechner zu ersparen.
+
+\begin{bytefield}[bitwidth=1.2em]{29}
+	\bitheader{0-28} \\
+	\colorbitbox{lightgreen}{1}{44} & 
+	\bitbox{4}{W} & \bitbox{4}{X} & \bitbox{4}{Y} & \bitbox{4}{Z} &
+	\bitbox{4}{Roll $\theta$} & \bitbox{4}{Pitch $\phi$} & \bitbox{4}{Yaw $\psi$}
+\end{bytefield}
 
 \subsection{Übertragungsprotokoll}
 
-Hinsichtlich der serielle Übertragung per \gls{uart} wurde ein Kommunikationsprotokoll --- genannt \gls{p2pp} --- entworfen, um die Nachsynchronisierbarkeit der Daten zu gewährleisten.
+\subsubsection{Übertragung Host zu Firmware}
+\label{subsubsec:transmission_host_to_client}
+
+Da die Firmware keine komplexen Befehle, sondern lediglich Moduswechsel kennt, bestehen Kommandos vom Host aus lediglich einem Byte, welches dem zu aktivierenden Modus entspricht. 
+Diese Modi sind in Abschnitt~\ref{subsec:streamingmodi} (ab Seite~\pageref{subsec:streamingmodi}) definiert. Der vom Host zu sendende Wert entspricht dabei dem jeweiligen Prefix.
+
+\subsubsection{Übertragung Firmware zu Host}
+
+Hinsichtlich der seriellen Übertragung von der Firmware an den Hostrechner per \gls{uart} wurde ein Kommunikationsprotokoll (genannt \gls{p2pp}) entworfen,
+um die Nachsynchronisierbarkeit der Daten zu gewährleisten.
 
 Den eigentlichen Daten vorgeschaltet ist eine frei definierbare Präambel. In der umgesetzten Implementierung besteht diese aus den Bytes 
-\texttt{218}, \texttt{122} (\texttt{0xDA7A}, Hexspeak für data). Die Präambel wird vom Dekoder selbst ignoriert, kann jedoch verwendet werden, 
+\texttt{218}, \texttt{122} (\texttt{0xDA7A}, Hexspeak für "`DATA"'). Die Präambel wird vom Dekoder selbst ignoriert, kann jedoch verwendet werden, 
 um Zeilenumbrüche oder Markierungen in einem Terminalprogramm zu erzwingen.
 
 \begin{bytefield}[bitwidth=4em]{2}
@@ -31,6 +90,8 @@ Das eigentliche Datenpaket kann dabei variabler Länge (bis einschließlich 255 
 benutzerdefiniertes Prefix \emph{P} vorgeschaltet sein kann, um das Codieren von Pakettypen zu erleichtern.
 Da die Länge des Prefixes mit im Längenfeld \emph{L} kodiert ist --- es handelt sich nur um eine logische
 Trennung, die nicht protokollspezifisch ist --- reduziert sich die maximale (virtuelle) Anzahl der Daten"-ok"-tette entsprechend.
+Einen Verwendungszweck der benutzerdefinierten Prefixe stellen die in Abschnitt~\ref{subsec:streamingmodi} definierten 8 bit 
+breiten Moduscodes dar.
 
 \begin{bytefield}[bitwidth=1.1em]{32}
 
@@ -60,7 +121,7 @@ void P2PPE_TransmissionPrefixed(
 	/* send the preamble */
 	for (int i=0; i<DEFAULT_PREAMBLE_LENGTH; ++i)
 	{
-		sendHandler(default_preamble[i]);
+		sendHandler(default_preamble[i]); /* 0xDA, 0x7A */
 	}
 	
 	/* send the header */
