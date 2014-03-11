@@ -1,5 +1,3 @@
-# TeX/LaTeX intermediates # 
-########################### 
 *.*~ 
 *.aux 
 *.log 
@@ -28,12 +26,8 @@
 *blx.bib 
 *.run.xml
 
-# Ausgaben ignorieren #
-####################### 
 /*.pdf
 
-# Zusätzliche intermediates #
-############################# 
 *.out
 *.bbl
 *.blg
@@ -52,3 +46,4 @@
 *.ist
 
 *.tps
+*.lol

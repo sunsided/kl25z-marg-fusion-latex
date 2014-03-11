@@ -20,7 +20,9 @@ ausgelesen werden\footnote{Dies entspricht dem sog. "`High Speed Mode \gls{i2c}"
 
 \subsection{Treiber}
 
-\begin{lstlisting}[style=lolc]
+Die im Treiber implementierte Registerstruktur des MMA8451Q kann in Listing~\ref{lst:mma8451q-registers} gefunden werden, der dazugehörige Initialisierungscode in Listing~\ref{lst:mma8451q-init}.
+
+\begin{lstlisting}[style=lolc,caption={Registerstruktur MMA8451Q},label=lst:mma8451q-registers]
 typedef struct {
 	uint8_t F_SETUP;		/*< FIFO setup */
 	uint8_t TRIG_CFG;		/*< Map of FIFO data capture events */
@@ -63,9 +65,7 @@ typedef struct {
 } mma8451q_confreg_t;
 \end{lstlisting}
 
-Die Initialisierung des MMA8451Q fiel dabei wie folgt aus:
-
-\begin{lstlisting}[style=lolc]
+\begin{lstlisting}[style=lolc,caption={Initialisierungscode MMA8451Q},label=lst:mma8451q-init]
 /* Referenz auf statischen shared buffer */
 mpu6050_confreg_t *configuration = &config_buffer.mma8451q_configuration;
 
@@ -143,9 +143,9 @@ Diese vergleichsweise geringe Geschwindigkeit ist jedoch ausreichend, um den Sen
 
 \subsection{Treiber}
 
-Die Registerstruktur der MPU6050 ist dabei bei weitem die komplexeste der verwendeten Sensoren.
+Die Registerstruktur der MPU6050 ist bei weitem die komplexeste der verwendeten Sensoren, sie kann in Listing~\ref{lst:mpu6050-registers} gefunden werden, der verwendete Initialisierungcode dagegen in Listing~\ref{lst:mpu6050-registers}. Insbesondere soll dort auf Zeile~\ref{lstline:mpu6050_osc} hingewiesen werden, auf die im Abschnitt~\ref{subsec:mpu6050_lessonslearned} gesondert eingegangen wird.
 
-\begin{lstlisting}[style=lolc]
+\begin{lstlisting}[style=lolc,caption={Registerstruktur MPU6050},label=lst:mpu6050-registers]
 #pragma pack(1)
 typedef struct __attribute__ ((__packed__))
 {
@@ -211,9 +211,7 @@ typedef struct __attribute__ ((__packed__))
 } mpu6050_confreg_t;
 \end{lstlisting}
 
-Die Initialisierung des MMA8451Q fiel dabei wie folgt aus:
-
-\begin{lstlisting}[style=lolc]
+\begin{lstlisting}[style=lolc,caption={Initialisierungscode MPU6050},label=lst:mpu6050-init]
 /* Referenz auf statischen shared buffer */
 mpu6050_confreg_t *configuration = &config_buffer.mpu6050_configuration;
 
@@ -222,7 +220,7 @@ uint8_t value = MPU6050_WhoAmI();
 assert(value == 0x68);
 
 /* Interrupts deaktivieren und Clock auf internen Oszillator setzen */
-MPU6050_SelectClockSource(MPU6050_CONFIGURE_DIRECT, MPU6050_CLOCK_8MHZOSC);
+MPU6050_SelectClockSource(MPU6050_CONFIGURE_DIRECT, MPU6050_CLOCK_8MHZOSC); %* \label{lstline:mpu6050_osc}*)
 MPU6050_EnableInterrupts(MPU6050_CONFIGURE_DIRECT,
 		MPU6050_INT_DISABLED,
 		MPU6050_INT_DISABLED,
@@ -335,6 +333,7 @@ Eine Übersicht der unkalibrierten und kalibrierten Sensordaten ist in Abbildung
 \end{figure}
 
 \subsection{Lessons Learned}
+\label{subsec:mpu6050_lessonslearned}
 
 Bei der Kommunikation mit der MPU6050 trat das Problem auf, dass bei aktiviertem Interrupt-Signal und reduzierter Samplingrate nach einem Kaltstart keinerlei nennenswerte 
 Verzögerung (d.h. nur wenige Millisekunden \todo{Verifizieren}) zwischen aufeinander folgenden Interruptsignalen festzustellen war. 
@@ -347,8 +346,8 @@ fehlerhaften Zustand erneut herbei und konnte dann ebenso durch einen Reset aufg
 
 \todo{Bild mit Freifeuer vom Logan}
 
-Dieses Problem war erst dadurch zu beheben, dass zu Beginn der Konfiguration der \gls{imu} die interne Takteinheit deaktiviert wurde, um sie dann im Zuge der folgenden 
-Konfiguration erneut auf den gewünschten Betriebsmodus zu stellen.
+Dieses Problem war erst dadurch zu beheben, dass zu Beginn der Konfiguration der \gls{imu} die interne Takteinheit vom PLL-Modus in den Oszillatormodus geschaltet wurde, um sie dann im Zuge der folgenden 
+Konfiguration erneut auf den gewünschten Betriebsmodus zu stellen (vgl. dazu Listing~\ref{lst:mpu6050-registers}, Zeile~\ref{lstline:mpu6050_osc}).
 
 \todo{Bild ohne Freifeuer vom Logan}
 
@@ -368,9 +367,9 @@ werden\footnote{Dies entspricht dem sog. "`Fast Mode \gls{i2c}"'', welcher bis 4
 
 \subsection{Treiber}
 
-Im Gegensatz zu den anderen verwendeten Sensoren fällt die Registerstruktur beim HMC5885L überaus knapp aus.
+Im Gegensatz zu den anderen verwendeten Sensoren fällt die Registerstruktur beim HMC5885L überaus knapp aus (Listing~\ref{lst:hmc5883l-registers}).
 
-\begin{lstlisting}[style=lolc]
+\begin{lstlisting}[style=lolc,caption={Registerstruktur HMC5883L},label=lst:hmc5883l-registers]
 typedef struct {
 	uint8_t CRA;	/*! Configuration Register A */
 	uint8_t CRB;	/*! Configuration Register B */
@@ -378,9 +377,9 @@ typedef struct {
 } hmc5883l_confreg_t;
 \end{lstlisting}
 
-Entsprechend überschaubar ist auch die Initialisierungsroutine.
+Entsprechend überschaubar ist auch die Initialisierungsroutine (Listing~\ref{lst:hmc5883l-init}).
 
-\begin{lstlisting}[style=lolc]
+\begin{lstlisting}[style=lolc,caption={Initialisierungscode HMC5883L},label=lst:hmc5883l-init]
 /* Referenz auf statischen shared buffer */
 hmc5883l_confreg_t *configuration = &config_buffer.hmc5883l_configuration;
 

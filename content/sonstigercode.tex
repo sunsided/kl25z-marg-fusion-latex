@@ -202,7 +202,7 @@ fopen(s);
 Anstelle nun direkt mittels \texttt{fread(s)} Daten anzufordern, wird einmalig mittels \texttt{igetfield} eine Referenz auf das native Java-Objekt bezogen. Dieses
 kann dann mittels einer überladenen Version von \texttt{fread} ausgewertet werden (vgl. Listing~\ref{lst:matlab-serial-grab}).
 
-\begin{lstlisting}[style=lolmatlab,caption={Konfiguration des Serial-Ports in MATLAB},label=lst:matlab-serial-grab]
+\begin{lstlisting}[style=lolmatlab,caption={Verwendung des Serial-Ports in MATLAB},label=lst:matlab-serial-grab]
 % zu Beginn der Funktion, nach fopen(s)
 sjobject = igetfield(s, 'jobject');
 
