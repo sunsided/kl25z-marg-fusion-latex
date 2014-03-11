@@ -125,7 +125,7 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 \usepackage{parskip}
 
 %% Code-Listings %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usepackage{listings}
+\usepackage[final]{listings}
 
 %% Hyperlinks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% http://www.tug.org/applications/hyperref/ftp/doc/manual.pdf
@@ -175,13 +175,15 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 \publishers{Beuth-Hochschule für Technik, Berlin}
 \date{\today}
 
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+
 % Code-Stile
 \lstdefinestyle{lolbash}{
     language={bash}, 
 		basicstyle=\ttfamily\tiny,
 		frame=single,
     moredelim=**[is][\slshape]{`}{`},
-    moredelim=**[is][\color{orange}]{°}{°},
+    moredelim=**[is][\color{orange}]{°}{°}
 }
 
 \lstdefinestyle{lolc}{
@@ -199,9 +201,43 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 		breaklines=true,
 		morekeywords={uint8_t, uint16_t, uint_fast8_t, uint_least8_t, uint_fast16_t, uint_least8_t,
 									mma8451q_confreg_t, mma8451q_acc_t,
-									mpu6050_confreg_t}
+									mpu6050_confreg_t},
+		numbers=left,
+		numbersep=5pt,
+		numberstyle=\tiny\color{mygray}
 }
 
+\lstdefinestyle{lolcsharp}{
+    language={Java}, 
+		basicstyle=\ttfamily\tiny,
+		frame=single,
+		keywordstyle=\bfseries\color{green!40!black},
+		commentstyle=\itshape\color{purple!40!black},
+		identifierstyle=\color{black},
+		stringstyle=\color{blue},
+		morekeywords={readonly, const, event},
+		breakatwhitespace=true,
+		breaklines=true,
+		numbers=left,
+		numbersep=5pt,
+		numberstyle=\tiny\color{mygray}
+}
+
+\lstdefinestyle{lolmatlab}{
+    language={Matlab}, 
+		basicstyle=\ttfamily\tiny,
+		frame=single,
+		keywordstyle=\bfseries\color{green!40!black},
+		commentstyle=\itshape\color{purple!40!black},
+		identifierstyle=\color{black},
+		stringstyle=\color{blue},
+		morekeywords={readonly, const, event},
+		breakatwhitespace=true,
+		breaklines=true,
+		numbers=left,
+		numbersep=5pt,
+		numberstyle=\tiny\color{mygray}
+}
 
 \begin{document}
 
