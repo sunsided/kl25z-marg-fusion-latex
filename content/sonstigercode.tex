@@ -1,0 +1,104 @@
+\chapter{Sonstiger Code}
+
+\section{Serielle Übertragung}
+
+\subsection{Streamingmodi}
+
+Die Firmware ist in der Lage, Sensor- und Fusionsdaten in verschiedenen Modi über die serielle Schnittstelle auszugeben.
+
+\subsection{Übertragungsprotokoll}
+
+Hinsichtlich der serielle Übertragung per \gls{uart} wurde ein Kommunikationsprotokoll --- genannt \gls{p2pp} --- entworfen, um die Nachsynchronisierbarkeit der Daten zu gewährleisten.
+
+Den eigentlichen Daten vorgeschaltet ist eine frei definierbare Präambel. In der umgesetzten Implementierung besteht diese aus den Bytes 
+\texttt{218}, \texttt{122} (\texttt{0xDA7A}, Hexspeak für data). Die Präambel wird vom Dekoder selbst ignoriert, kann jedoch verwendet werden, 
+um Zeilenumbrüche oder Markierungen in einem Terminalprogramm zu erzwingen.
+
+\begin{bytefield}[bitwidth=4em]{2}
+
+	\bitheader{0-1} \\
+	
+	\begin{rightwordgroup}{Präambel}
+		\bitbox{1}{\texttt{0xDA}} & \bitbox{1}{\texttt{0x7A}}
+	\end{rightwordgroup} 
+	
+\end{bytefield}
+
+Das Übertragungsprotokoll ist definiert durch drei Oktette: Den Startmarker \emph{S} = \texttt{0x01} (\gls{soh}), 
+der Länge der Nutzdaten \emph{L}, sowie dem Endmarker \emph{E} = \texttt{0x04} (\gls{eot}).
+
+Das eigentliche Datenpaket kann dabei variabler Länge (bis einschließlich 255 Byte) sein, wobei den Daten ein
+benutzerdefiniertes Prefix \emph{P} vorgeschaltet sein kann, um das Codieren von Pakettypen zu erleichtern.
+Da die Länge des Prefixes mit im Längenfeld \emph{L} kodiert ist --- es handelt sich nur um eine logische
+Trennung, die nicht protokollspezifisch ist --- reduziert sich die maximale (virtuelle) Anzahl der Daten"-ok"-tette entsprechend.
+
+\begin{bytefield}[bitwidth=1.1em]{32}
+
+	\bitheader{0-31} \\
+	
+	%\begin{rightwordgroup}{Header}
+		\colorbitbox{lightcyan}{1}{S} & \colorbitbox{lightcyan}{1}{L} & \bitbox{1}{P} &	\bitbox[rt]{29}{} \\
+	% \end{rightwordgroup} \\
+	
+	\wordbox[lr]{1}{Nutzdaten} \\
+	\skippedwords \\
+	\wordbox[lr]{1}{} \\
+	\bitbox[lrb]{31}{} & \colorbitbox{lightcyan}{1}{E}
+
+\end{bytefield}
+
+Die entsprechende Sendefunktion im \gls{p2pp}-Encoder ist wie folgt implementiert:
+
+\begin{lstlisting}[style=lolc]
+void P2PPE_TransmissionPrefixed(
+	register const uint8_t*const prefix, 
+	register uint8_t prefixCount, 
+	register const uint8_t*const data, 
+	register uint8_t dataCount, 
+	register void (*sendHandler)(uint8_t dataByte))
+{
+	/* send the preamble */
+	for (int i=0; i<DEFAULT_PREAMBLE_LENGTH; ++i)
+	{
+		sendHandler(default_preamble[i]);
+	}
+	
+	/* send the header */
+	sendHandler(SOH);
+	sendHandler(dataCount + prefixCount);
+	
+	/* send prefix */
+	for (int i=0; i<prefixCount; ++i)
+	{
+		register uint8_t byte = prefix[i];
+		encodeAndSend(byte, sendHandler);
+	}
+	
+	/* send data */
+	for (int i=0; i<dataCount; ++i)
+	{
+		register uint8_t byte = data[i];	
+		encodeAndSend(byte, sendHandler);
+	}
+	
+	/* send data frame end */
+	sendHandler(EOT);
+}
+\end{lstlisting}
+
+Da das Paketende durch den \gls{eot}-Marker gesetzt ist, darf dieser Wert (sowie das Zeichen \gls{esc}) in den
+Nutzdaten nicht vorkommen. Tritt ein solcher Wert auf, wird das wird \gls{esc} (\texttt{0x1B}) eingefügt
+und der ursprüngliche Inhalt mit dem Wert \texttt{0x42} ver\textsc{xor}t übertragen.
+
+\begin{lstlisting}[style=lolc]
+static inline void encodeAndSend(register uint8_t byte, register void (*sendHandler)(uint8_t dataByte))
+{
+	if ( EOT == byte || ESC == byte)
+	{
+		sendHandler(ESC);
+		byte ^= ESC_XOR; /* ESC_XOR = 0x42 */
+	}
+	
+	sendHandler(byte);	
+}
+\end{lstlisting}

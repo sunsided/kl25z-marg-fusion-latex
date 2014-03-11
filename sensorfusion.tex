@@ -104,6 +104,15 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 %% http://texdoc.net/texmf-dist/doc/latex/bytefield/bytefield.pdf
 \usepackage{bytefield}
 
+
+\newcommand{\colorbitbox}[3]{%
+\rlap{\bitbox{#2}{\color{#1}\rule{\width}{\height}}}%
+\bitbox{#2}{#3}}
+
+\definecolor{lightcyan}{rgb}{0.84,1,1}
+\definecolor{lightgreen}{rgb}{0.64,1,0.71}
+\definecolor{lightred}{rgb}{1,0.7,0.71}
+
 %% Bibliographiestil %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% ftp://ftp.tex.ac.uk/tex-archive/macros/latex/contrib/natbib/natbib.pdf
 \usepackage{natbib}
@@ -207,6 +216,7 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 \mainmatter						% Hauptteil
 \input{./content/entwicklungsumgebung.tex}
 \input{./content/sensoren.tex}
+\input{./content/sonstigercode.tex}
 \input{./content/algorithmus.tex}
 
 \appendix							% Beginn des Anhangs
