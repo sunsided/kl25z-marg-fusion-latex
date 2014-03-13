@@ -64,6 +64,7 @@ bei quadratischen Matrizen der Dimension $n$ von der Komplexität $O(n^3)$\todo{
 noch einmal eingegangen.
 
 \subsection{Indirektes Filter zur Schätzung der Orientierung}
+\label{subsec:indir_filt_est_orient}
 
 Ähnlich dem von \cite{suh} vorgeschlagenen Kalman-Filter zur indirekten Schätzung eines Quaternions, verwendet der hier (abgewandelt) umgesetzte
 Filter von \cite{orientation_dcm} eine indirekte Schätzmethode der \gls{dcm}. Während der direkte \gls{Kalman-Filter} die gesuchten Parameter als Zustände $\vec{x}$ formuliert und deren
@@ -230,7 +231,7 @@ der Performance\footnote{Aufgrund der sonst kubisch ansteigenden Komplexität.} 
 Filter implementiert.
 
 \cite{orientation_dcm} verwenden hierbei die \glslink{tilt compensation}{neigungskompensierten} Magnetometerdaten. Um auf die Notwendigkeit der
-vergleichsmäßig komplexen trigonometrischen Methoden zu verzichten wird stattdessen der nach \gls{triad}-Verfahren gewonnene $\vec{x}$-Vektor als Eingang verwendet wird.
+vergleichsmäßig komplexen trigonometrischen Methoden zu verzichten wird stattdessen der nach \gls{triad}-Verfahren gewonnene $\vec{x}$-Vektor als Eingang verwendet wird (vgl. dazu Listing~\ref{lst:magnetometer_project} und~\ref{lst:magnetometer_correct}).
 Dieser wird anstelle von $\vec{z}$ in Gleichung~\ref{eq:kalman_ax_z} verwendet und die dazugehörige Matrix $\underline{A}$ entsprechend angepasst.
 
 Zusätzlich kann der vom ersten Filter geschätzte Winkelgeschwindigkeitsvektor $\hat{\vec{\omega}}$ oder --- wenn verfügbar --- der korrigierte Vektor $\tilde{\vec{\omega}}$ in der 

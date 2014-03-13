@@ -118,7 +118,7 @@ Trigger für neue Messergebnisse, noch bevor diese verarbeitet werden konnten.
 Zusätzlich müssen ggf. die in \emph{libfixmatrix} verfügbaren Lookup-Tabellen für trigonometrische Funktion deaktiviert werden, da sie sehr groß sind, gleichzeitig aber zur Laufzeit
 befüllt werden und daher nicht als Kandidaten für den ROM gelten können.
 
-Die verwendeten Settings zum Setzen der maximal Matrixgröße, Deaktivieren der Funktionen für Filter mit Steuereingängen\footnote{Dies ist nicht nötig, reduziert aber auch ohne Optimierungen die Codegröße.}
+Die verwendeten Settings zum Setzen der maximalen Matrixgröße, Deaktivieren der Funktionen für Filter mit Steuereingängen\footnote{Dies ist nicht nötig, reduziert aber auch ohne Optimierungen die Codegröße.}
 und Deaktivierung der Look-up-Tabellen finden sich in Listing~\ref{lst:libfixkalman-defines}.
 
 \begin{lstlisting}[style=lolc,caption={libfixkalman: Verwendete Preprozessor-Defines},label=lst:libfixkalman-defines]
@@ -133,15 +133,84 @@ Exemplarisch für die Verwendung der \gls{q16}-Funktionen aus \emph{libfixmath} 
 gezeigt werden. Diese ist in Listing~\ref{lst:libfixmath_dcm_euler} zu finden und implementiert die Formeln aus Gleichungen~\ref{eq:pitch_from_dcm}ff.
 Die komplexere Funktion zur Berechnung des Orientierungs-Quaternions aus den fusionierten Daten kann Listing~\ref{lst:quaternion_from_kalman} entnommen werden.
 
-\begin{lstlisting}[style=lolc,caption={libfixmath: \textsc{Euler}'sche Winkel aus \gls{dcm}},label=lst:libfixmath_dcm_euler]
-void sensor_dcm2rpy(
-	const mf16 *RESTRICT const dcm, 
-	fix16_t *RESTRICT const roll, 
-	fix16_t *RESTRICT const pitch, 
-	fix16_t *RESTRICT const yaw)
+
+
+
+
+
+
+\section{Implementierung des Fusionstreibers}
+
+Die Fusionstreiber selbst besteht aus mehreren Teilkomponenten und ist als adaptives System implementiert, welches eine optimale Fusionsstrategie in Abhängigkeit von den vorliegenden
+Sensordaten wählt.
+
+Hierzu stehen dem Benutzer drei Funktionen zum Setzen der Sensordaten zur Verfügung, mit welchen die jeweils vorliegenden Sensordaten registriert werden können (Listing~\ref{lst:fusion_register}).
+
+\begin{lstlisting}[style=lolc,caption={Fusion: Registrierung der Sensordaten},label=lst:fusion_register]
+void fusion_set_accelerometer(
+	register const fix16_t *const ax, 
+	register const fix16_t *const ay, 
+	register const fix16_t *const az);
+void fusion_set_gyroscope(
+	register const fix16_t *const gx, 
+	register const fix16_t *const gy, 
+	register const fix16_t *const gz);
+void fusion_set_magnetometer(
+	register const fix16_t *const mx, 
+	register const fix16_t *const my, 
+	register const fix16_t *const mz);
+\end{lstlisting}
+
+Ein Aufruf jeder dieser Funktionen registriert einen neuen Sensorwert für den Korrekturschritt des Filters. Hierbei obliegt es dem Benutzer, die Daten zuvor geeignet in 
+das \gls{q16}-Format zu konvertieren.
+
+Mittels der in Listing~\ref{lst:fusion_predict_interface} dargestellten Funktionen wird dem Benutzer Zugriff auf die Kernfunktionalität des Fusiontreibers gegeben, wobei in zyklischer
+Abfolge die Funktionen \texttt{fusion\_predict()} (schnell, aber ungenau) und \texttt{fusion\_correct()} (langsam, aber genau) aufgerufen werden müssen.
+
+\begin{lstlisting}[style=lolc,caption={Fusion: Schnittstelle zur Prädiktion},label=lst:fusion_predict_interface]
+void fusion_initialize();
+void fusion_predict(register const fix16_t deltaT);
+void fusion_update(register const fix16_t deltaT);
+\end{lstlisting}
+
+Die Implementierung von \texttt{fusion\_correct()} kann Listing~\ref{lst:fusion_adaptive} entnommen werden. Es ist zu erkennen, dass in Abhängigkeit des Vorhandenseins von
+Sensorwerten entweder keine Korrektur, eine Korrektur nur anhand der Gyrosensor-Daten\footnote{Dies ist ein zusätzlicher Fall, da der Gyrosensor Daten in sehr viel höherer Frequenz liefern kann.}
+oder eine Mischung aus Auf- und Vorwärtsvektorkorrektur vorgenommen wird. Die Trennung in \emph{attitude}- und \emph{orientation}-Filter entspricht dabei der in 
+Abschnitt~\ref{subsec:indir_filt_est_orient} dargestellten Trennung zwischen Filter zur Ermittlung der Neigung aus dem Aufwärtsvektor und dem Erweiterungsfilter mit der Vorwärtsrichtung 
+zur Ermittlung der vollständigen Orientierung.
+
+\begin{lstlisting}[style=lolc,caption={Fusion: Adaptiver Updatemechanismus},label=lst:fusion_adaptive]
+void fusion_update(register const fix16_t deltaT)
 {
-    *pitch = -fix16_asin(dcm->data[0][2]);
-    *roll  = fix16_atan2(dcm->data[1][2], dcm->data[2][2]);
-    *yaw   = fix16_atan2(dcm->data[0][1], dcm->data[0][0]);
+	// perform roll and pitch updates
+	if (true == m_have_accelerometer)
+	{
+		/* ... SNIP ... */
+		fusion_update_attitude(deltaT);
+	}
+	else
+	{
+		// perform only rotational update
+		fusion_update_attitude_gyro(deltaT);
+	}
+
+	// perform yaw updates
+	if (true == m_have_magnetometer)
+	{
+		/* ... SNIP ... */
+		fusion_update_orientation(deltaT);
+	}
+	else
+	{
+		// perform only rotational update
+		fusion_update_orientation_gyro(deltaT);
+	}
+
+	// reset information
+	m_have_accelerometer = false;
+	m_have_magnetometer = false;
 }
 \end{lstlisting}
+
+Die Implementierung von \texttt{fusion\_update\_orientation()} ist dabei in Listing~\ref{lst:magnetometer_correct} zu finden, die zugehörige Hilfsfunktion \texttt{magnetometer\_project()}
+ergänzend in Listing~\ref{lst:magnetometer_project}.

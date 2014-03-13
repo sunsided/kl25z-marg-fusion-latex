@@ -512,8 +512,20 @@ void kalman_gravity_demo()
 }
 \end{lstlisting}
 
+\begin{lstlisting}[style=lolc,caption={Fusion: \textsc{Euler}'sche Winkel aus \gls{dcm}},label=lst:libfixmath_dcm_euler]
+void sensor_dcm2rpy(
+	const mf16 *RESTRICT const dcm, 
+	fix16_t *RESTRICT const roll, 
+	fix16_t *RESTRICT const pitch, 
+	fix16_t *RESTRICT const yaw)
+{
+    *pitch = -fix16_asin(dcm->data[0][2]);
+    *roll  = fix16_atan2(dcm->data[1][2], dcm->data[2][2]);
+    *yaw   = fix16_atan2(dcm->data[0][1], dcm->data[0][0]);
+}
+\end{lstlisting}
 
-\begin{lstlisting}[style=lolc,caption={Ermittlung des Quaternions aus den fusionierten Datem},label=lst:quaternion_from_kalman]
+\begin{lstlisting}[style=lolc,caption={Fusion: Ermittlung des Quaternions aus den fusionierten Datem},label=lst:quaternion_from_kalman]
 HOT NONNULL LEAF
 static void fetch_quaternion_opt2(register qf16 *RESTRICT const quat)
 {
@@ -632,5 +644,93 @@ static void fetch_quaternion_opt2(register qf16 *RESTRICT const quat)
 
 	// normalizify
 	qf16_normalize(quat, quat);
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=lolc,caption={Fusion: Berechnung des Vorwärtsvektors aus Magnetometer und Accelerometer},label=lst:magnetometer_project]
+HOT LEAF NONNULL
+STATIC_INLINE void magnetometer_project(
+	fix16_t *RESTRICT const mx, 
+	fix16_t *RESTRICT const my, 
+	fix16_t *RESTRICT const mz)
+{
+	const mf16 *const x = kalman_get_state_vector_uc(&kf_attitude);
+
+	register const fix16_t acc_x = x->data[0][0];
+	register const fix16_t acc_y = x->data[1][0];
+	register const fix16_t acc_z = x->data[2][0];
+
+	/************************************************************************/
+	/* Instead of tilt corrected magnetometer, use TRIAD algorithm          */
+	/************************************************************************/
+
+	// calculate cross product for C1
+	// m = cross([m_magnetometer.x m_magnetometer.y m_magnetometer.z], [m_accelerometer.x m_accelerometer.y m_accelerometer.z])
+	// -->
+	//      mx = m_magnetometer.y*m_accelerometer.z - m_magnetometer.z*m_accelerometer.y
+	//      my = m_magnetometer.z*m_accelerometer.x - m_magnetometer.x*m_accelerometer.z
+	//      mz = m_magnetometer.x*m_accelerometer.y - m_magnetometer.y*m_accelerometer.x
+	*mx = fix16_sub(fix16_mul(m_magnetometer.y, acc_z), fix16_mul(m_magnetometer.z, acc_y));
+	*my = fix16_sub(fix16_mul(m_magnetometer.z, acc_x), fix16_mul(m_magnetometer.x, acc_z));
+	*mz = fix16_sub(fix16_mul(m_magnetometer.x, acc_y), fix16_mul(m_magnetometer.y, acc_x));
+
+	// normalize C1 
+	const register fix16_t norm = norm3(*mx, *my, *mz);
+	*mx = fix16_div(*mx, norm);
+	*my = fix16_div(*my, norm);
+	*mz = fix16_div(*mz, norm);
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=lolc,caption={Fusion: Korrektur des \emph{orientation}-Filters mittels Magnetometer},label=lst:magnetometer_correct]
+HOT
+static void fusion_update_orientation(register const fix16_t deltaT)
+{
+	/************************************************************************/
+	/* Calculate metrics required for update                                */
+	/************************************************************************/
+	fix16_t mx, my, mz;
+	magnetometer_project(&mx, &my, &mz);
+	
+	/************************************************************************/
+	/* Prepare noise                                                        */
+	/************************************************************************/
+
+	tune_measurement_noise(&kfm_magneto);
+	{
+		mf16 *const R = &kfm_magneto.R;
+
+		// anyway, overwrite covariance of projection
+		matrix_set(R, 0, 0, fix16_mul(initial_r_projection, alpha1));
+		matrix_set(R, 1, 1, fix16_mul(initial_r_projection, alpha1));
+		matrix_set(R, 2, 2, fix16_mul(initial_r_projection, alpha1));
+	}
+
+	/************************************************************************/
+	/* Prepare measurement                                                  */
+	/************************************************************************/
+	{
+		mf16 *const z = &kfm_magneto.z;
+
+		matrix_set(z, 0, 0, mx);
+		matrix_set(z, 1, 0, my);
+		matrix_set(z, 2, 0, mz);
+
+		matrix_set(z, 3, 0, kf_attitude.x.data[3][0]);
+		matrix_set(z, 4, 0, kf_attitude.x.data[4][0]);
+		matrix_set(z, 5, 0, kf_attitude.x.data[5][0]);
+	}
+
+	/************************************************************************/
+	/* Perform Kalman update                                                */
+	/************************************************************************/
+
+	kalman_correct_uc(&kf_orientation, &kfm_magneto);
+
+	/************************************************************************/
+	/* Re-orthogonalize and update state matrix                             */
+	/************************************************************************/
+
+	fusion_sanitize_state(&kf_orientation);
 }
 \end{lstlisting}
