@@ -156,6 +156,8 @@ W*A                      % Winkelgeschwindigkeit der DCM
 Ax*(-w)                  % Winkelgeschwindigkeit auf x-Vektor
 \end{lstlisting}
 
+\subsubsection{Filterung des Aufwärtsvektors}
+
 Die Zustandsübergangsmatrix $\underline{A}$ und der Zustandsvektor $\vec{x}$, sowie die Prozess-Rauschmatrix $\underline{Q}$ des (diskreten) indirekten 
 \glslink{Kalman-Filter}{Kalman-Filters} ergeben sich hiermit als:
 
@@ -171,7 +173,7 @@ Die Zustandsübergangsmatrix $\underline{A}$ und der Zustandsvektor $\vec{x}$, s
 \end{bmatrix} \cdot 
 \begin{bmatrix}
 z_x \\ z_y \\ z_z \\ \omega_x \\ \omega_y \\ \omega_z
-\end{bmatrix} \\
+\end{bmatrix} \label{eq:kalman_ax_z} \\
 \underline{Q}_k &= 
 \begin{bmatrix}
 0 & 0 & 0 & 0 & 0 & 0 \\
@@ -204,7 +206,7 @@ Die Messübergangsmatrix $\underline{H}$, sowie der Messvektor $\vec{z}$ und die
 \end{bmatrix} \cdot 
 \begin{bmatrix}
 z_x \\ z_y \\ z_z \\ \omega_x \\ \omega_y \\ \omega_z
-\end{bmatrix} \\
+\end{bmatrix}  \label{eq:kalman_hz_z} \\
 \underline{R}_k &= 
 \begin{bmatrix}
 \alpha r_{a,x} & 0 & 0 & 0 & 0 & 0 \\
@@ -220,3 +222,16 @@ Hierbei entspricht $r_{a,x..z}$ der Varianz des Accelerometers, da die Aufwärts
 Die Koeffizienten $\alpha$ und $\beta$ sind dabei Tuningvariablen, welche die Gewichtung von Accelerometer- zu Gyrosensor-
 Messwerten ermöglichen. \citealp{attitude_est_comp} verwenden ein Verhältnis von 1:10, welches sich auch in der Implementierung
 als funktional erwies.
+
+\subsubsection{Filterung des Vorwärtsvektors}
+
+Das Filter für den Vorwärtsvektor $\vec{x}$ wurde analog dem Filter für den Aufwärtsvektor $\vec{z}$ entworfen. Zugunsten
+der Performance\footnote{Aufgrund der sonst kubisch ansteigenden Komplexität.} wurde hierbei auf die Erweiterung des bestehenden Filters verzichtet und stattdessen ein zweites
+Filter implementiert.
+
+\cite{orientation_dcm} verwenden hierbei die \glslink{tilt compensation}{neigungskompensierten} Magnetometerdaten. Um auf die Notwendigkeit der
+vergleichsmäßig komplexen trigonometrischen Methoden zu verzichten wird stattdessen der nach \gls{triad}-Verfahren gewonnene $\vec{x}$-Vektor als Eingang verwendet wird.
+Dieser wird anstelle von $\vec{z}$ in Gleichung~\ref{eq:kalman_ax_z} verwendet und die dazugehörige Matrix $\underline{A}$ entsprechend angepasst.
+
+Zusätzlich kann der vom ersten Filter geschätzte Winkelgeschwindigkeitsvektor $\hat{\vec{\omega}}$ oder --- wenn verfügbar --- der korrigierte Vektor $\tilde{\vec{\omega}}$ in der 
+Messung verwendet werden (vgl. Gleichung~\ref{eq:kalman_hz_z}), um die Genauigkeit zu erhöhen.
