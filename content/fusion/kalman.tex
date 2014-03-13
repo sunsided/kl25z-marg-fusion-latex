@@ -1,0 +1,77 @@
+\section{Entwurf des Kalman-Filters}
+
+Auf eine einleitende Erklärung zum \gls{Kalman-Filter} sei an dieser Stelle verzichtet und stattdessen auf die Skripte der Vorlesungen Adaptive Filter (\citealp{bht_som_adf})
+und Autonome Mobile Systeme (\citealp{bht_som_ams}) oder auf Fachliteratur (\citealp{intro_kalman}, \citealp{kalman_filtering} und \citealp{kalman_ins}) verwiesen.
+
+Die Struktur des diskreten (regulären) \glslink{Kalman-Filter}{Kalman-Filter} ist dabei wie folgt gegeben:
+
+\begin{align}
+\hat{\vec{x}}_{k+1}       &= \underline{A}_k \vec{x}_k + \underline{B}_k \vec{u}_k  \label{eq:kalman_x_est} \\
+\hat{\underline{P}}_{k+1} &= \underline{A}_k \underline{P}_k \underline{A}^T_k + \underline{B}_k \underline{Q}_k \underline{B}^T_k \label{eq:kalman_P_est}
+\end{align}
+
+Wobei der Messupdate-Schritt wie folgt definiert ist:
+
+\begin{align}
+\vec{y}_k 									&= \vec{z}_k - \underline{H}_k \hat{\vec{x}}_{k+1} \\
+\underline{S}_k 						&= \underline{H}_k \hat{\underline{P}}_{k+1} \underline{H}^T_k + \underline{R}_k \\
+\underline{K}_k							&= \hat{\underline{P}}_{k+1} \underline{H}^T_k \cdot \underline{S}^{-1}_k \label{eq:kalman_S_inversion} \\
+\tilde{\vec{x}}_{k+1}				&= \hat{\vec{x}}_{k+1} + \underline{K}_k \vec{y}_k  \label{eq:kalman_x_corr} \\
+\tilde{\underline{P}}_{k+1}	&= \left( \underline{E} - \underline{K}_k \underline{H}_k \right) \hat{\underline{P}}_{k+1} \label{eq:kalman_P_corr}
+\end{align}
+
+Dabei entsprechen die in Gleichungen~\ref{eq:kalman_x_est} und~\ref{eq:kalman_P_est} ermittelten Werte $\hat{\vec{x}}_{k+1}$ und $\hat{\underline{P}}_{k+1}$ den 
+geschätzten Zuständen im Folgezeittakt $k+1$, und die in Gleichungen~\ref{eq:kalman_x_corr} und~\ref{eq:kalman_P_corr} ermittelten Werte $\tilde{\vec{x}}_{k+1}$ und
+$\tilde{\underline{P}}_{k+1}$ den mittels vorliegender Messwerte $\vec{z}_k$ korrigierten Schätzungen. $\underline{E}$ entspricht der Einheitsmatrix, wobei diese den
+Dimensionen von $\underline{A}$ (bzw. $\underline{P}$) entsprechen muss.
+
+\cite{bht_som_adf} beschreibt in Zusammenhang mit Gleichung~\ref{eq:kalman_P_est} eine Tuning-Variable $\lambda$ zur Vereinfachung der oft nur ungenau oder
+empirisch benennbaren Prozessrauschmatrix $\underline{Q}$, so dass
+
+\begin{align}
+\hat{\underline{P}}_{k+1} &= \underline{A}_k \underline{P}_k \underline{A}^T_k \cdot \frac{1}{\lambda_k^2} \left( + \underline{B}_k \underline{Q}_k \underline{B}^T_k \right) \label{eq:kalman_P_est_lambda}
+\end{align}
+
+wobei $\lambda_k \in \mathopen] 0, 1 \mathclose], \mathbb{R}$ gegeben ist und den empirischen Grad der Schätzsicherheit zum Zeitpunkt $k$ definiert.
+Dies ermöglicht die temporäre oder konstante Unterdrückung der Konvergenz des Filters, um ggf. bekannten Unsicherheiten durch externe Einflüsse
+entgegenzuwirken. Da dieser Faktor jedoch auf die gesamte Matrix $\hat{\underline{P}}$ Einfluss nimmt, ist dessen Verwendung nur nach hinreichender Simulation
+empfohlen. Im vorliegenden Fall führten selbst geringe Unsicherheiten ($\lambda \approx 0.9$) zu drastischen Verschlechterungen der Schätzungen.
+
+Eine exemplarische Implementierung in MATLAB kann den Listings~\ref{lst:matlab-kalman-predict} und~\ref{lst:matlab-kalman-correct} entnommen werden.
+
+\begin{lstlisting}[style=lolmatlab,caption={Kalman-Filter: Prädiktion (Zeitupdate)},label=lst:matlab-kalman-predict]
+function [x, P] = kf_predict(x, A, P, lambda, u, B, Q)   
+	x = A*x + B*u;                      % predict state
+	P = A*P*A' * 1/(lambda^2) + B*Q*B'; % predict covariance   
+end
+\end{lstlisting}
+
+\begin{lstlisting}[style=lolmatlab,caption={Kalman-Filter: Korrektur (Messupdate)},label=lst:matlab-kalman-correct]
+function [x, P] = kf_update(x, z, P, H, R)
+	y = z - H*x;                        % measurement residuals (innovation)
+	S = H*P*H' + R;                     % residual (innovation) covariance
+	K = P*H' / S;                       % Kalman gain  %* \label{lstline:kf_correct_inversion}*)
+	x = x + K*y;                        % update state prediction
+	P = (eye(size(P)) - K*H)*P;         % update covariance matrix
+end
+\end{lstlisting}
+
+Es ist ersichtlich, dass die Komplexität des Filters mit der Größe der Matrizen steigt --- der naive Algorithmus zur Matrizenmultiplikation mittels dreier \texttt{for}-Schleifen ist 
+bei quadratischen Matrizen der Dimension $n$ von der Komplexität $O(n^3)$\todo{Quelle} --- sowie maßgeblich von der Performance der Implementierung zur Matrixinvertierung 
+(vgl. Gleichung~\ref{eq:kalman_S_inversion} und Listing~\ref{lst:matlab-kalman-correct}, Zeile~\ref{lstline:kf_correct_inversion}) abhängt.
+\todo{Verweis auf Implementierungskapitel}
+
+\subsection{Indirektes Filter zur Schätzung der Orientierung}
+
+Ähnlich dem von \cite{suh} vorgeschlagenen Kalman-Filter zur indirekten Schätzung eines Quaternions, verwendet der hier (abgewandelt) umgesetzte
+Filter von \cite{Tsang} eine indirekte Schätzmethode der \gls{dcm}. Während der direkte \gls{Kalman-Filter} die gesuchten Parameter als Zustände $\vec{x}$ formuliert und deren
+Veränderung in der Zustandsübergangsmatrix $\underline{A}$ beschreibt, platziert der hier implementierte Filter die gesuchten Zustände direkt in der
+Matrix $\underline{A}$ und überlässt dem Algorithmus die Anpassung der dazugehörigen Zustände, ohne eine direkte Vorschrift hierfür zu liefern.
+
+Dies umgeht die Notwendigkeit, lineare Annäherungen (und die damit verbundenen Linearisierungen) für die Zustände und Zustandsübergänge zu verwenden,
+bewirkt jedoch zwei Nebeneffekte, denen Rechnung getragen werden muss. Der wesentlichste Aspekt ist der Umstand, dass durch die nichtlinearen Zusammenhänge die
+Orthogonalitätsbedingung der (indirekt geschätzten) \gls{dcm} verletzt wird, weswegen nach jedem Estimationsschritt eine Reorthogonalisierung analog dem 
+in Abschnitt~\ref{subsec:herleitung_vektorbeobachtungen} aufgezeigten \gls{triad}-Verfahren notwendig ist. Eine weitere Besonderheit stellt die durch die 
+indirekte Schätzung drastisch verlangsamte Dynamik (d.h. Konvergenzgeschwindigkeit) des Filters dar. Da die verwendeten
+Gyrometer-Sensordaten jedoch nur über einen verhältnismäßig langen Zeitraum als driftbehaftet --- d.h. für kurze Zeiträume sehr exakt --- anzunehmen sind,
+kann diesem Problem durch geeignete Parametrierung der Mess- und Prozessrauschmatrizen $\underline{H}$ und $\underline{Q}$ gegengesteuert werden.

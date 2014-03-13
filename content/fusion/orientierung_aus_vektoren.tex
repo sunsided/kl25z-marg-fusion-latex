@@ -92,6 +92,7 @@ durch die Vektorbeobachtungen vollständig gegeben ist.
 
 
 \subsection{Herleitung der Vektorbeobachtungen}
+\label{subsec:herleitung_vektorbeobachtungen}
 
 Bei dieser Betrachtung soll davon ausgegangen werden, dass der Messvektor $\vec{g}$ des Accelerometers in Ruhelage dann negativ ist, wenn er in Richtung des Erdkerns zeigt, 
 d.h. die Richtung \emph{unten} mit negativem Vorzeichen angegeben ist.
@@ -131,7 +132,7 @@ Vektoren immer eine Resultierende ergibt, die orthogonal auf den beiden Argument
 \vec{y} = \frac{\vec{m} \times \vec{z}}{\left| \vec{m} \times \vec{z} \right|} \label{eq:y_aus_mz}
 \end{align}
 
-Die Renormalisierung von $\vec{y}$ in Formel~\ref{eq:y_aus_mz} ist mathematisch nicht notwendig, wenn $\vec{m}$ und $\vec{z}$ bereits normalisiert vorliegen, sollte 
+Die Renormalisierung von $\vec{y}$ ist dabei mathematisch dann nicht notwendig, wenn $\vec{m}$ und $\vec{z}$ bereits normalisiert vorliegen. Sie sollte 
 jedoch in der Implementierung in jedem Fall durchgeführt werden, um Fehler durch Rechenungenauigkeiten weitestmöglich zu unterdrücken.
 
 Mittels der in Formeln~\ref{eq:z_aus_g} und~\ref{eq:y_aus_mz} gewonnenen Vektoren $\vec{z}$ und $\vec{y}$ kann nun der echte Vorwärtsvektor $\vec{x}$ rekonstruiert werden.
