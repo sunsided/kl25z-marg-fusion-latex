@@ -38,11 +38,11 @@ Unscented-Transformation, wodurch die Notwendigkeit der Linearisierung des Syste
 Varianten des \glslink{Kalman-Filter}{Kalman-Filters}, wie etwa von \cite{liwang12} untersucht.
 Diese Arten von Filtern versuchen, die nichtlinearen Zusammenhänge des Systems --- allerdings auf Kosten der Komplexität des Filters --- direkt abzubilden. 
 
-\cite{Tsang} vergleicht eine \gls{Quaternion}-Methode in einem erweiterten \gls{Kalman-Filter}, sowie die (bekanntermaßen problembehaftete) direkte Bestimmung der \textsc{Euler}'schen Winkel
+\cite{orientation_dcm} vergleichen eine \gls{Quaternion}-Methode in einem erweiterten \gls{Kalman-Filter}, sowie die (bekanntermaßen problembehaftete) direkte Bestimmung der \textsc{Euler}'schen Winkel
 mit einem Entwurf zur indirekten Schätzung der \gls{dcm} in einem regulären \gls{Kalman-Filter}. 
 Er zeigt auf, dass die Verwendung des regulären Filters zur indirekten Schätzung trotz der Nichtlinearitäten keine inhärenten Nachteile mit sich bringt, 
 sondern im Gegenteil mit der \gls{Quaternion}-Methode konkurrieren kann, weswegen dieser Algorithmus im Rahmen des Projektes umgesetzt wurde.
-\cite{Filieri} beschreiben in diesem Zusammenhang ein Fehlermodell zur Schätzung der Beschleunigungs- und Integrationsunsicherheiten, welches unterstützend auch 
+\cite{Tsang} und \cite{Filieri} beschreiben in diesem Zusammenhang ein Fehlermodell zur Schätzung der Beschleunigungs- und Integrationsunsicherheiten, welches unterstützend auch 
 zur direkten Schätzung der Sensordrift angewendet werden kann. Dieser Aspekt wurde in MATLAB (erfolgreich) untersucht, jedoch nicht in der Firmware implementiert.
 
 \begin{figure}[htbp]
