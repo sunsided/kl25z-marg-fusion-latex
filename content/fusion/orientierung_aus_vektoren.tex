@@ -1,0 +1,115 @@
+
+\section{Bestimmung der Orientierung aus Vektorbeobachtungen}
+
+
+
+\subsection{Herleitung der Winkelkosinusmatrix}
+
+Aus der Definition des vektoriellen Skalarproduktes ("`Punktprodukt"'),
+
+\begin{align}
+\vec{a} \cdot \vec{b} &= \sum_{i=1}^{n} a_i b_i \quad \vec{a}, \vec{b} \in \mathbb{R}^n \label{eq:dot_sum} \\
+										  &= \lvert \vec{a} \rvert \lvert \vec{b} \rvert \cos\left(\vec{a}, \vec{b}\right)
+\end{align}
+
+ergibt sich, dass der von zwei sich kreuzenden Vektoren eingeschlossene Winkel durch den Arkuskosinus ermittelbar ist. Die \glslink{dcm}{Winkelkosinusmatrix} (DCM) 
+$\underline(A)$ nutzt diesen Zusammenhang zur Darstellung alle Winkelzusammenhänge zweier Systeme $\underline{S}_{\text{body}} = \left\{\vec{x}, \vec{y}, \vec{z} \right\}$, 
+$\underline{S}_{\text{ref}} = \left\{\vec{X}, \vec{Y}, \vec{Z} \right\}$ 
+(orthonormaler $\mathbb{R}^3$), so dass
+
+\begin{align}
+\underline{A} &= \begin{bmatrix}
+\vec{x} \cdot \vec{X} & \vec{y} \cdot \vec{X} & \vec{z} \cdot \vec{X} \\
+\vec{x} \cdot \vec{Y} & \vec{y} \cdot \vec{Y} & \vec{z} \cdot \vec{Y} \\
+\vec{x} \cdot \vec{Z} & \vec{y} \cdot \vec{Z} & \vec{z} \cdot \vec{Z}
+\end{bmatrix} \label{eq:dcm_long}
+\end{align}
+
+Wird das Koordinatensystem  $\underline{S}$ in Matrixform definiert, so dass
+
+\begin{align}
+\underline{S} &= \begin{bmatrix}
+x_x & y_x & z_x \\
+x_y & y_y & z_y \\
+x_z & y_z & z_z
+\end{bmatrix}
+\end{align}
+
+kann mittels der in Gleichung~\ref{eq:dot_sum} genannten Summendarstellung ersehen werden, dass Gleichung~\ref{eq:dcm_long} auch als
+
+\begin{align}
+\underline{A} &= \begin{bmatrix}
+x_x & y_x & z_x \\
+x_y & y_y & z_y \\
+x_z & y_z & z_z
+\end{bmatrix} \cdot \begin{bmatrix}
+X_x & Y_x & Z_x \\
+X_y & Y_y & Z_y \\
+X_z & Y_z & Z_z
+\end{bmatrix} = \underline{S}_{base} \cdot \underline{S}_{ref}  \label{eq:dcm_short}
+\end{align}
+
+formulierbar ist. Diese auch als
+
+\begin{align}
+\underline{A} &=
+\begin{bmatrix}
+\vec{x} \; \vdots \; \vec{y} \; \vdots \; \vec{z}\end{bmatrix} \cdot
+\begin{bmatrix}
+\vec{X} \; \vdots \; \vec{Y} \; \vdots \; \vec{Z}\end{bmatrix} \notag
+\end{align}
+
+bekannte Formulierung bildet den Kern des als \gls{triad}-Methode (vgl. \citealp{triad}) durch das Apollo-Programm bekannt gewordenen Algorithmus zur 
+Orientierungserkennung aus drei\footnote{Hieraus ergibt sich der Name des Algorithmus.} Vektorbeobachtungen $\vec{x}, \vec{y}, \vec{z}$. 
+Während das o.g. Beispiel orthonormale (oder bereits orthonormalisierte)
+Vektoren voraussetzt, beschreibt \gls{triad} die Vorgehensweise unter Annahme nicht-orthonormaler Vektoren\footnote{Einen im Apollo-Programm als Sicherheitsmaßnahme umgesetzten Alternativalgorithmus bildet die \gls{quest}-Methode. Dessen Erweiterung, \gls{request}, wird u.a. von \cite{vecops} beschrieben.}, wie sie im 
+Rahmen des Projektes vorliegen.
+
+Ein Vorteil dieser Methode wird direkt ersichtlich, wenn das Referenzsystem $\underline{S}_{\text{ref}}$ als orthonormal zum Einheitssystem angenommen wird, d.h.
+
+\begin{align}
+\underline{S}_{\text{ref}} &= \underline{E}_3 = \begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+\end{align}
+
+In diesem Fall ergibt sich die \gls{dcm} $\underline{A}$ mittels Gleichung~\ref{eq:dcm_short} direkt als 
+
+\begin{align}
+\underline{A} &= \begin{bmatrix}
+x_x & y_x & z_x \\
+x_y & y_y & z_y \\
+x_z & y_z & z_z
+\end{bmatrix} = \begin{bmatrix} \vec{x} \; \vdots \; \vec{y} \; \vdots \; \vec{z}\end{bmatrix} = \underline{S}_{\text{body}}
+\end{align}
+
+Da die \gls{dcm} mit der \textsc{Euler}'schen Rotationsmatrix übereinstimmt, bedeutet dies, dass die Rotationsmatrix allein 
+durch die Vektorbeobachtungen vollständig gegeben ist.
+
+
+
+
+\subsection{Herleitung der Vektorbeobachtungen}
+
+
+
+\begin{figure}[htbp]
+		\centering
+		
+		\begin{subfigure}[b]{0.75\textwidth}
+			\includegraphics[width=\textwidth]{./images/matlab/simulation_run_arrow.png}
+			\caption{Darstellung als Pfeil}
+			\label{fig:vektorobs_visual_arrow}
+		\end{subfigure}
+		
+		\begin{subfigure}[b]{0.75\textwidth}
+			\includegraphics[width=\textwidth]{./images/matlab/simulation_run_coord.png}
+			\caption{Darstellung als Koordinatensystem. Dünne blaue Linie: Accelerometer (Gravitation). Dünne rote Linie: Magnetometer.}
+			\label{fig:vektorobs_visual_coord}
+		\end{subfigure}
+		
+		\caption{Visuelle Darstellung der Vektorbeobachtung}
+		\label{fig:vektorobs_visual}
+\end{figure}

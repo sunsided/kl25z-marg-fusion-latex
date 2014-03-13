@@ -1,0 +1,53 @@
+Allen Fusionsalgorithmen gemein ist die Problematik, dass die Verwendung \textsc{Euler}'scher Winkel --- trotz oder eben gerade wegen ihrer Einfachheit --- zu 
+nicht auflösbaren Singularitäten führt. Dieses Phänomen wird \gls{Gimbal Lock} genannt, nach dem englischen Namens des kardanischen Kreisel (siehe Abbildung~\ref{fig:kardanischer_kreisel}),
+bei dem dieser Effekt deutlich wird.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.3\textwidth]{./images/kardanischer_kreisel.png}
+	\caption[Kardanischer Kreisel]{Darstellung eines kardanischen Kreisels.\\Quelle: Prof. Dr. G. Flügge: Experimentalphysik I: Mechanik, RHTW Aachen}
+	\label{fig:kardanischer_kreisel}
+\end{figure}
+
+
+Abhängig von der Wahl des Rotationsmodells etwa als Euler\footnote{Rotationsfolgen $Z\text{--}X\text{--}Z$, $X\text{--}Y\text{--}X$, $Y\text{--}Z\text{--}Y$, 
+$Z\text{--}Y\text{--}Z$, $X\text{--}Z\text{--}X$ und $Y\text{--}X\text{--}Y$}- oder der in der Technik (vgl. DIN 9300, DIN 70000) üblicheren 
+Tait-Bryan-Folge\footnote{Rotationsfolgen $X\text{--}Y\text{--}Z$, $Y\text{--}Z\text{--}X$, $Z\text{--}X\text{--}Y$, 
+$X\text{--}Z\text{--}Y$, $Z\text{--}Y\text{--}X$ und $Y\text{--}X\text{--}Z$}, existieren hierbei unterschiedliche Rotationskonstellationen
+mit nicht eindeutig bestimmbaren Winkeln. Dies ist im Falle des kardanischen Kreisels immer dann der Fall, wenn sich zwei direkt nebeneinander liegende Ringe  
+durch geeignete Wahl der Rotationen in derselben Ebene befinden, wodurch eine beliebige Rotation des äußeren der beiden Ringe auch immer eine --- d.h. dieselbe! --- Rotation des inneren Ringes
+bewirkt, was dem Verlust eines Freiheitsgrades des Systems entspricht. In solchen Fällen ist es oft nur noch möglich, einen einzelnen Winkel 
+(etwa eine Neigung $\theta$) exakt anzugeben, wobei für die verbleibenden Winkel lediglich eine Bedingung der Art $\left|\phi + \psi \right| \leq 180^\circ$ angegeben werden kann.
+
+Die Auswirkungen dieses Effektes in der Praxis sind in Abbildung~\ref{fig:euler_extrakt} deutlich ersichtlich. Hierbei wurde das System
+über eine Zeit von ca. 40 Sekunden zweimal um jede seiner Achsen rotiert, wobei bei vorausgesetztem $Z\text{--}Y\text{--}X$-System\footnote{"`yaw-pitch-roll"'} 
+ein Nickwinkel (Pitch, Elevation) von $\theta = \pm 90^\circ$ zu einer Singularität auf den Achsen $\phi$ (Yaw, Azimuth) und $\psi$ (Roll) führte.
+
+Verschiedene Ansätze zur Orientierungserkennung unter Vermeidung \textsc{Euler}'scher Winkel werden daher in der Literatur behandelt. 
+\cite{madgwick_quat}, \cite{indirect_quaternion_kalman} und \cite{vecops} formulieren \gls{Quaternion}-basierte \gls{marg}-Fusionsalgorithmen.
+In der Quadrocopter-Bastlerszene großer Beliebtheit erfreut sich aufgrund seiner geringen Komplexität der von \cite{dcmdraft} vorgeschlagene 
+Fusionsalgorithmus auf Basis der Winkelkosinusmatrix (\gls{dcm}) in Kombination mit einem \gls{Komplementaerfilter}, wie er von \cite{mahony_comp_eucl}, 
+\cite{mahony_coupled} und \cite{mahony_compl} beschrieben wird.
+
+Das \gls{Komplementaerfilter} wird als sich im Frequenzband komplementierende Zusammenstellung von Hoch- und Tiefpassfiltern implementiert, welche -- im vorliegenden Szenario -- 
+die Vorteile der hohen Genauigkeit des Gyrosensors (ohne dessen Drift) mit jenen der hohen Dynamik des Accelerometers (ohne dessen Streuung) kombinieren.
+
+Untersuchungen finden sich weiterhin zu den sog. Erweiterten \glslink{Kalman-Filter}{Kalman-Filtern} (z.B. \citealp{yadlin09} und \citealp{indirect_quaternion_kalman}), 
+sowie den Unscented \glslink{Kalman-Filter}{Kalman-Filtern}\footnote{Einer Variation des erweiterten \glslink{Kalman-Filter}{Kalman-Filters} unter Zuhilfenahme der 
+Unscented-Transformation, wodurch die Notwendigkeit der Linearisierung des Systems vermieden wird} (etwa \citealp{unscented}). Ferner existieren adaptive 
+Varianten des \glslink{Kalman-Filter}{Kalman-Filters}, wie etwa von \cite{liwang12} untersucht.
+Diese Arten von Filtern versuchen, die nichtlinearen Zusammenhänge des Systems --- allerdings auf Kosten der Komplexität des Filters --- direkt abzubilden. 
+
+\cite{Tsang} vergleicht eine \gls{Quaternion}-Methode in einem erweiterten \gls{Kalman-Filter}, sowie die (bekanntermaßen problembehaftete) direkte Bestimmung der \textsc{Euler}'schen Winkel
+mit einem Entwurf zur indirekten Schätzung der \gls{dcm} in einem regulären \gls{Kalman-Filter}. 
+Er zeigt auf, dass die Verwendung des regulären Filters zur indirekten Schätzung trotz der Nichtlinearitäten keine inhärenten Nachteile mit sich bringt, 
+sondern im Gegenteil mit der \gls{Quaternion}-Methode konkurrieren kann, weswegen dieser Algorithmus im Rahmen des Projektes umgesetzt wurde.
+\cite{Filieri} beschreiben in diesem Zusammenhang ein Fehlermodell zur Schätzung der Beschleunigungs- und Integrationsunsicherheiten, welches unterstützend auch 
+zur direkten Schätzung der Sensordrift angewendet werden kann. Dieser Aspekt wurde in MATLAB (erfolgreich) untersucht, jedoch nicht in der Firmware implementiert.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{./images/matlab/rollpitchyaw45-2.png}
+	\caption[Extraktion der \textsc{Euler}'schen Winkel]{Extraktion der \textsc{Euler}'schen Winkel. Deutlich zu erkennen sind die Singularitäten bei Sekunden 13, 17 und 29 und 32.}
+	\label{fig:euler_extrakt}
+\end{figure}
