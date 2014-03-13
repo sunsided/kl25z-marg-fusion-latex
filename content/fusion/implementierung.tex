@@ -1,0 +1,130 @@
+
+\section{Implementierung des Kalman-Filters}
+
+\subsection{Entwicklung der Library kalman-clib}
+
+Um die Funktionalität des \glslink{Kalman-Filter}{Kalman-Filters} zu testen wurde eine Bibliothek in C implementiert. Diese wurde im Verlauf des Projektes 
+unter dem Namen \emph{kalman-clib} auf GitHub veröffentlicht\footnote{\url{https://github.com/sunsided/kalman-clib}}.
+
+Bei der Entwicklung wurde hierbei besonderes Augenmerk auf die Vermeidung dynamischer Speicheralloziierung gelegt, wodurch diese Bibliothek insbesondere
+für die Verwendung auf speicherbeschränkten Systemen wie Mikrocontrollern geeignet ist. Der verwendete Typ für Skalare ist frei definierbar, ist
+jedoch in seiner Vorgabe auf den Typ \texttt{float} gesetzt. Eine Anpassung auf fixed-Point Werte ist in ANSI C nicht ohne weiteres möglich, kann jedoch
+in C++ mittels überladener Operatoren umgesetzt werden.
+
+Da die Vermeidung der dynamischen Speicherverwaltung eine statische Konstruktion der verwendeten Arrays bedingt, wurden Helfermakros geschrieben, die
+die Funktionalität einer Factory zur Compilezeit übernehmen. Hierbei werden anhand benutzerdefinierter Namen statische Arrays (benutzer-)definierter
+Größe je Filter erzeugt und, sofern möglich, für interne Berechnungen weiterverwendet.
+
+Eine kurze Übersicht zur Verwendung der Factory und des Filters kann in Listing~\ref{lst:kalman-clib-short} eingesehen werden. 
+Der vollständige Code findet sich in Listing~\ref{lst:kalman-clib}.
+
+\begin{lstlisting}[style=lolc,caption={Gravitations-Beispiel mittels kalman-clib (Ausschnitt)},label=lst:kalman-clib-short]
+#include "kalman_example_gravity.h"
+
+// create the filter structure
+#define KALMAN_NAME gravity
+#define KALMAN_NUM_STATES 3
+#define KALMAN_NUM_INPUTS 0
+#include "kalman_factory_filter.h"
+
+// create the measurement structure
+#define KALMAN_MEASUREMENT_NAME position
+#define KALMAN_NUM_MEASUREMENTS 1
+#include "kalman_factory_measurement.h"
+
+// clean up
+#include "kalman_factory_cleanup.h"
+
+/*!
+* \brief Runs the gravity Kalman filter.
+*/
+void kalman_gravity_demo()
+{
+    // initialize the filter
+    kalman_gravity_init(); // to be implemented by the user!
+
+    // fetch structures
+    kalman_t *kf = &kalman_filter_gravity;
+    kalman_measurement_t *kfm = &kalman_filter_gravity_measurement_position;
+
+    matrix_t *x = kalman_get_state_vector(kf);
+    matrix_t *z = kalman_get_measurement_vector(kfm);
+    
+    // filter!
+    for (int i = 0; i < MEAS_COUNT; ++i)
+    {
+        // prediction.
+        kalman_predict(kf);
+
+        // measure ...
+        matrix_data_t measurement = real_distance[i] + measurement_error[i];
+        matrix_set(z, 0, 0, measurement);
+
+        // update
+        kalman_correct(kf, kfm);
+    }
+
+    // fetch estimated g
+    matrix_data_t g_estimated = x->data[2];
+    assert(g_estimated > 9 && g_estimated < 10);
+}
+\end{lstlisting}
+
+Eine Ausgabe des Filters bei Verwendung des \texttt{float}-Datentyps findet sich in Abbildung~\ref{fig:kalman-clib}.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{./images/981.png}
+	\caption[kalman-clib in Aktion]{kalman-clib in Aktion: Ausgabe des Codes in Listing~\ref{lst:kalman-clib} nach 15 Iterationen}
+	\label{fig:kalman-clib}
+\end{figure}
+
+Um die in \texttt{kalman\_correct} notwendige Matrixinvertierung (vgl. Gleichung~\ref{eq:kalman_S_inversion}) effizient zu implementieren,
+wurde sich der Sachverhalt zunutze gemacht, dass es sich bei der Residualkovarianzmatrix $\underline{S}$ um eine symmetrisch positiv-definite 
+Matrix handelt, welche effizient mittels der Cholesky-Zerlegung vearbeitet werden kann.
+
+Aus der \emph{Efficient Java Matrix Library}\footnote{\url{https://code.google.com/p/efficient-java-matrix-library}} wurden die Methoden zur 
+Cholesky-Zerlegung in eine untere Dreieecksmatrix, sowie die Methode zur Invertierung einer Cholesky-zerlegten Matrix in die \emph{kalman-clib} portiert.
+Ein Auszug der Verwendung findet sich in Listing~\ref{lst:kalman-clib-cholesky}.
+
+\begin{lstlisting}[style=lolc,caption={kalman-clib: Invertierung der Residualkovarianzmatrix},label=lst:kalman-clib-cholesky]
+/*************************/
+/* Calculate Kalman gain */
+/* K = P*H' * S^-1       */
+/*************************/
+
+// K = P*H' * S^-1
+cholesky_decompose_lower(S);
+matrix_invert_lower(S, Sinv);               // Sinv = S^-1
+matrix_mult_transb(P, H, temp_PHt);         // temp = P*H'
+matrix_mult(temp_PHt, Sinv, K, aux);        // K = temp*Sinv
+\end{lstlisting}
+
+\subsection{Portierung von kalman-clib auf libfixmatrix}
+
+Da eine Entwicklung in C++ vermieden werden sollte, der \gls{kl25z} jedoch aufgrund seines \gls{cortex-m0+}-Cores keine \gls{fpu} besitzt, 
+wurde eine Portierung der \emph{kalman-clib} auf eine \gls{q16}-Bibliothek namens \emph{libfixmatrix}\footnote{\url{https://github.com/PetteriAimonen/libfixmatrix}} durchgeführt.
+Diese setzt auf das \emph{libfixmath}-Projekt\footnote{\url{https://code.google.com/p/libfixmath/}} auf und erweitert dieses um Matrizen, sowie Vektoren und Quaternionen.
+Auch diese Portierung wurde unter dem Namen \emph{libfixkalman} auf GitHub veröffentlicht\footnote{\url{https://github.com/sunsided/libfixkalman}}.
+
+Anders als \emph{kalman-clib} verwendet \emph{libfixmatrix} keinen factorybasierten Ansatz zur Definition der Matrizen, sondern verwendet ein globales Define, welches
+die größte verwendete Matrixdimension beinhaltet. Dies bewirkt jedoch, dass auch Matrizen kleinerer Dimension immer den Platz der größten Matrix belegen, was insbesondere
+bei großen Matrizen dazu führt, dass der verfügbare Arbeitsspeicher nutzlos verbraucht wird. Eine andere Problematik stellt das erzeugen von temporären Matrizen auf
+dem Stack dar, was je nach Rekursionstiefe zu einem stack overflow mit anwendungsabhängigen Effekten führen kann. Der Erfahrung nach sind diese Fehler besonders unangenehm: Sie 
+sind schwer zu lokalisieren, da selbst (scheinbar) unbetroffene Teile des Speichers verändert werden können. Im Falle des \gls{kl25z} bewirkte dies eine mehrstündige Fehlersuche 
+mittels des Ausschlussverfahrens, da auf dem Gerät keine hardwareseitige Exception für Stack-Überläufe existiert. Ein Überlauf in der Matrixbibliothek deaktivierte hier den
+Trigger für neue Messergebnisse, noch bevor diese verarbeitet werden konnten.
+
+Zusätzlich müssen ggf. die in \emph{libfixmatrix} verfügbaren Lookup-Tabellen für trigonometrische Funktion deaktiviert werden, da sie sehr groß sind, gleichzeitig aber zur Laufzeit
+befüllt werden und daher nicht als Kandidaten für den ROM gelten können.
+
+Die verwendeten Settings zum Setzen der maximal Matrixgröße, Deaktivieren der Funktionen für Filter mit Steuereingängen\footnote{Dies ist nicht nötig, reduziert aber auch ohne Optimierungen die Codegröße.}
+und Deaktivierung der Look-up-Tabellen finden sich in Listing~\ref{lst:libfixkalman-defines}.
+
+\begin{lstlisting}[style=lolc,caption={libfixkalman: Verwendete Preprozessor-Defines},label=lst:libfixkalman-defines]
+FIXMATRIX_MAX_SIZE=6 
+KALMAN_DISABLE_C 
+FIXMATH_NO_CACHE
+\end{lstlisting}
+
+Ein Beispielcode für die Verwendung von \emph{libfixkalman} kann Listing~\ref{lst:libfixkalman} entnommen werden.
