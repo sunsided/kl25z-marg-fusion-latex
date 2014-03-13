@@ -56,7 +56,7 @@ formulierbar ist. Diese auch als
 \begin{bmatrix}
 \vec{x} \; \vdots \; \vec{y} \; \vdots \; \vec{z}\end{bmatrix} \cdot
 \begin{bmatrix}
-\vec{X} \; \vdots \; \vec{Y} \; \vdots \; \vec{Z}\end{bmatrix} \notag
+\vec{X} \; \vdots \; \vec{Y} \; \vdots \; \vec{Z}\end{bmatrix}   \label{eq:dcm_triad}
 \end{align}
 
 bekannte Formulierung bildet den Kern des als \gls{triad}-Methode (vgl. \citealp{triad}) durch das Apollo-Programm bekannt gewordenen Algorithmus zur 
@@ -82,7 +82,7 @@ In diesem Fall ergibt sich die \gls{dcm} $\underline{A}$ mittels Gleichung~\ref{
 x_x & y_x & z_x \\
 x_y & y_y & z_y \\
 x_z & y_z & z_z
-\end{bmatrix} = \begin{bmatrix} \vec{x} \; \vdots \; \vec{y} \; \vdots \; \vec{z}\end{bmatrix} = \underline{S}_{\text{body}}
+\end{bmatrix} = \begin{bmatrix} \vec{x} \; \vdots \; \vec{y} \; \vdots \; \vec{z}\end{bmatrix} = \underline{S}_{\text{body}} \label{eq:dcm_from_triad}
 \end{align}
 
 Da die \gls{dcm} mit der \textsc{Euler}'schen Rotationsmatrix übereinstimmt, bedeutet dies, dass die Rotationsmatrix allein 
@@ -93,6 +93,55 @@ durch die Vektorbeobachtungen vollständig gegeben ist.
 
 \subsection{Herleitung der Vektorbeobachtungen}
 
+Bei dieser Betrachtung soll davon ausgegangen werden, dass der Messvektor $\vec{g}$ des Accelerometers in Ruhelage dann negativ ist, wenn er in Richtung des Erdkerns zeigt, 
+d.h. die Richtung \emph{unten} mit negativem Vorzeichen angegeben ist.
+Hieraus folgt, dass der neue Aufwärtsvektor $\vec{z}$ das Inverse des normierten Beschleunigungsvektors $\vec{g}$\footnote{In Ruhelage des Sensors!} darstellt, so dass
+
+\begin{align}
+\vec{z} = -\frac{\vec{g}}{\left| \vec{g} \right|} \label{eq:z_aus_g}
+\end{align}
+
+Es soll nun weiterhin angenommen werden, dass der $\vec{x}$-Vektor des Systems mit der Richtung \emph{magnetisch Nord} (in der Ebene) übereinstimmen soll, so dass dieser aus dem
+Magnetometervektor $\vec{m}$ annähernd gewonnen werden kann. Es gilt:
+
+\begin{align}
+\vec{x}' \approx \frac{\vec{m}}{\left| \vec{m} \right|} \label{eq:x_approx_m}
+\end{align}
+
+Zwischen dem tatsächlichen Vorwärtsvektor $\vec{x}$ und dem Magnetometervektor $\vec{m}$ besteht ein Fehler, der durch den Winkelvektor $\vec{\epsilon}$ ausgedrückt werden kann, welcher visuell in Abbildung~\ref{fig:vektorobs_visual_coord} nachvollzogen werden kann.
+
+Um diesem Fehler entgegenzuwirken, wird in vielen Fällen der Mechanismus der \gls{tilt compensation} (dt. des Neigungsausgleichs) vorgeschlagen (vgl. \citealp{stm_an3192} und 
+\citealp{stm_an3182}, sowie \citealp{fs_an3461} und \citealp{ad_an1057}),
+wobei zusätzliche Ausrichtungsdaten, wie sie etwa vom Accelerometer gewonnen werden können, verwendet werden, um den dreidimensionalen 
+Vektor $\vec{m}$ auf eine zweidimensionale Ebene zu projizieren. Liegt dieser projizierte Vektor vor, können die Winkel mittels trigonometrischer Funktionen wie dem 
+Arkustangens direkt gewonnen werden.
+
+Problematisch bei dieser Methode ist jedoch, dass es sich bei den so gewonnenen Angaben wieder um \textsc{Euler}'sche Winkel handelt, und diese somit dem bekannten
+Singularitätsproblem unterliegen\footnote{Wenn das Gerät etwa um $90^\circ$ geneigt ist, ist keine eindeutige Nordrichtung mehr benennbar, obschon die Ergebnisse des 
+Magnetometers für sich genommen konsistent sind.}.
+
+Um dieses Problem zu umgehen (und da die \textsc{Euler}'schen Winkel für die Weiterverarbeitung ohnehin nicht von Belang sind), wird auf die Methode der \gls{tilt compensation}
+verzichtet und stattdessen eine Variante des \gls{triad}-Algorithmus verwendet. Hierzu wird die vollständige Orientierungsinformation (redundant) in einer \gls{dcm}
+kodiert.
+
+Zuerst wird dazu aus dem Magnetometervektor $\vec{m}$ und dem Aufwärtsvektor $\vec{z}$ der Linksvektor $\vec{y}$ gebildet. Dies ist möglich, da das Kreuzprodukt zweier
+Vektoren immer eine Resultierende ergibt, die orthogonal auf den beiden Argumenten steht.
+
+\begin{align}
+\vec{y} = \frac{\vec{m} \times \vec{z}}{\left| \vec{m} \times \vec{z} \right|} \label{eq:y_aus_mz}
+\end{align}
+
+Die Renormalisierung von $\vec{y}$ in Formel~\ref{eq:y_aus_mz} ist mathematisch nicht notwendig, wenn $\vec{m}$ und $\vec{z}$ bereits normalisiert vorliegen, sollte 
+jedoch in der Implementierung in jedem Fall durchgeführt werden, um Fehler durch Rechenungenauigkeiten weitestmöglich zu unterdrücken.
+
+Mittels der in Formeln~\ref{eq:z_aus_g} und~\ref{eq:y_aus_mz} gewonnenen Vektoren $\vec{z}$ und $\vec{y}$ kann nun der echte Vorwärtsvektor $\vec{x}$ rekonstruiert werden.
+
+\begin{align}
+\vec{x} = \frac{\vec{y} \times \vec{z}}{\left| \vec{y} \times \vec{z} \right|} \neq \vec{m} \label{eq:x_aus_yz}
+\end{align}
+
+Aus den so gewonnenen Vektoren $\vec{x}, \vec{y}, \vec{z}$ kann dann mittels der in Gleichung~\ref{eq:dcm_triad} und~\ref{eq:dcm_from_triad} eingeführten Form die \gls{dcm} gewonnen werden, wobei
+sämtliche Singularitäten der \gls{tilt compensation} vermieden werden\footnote{Sofern die \textsc{Euler}'schen Winkel nicht abschließend aus der \gls{dcm} extrahiert werden.}.
 
 
 \begin{figure}[htbp]
