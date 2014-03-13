@@ -1,3 +1,5 @@
+\section{Einleitung}
+
 Allen Fusionsalgorithmen gemein ist die Problematik, dass die Verwendung \textsc{Euler}'scher Winkel --- trotz oder eben gerade wegen ihrer Einfachheit --- zu 
 nicht auflösbaren Singularitäten führt. Dieses Phänomen wird \gls{Gimbal Lock} genannt, nach dem englischen Namens des kardanischen Kreisel (siehe Abbildung~\ref{fig:kardanischer_kreisel}),
 bei dem dieser Effekt deutlich wird.
@@ -27,10 +29,9 @@ Verschiedene Ansätze zur Orientierungserkennung unter Vermeidung \textsc{Euler}
 \cite{madgwick_quat}, \cite{indirect_quaternion_kalman} und \cite{vecops} formulieren \gls{Quaternion}-basierte \gls{marg}-Fusionsalgorithmen.
 In der Quadrocopter-Bastlerszene großer Beliebtheit erfreut sich aufgrund seiner geringen Komplexität der von \cite{dcmdraft} vorgeschlagene 
 Fusionsalgorithmus auf Basis der Winkelkosinusmatrix (\gls{dcm}) in Kombination mit einem \gls{Komplementaerfilter}, wie er von \cite{mahony_comp_eucl}, 
-\cite{mahony_coupled} und \cite{mahony_compl} beschrieben wird.
-
-Das \gls{Komplementaerfilter} wird als sich im Frequenzband komplementierende Zusammenstellung von Hoch- und Tiefpassfiltern implementiert, welche -- im vorliegenden Szenario -- 
-die Vorteile der hohen Genauigkeit des Gyrosensors (ohne dessen Drift) mit jenen der hohen Dynamik des Accelerometers (ohne dessen Streuung) kombinieren.
+\cite{mahony_coupled} und \cite{mahony_compl} beschrieben wird. Das \gls{Komplementaerfilter} wird als sich im Frequenzband komplementierende Zusammenstellung von Hoch- und 
+Tiefpassfiltern implementiert, welche -- im vorliegenden Szenario -- die Vorteile der hohen Genauigkeit des Gyrosensors (ohne dessen Drift) mit jenen der hohen Dynamik des 
+Accelerometers (ohne dessen Streuung) kombinieren.
 
 Untersuchungen finden sich weiterhin zu den sog. Erweiterten \glslink{Kalman-Filter}{Kalman-Filtern} (z.B. \citealp{yadlin09} und \citealp{indirect_quaternion_kalman}), 
 sowie den Unscented \glslink{Kalman-Filter}{Kalman-Filtern}\footnote{Einer Variation des erweiterten \glslink{Kalman-Filter}{Kalman-Filters} unter Zuhilfenahme der 

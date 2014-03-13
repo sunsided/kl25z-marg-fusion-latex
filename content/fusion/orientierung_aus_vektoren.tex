@@ -163,3 +163,15 @@ sämtliche Singularitäten der \gls{tilt compensation} vermieden werden\footnote
 		\caption{Visuelle Darstellung der Vektorbeobachtung}
 		\label{fig:vektorobs_visual}
 \end{figure}
+
+
+\subsection{Herleitung der Winkel aus der DCM}
+\label{subsec:herleitung_winkel_dcm}
+
+Werden die \textsc{Euler}'schen Winkel aus der \gls{dcm} $\underline{A}$ benötigt, können diese nach \cite{premeul} über die folgenden Zusammenhänge\footnote{Unter der Annahme der Tait-Bryan $X\text{--}Y\text{--}Z$-Folge} gewonnen werden.
+
+\begin{align}
+\theta_{\text{pitch}} &= -\sin^{-1} \underline{A}_{0,2} = z_x \label{eq:pitch_from_dcm} \\
+\phi_{\text{roll}}   &= \tan^{-1} \frac{\underline{A}_{1,2}}{\underline{A}_{2,2}} = \tan^{-1} \frac{z_y}{z_z} \\
+\psi_{\text{yaw}}   &= \tan^{-1} \frac{\underline{A}_{0,1}}{\underline{A}_{0,0}} = \tan^{-1} \frac{y_x}{x_x}
+\end{align}

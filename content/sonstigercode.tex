@@ -24,8 +24,8 @@ Dieser Modus wird auch aktiv, wenn kein gültiger Modusbefehl erkannt wurde.
 
 \subsubsection{Roll-Pitch-Yaw (Modus 42)}
 
-In diesem Modus (Prefix \emph{42\textsubscript{dec}}) werden die aus der \gls{dcm} extrahierten \textsc{Euler}'schen Winkel\todo{howto - Verweis auf Fusion!} (Tait-Bryan $X\text{--}Y\text{--}Z$) übertragen.
-Die Winkel liegen im \gls{q16}-Format vor.
+In diesem Modus (Prefix \emph{42\textsubscript{dec}}) werden die aus der \gls{dcm} extrahierten \textsc{Euler}'schen Winkel (Tait-Bryan $X\text{--}Y\text{--}Z$) übertragen (vgl. Abschnitt~\ref{subsec:herleitung_winkel_dcm}).
+Die Winkel liegen im \gls{q16}-Format vor, der zur Extraktion verwendete Code ist in Listing~\ref{lst:libfixmath_dcm_euler} dargestellt.
 
 \begin{bytefield}[bitwidth=1.2em]{13}
 	\bitheader{0-12} \\
@@ -36,13 +36,15 @@ Die Winkel liegen im \gls{q16}-Format vor.
 \subsubsection{Orientierungs-Quaternion (Modus 43)}
 
 In diesem Modus (Prefix \emph{43\textsubscript{dec}}) wird zur effizienten Übertragung der singularitätsfreien Orientierung anstelle der vollständigen \gls{dcm} ein
-Orientierungs-Quaternion übertragen\todo{howto - Verweis auf Fusion!}, wobei die Komponenten im \gls{q16}-Format vorliegen.
+Orientierungs-Quaternion übertragen, wobei die Komponenten im \gls{q16}-Format vorliegen.
 
 \begin{bytefield}[bitwidth=1.2em]{17}
 	\bitheader{0-16} \\
 	\colorbitbox{lightgreen}{1}{43} & 
 	\bitbox{4}{W} & \bitbox{4}{X} & \bitbox{4}{Y} & \bitbox{4}{Z}
 \end{bytefield}
+
+Der zur Generierung des Quaternions verwendete Code kann in Listing~\ref{lst:quaternion_from_kalman} gefunden werden.
 
 \subsubsection{Orientierungs-Quaternion und Roll-Pitch-Yaw (Modus 44)}
 

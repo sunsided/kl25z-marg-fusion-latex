@@ -1,5 +1,5 @@
-
 \section{Implementierung des Kalman-Filters}
+\label{sec:implementierung_filter}
 
 \subsection{Entwicklung der Library kalman-clib}
 
@@ -128,3 +128,20 @@ FIXMATH_NO_CACHE
 \end{lstlisting}
 
 Ein Beispielcode für die Verwendung von \emph{libfixkalman} kann Listing~\ref{lst:libfixkalman} entnommen werden.
+
+Exemplarisch für die Verwendung der \gls{q16}-Funktionen aus \emph{libfixmath} soll die Funktion zur Ermittlung der \textsc{Euler}'schen Winkel aus der \gls{dcm} 
+gezeigt werden. Diese ist in Listing~\ref{lst:libfixmath_dcm_euler} zu finden und implementiert die Formeln aus Gleichungen~\ref{eq:pitch_from_dcm}ff.
+Die komplexere Funktion zur Berechnung des Orientierungs-Quaternions aus den fusionierten Daten kann Listing~\ref{lst:quaternion_from_kalman} entnommen werden.
+
+\begin{lstlisting}[style=lolc,caption={libfixmath: \textsc{Euler}'sche Winkel aus \gls{dcm}},label=lst:libfixmath_dcm_euler]
+void sensor_dcm2rpy(
+	const mf16 *RESTRICT const dcm, 
+	fix16_t *RESTRICT const roll, 
+	fix16_t *RESTRICT const pitch, 
+	fix16_t *RESTRICT const yaw)
+{
+    *pitch = -fix16_asin(dcm->data[0][2]);
+    *roll  = fix16_atan2(dcm->data[1][2], dcm->data[2][2]);
+    *yaw   = fix16_atan2(dcm->data[0][1], dcm->data[0][0]);
+}
+\end{lstlisting}

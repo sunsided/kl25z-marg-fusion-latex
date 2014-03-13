@@ -18,14 +18,14 @@ wobei der Messupdate-Schritt wie folgt definiert ist:
 \vec{y}_k 									&= \vec{z}_k - \underline{H}_k \hat{\vec{x}}_{k+1} \\
 \underline{S}_k 						&= \underline{H}_k \hat{\underline{P}}_{k+1} \underline{H}^T_k + \underline{R}_k \\
 \underline{K}_k							&= \hat{\underline{P}}_{k+1} \underline{H}^T_k \cdot \underline{S}^{-1}_k \label{eq:kalman_S_inversion} \\
-\tilde{\vec{x}}_{k+1}				&= \hat{\vec{x}}_{k+1} + \underline{K}_k \vec{y}_k  \label{eq:kalman_x_corr} \\
-\tilde{\underline{P}}_{k+1}	&= \left( \underline{E} - \underline{K}_k \underline{H}_k \right) \hat{\underline{P}}_{k+1} \label{eq:kalman_P_corr}
+\tilde{\vec{x}}_{k}				&= \hat{\vec{x}}_{k+1} + \underline{K}_k \vec{y}_k  \label{eq:kalman_x_corr} \\
+\tilde{\underline{P}}_{k}	&= \left( \underline{E} - \underline{K}_k \underline{H}_k \right) \hat{\underline{P}}_{k+1} \label{eq:kalman_P_corr}
 \end{align}
 
 Dabei entsprechen die in Gleichungen~\ref{eq:kalman_x_est} und~\ref{eq:kalman_P_est} ermittelten Werte $\hat{\vec{x}}_{k+1}$ und $\hat{\underline{P}}_{k+1}$ den 
-geschätzten Zuständen im Folgezeittakt $k+1$, und die in Gleichungen~\ref{eq:kalman_x_corr} und~\ref{eq:kalman_P_corr} ermittelten Werte $\tilde{\vec{x}}_{k+1}$ und
-$\tilde{\underline{P}}_{k+1}$ den mittels vorliegender Messwerte $\vec{z}_k$ korrigierten Schätzungen. $\underline{E}$ entspricht der Einheitsmatrix, wobei diese 
-von derselben Dimensionen der Matrix $\underline{A}$ (bzw. $\underline{P}$) sein muss.
+geschätzten Zuständen im Folgezeittakt $k+1$, und die in Gleichungen~\ref{eq:kalman_x_corr} und~\ref{eq:kalman_P_corr} ermittelten Werte $\tilde{\vec{x}}_{k}$ und
+$\tilde{\underline{P}}_{k}$ den mittels vorliegender Messwerte $\vec{z}_k$ korrigierten Schätzungen aus dem vorherigen Zeittakt. 
+$\underline{E}$ entspricht der Einheitsmatrix, wobei diese von derselben Dimensionen der Matrix $\underline{A}$ (bzw. $\underline{P}$) sein muss.
 
 \cite{bht_som_adf} beschreibt in Zusammenhang mit Gleichung~\ref{eq:kalman_P_est} eine Tuning-Variable $\lambda$ zur Vereinfachung der oft nur ungenau oder
 empirisch benennbaren Prozessrauschmatrix $\underline{Q}$, so dass
@@ -60,8 +60,8 @@ end
 
 Es ist ersichtlich, dass die Komplexität des Filters mit der Größe der Matrizen steigt --- der naive Algorithmus zur Matrizenmultiplikation mittels dreier \texttt{for}-Schleifen ist 
 bei quadratischen Matrizen der Dimension $n$ von der Komplexität $O(n^3)$\todo{Quelle} --- sowie maßgeblich von der Performance der Implementierung zur Matrixinvertierung 
-(vgl. Gleichung~\ref{eq:kalman_S_inversion} und Listing~\ref{lst:matlab-kalman-correct}, Zeile~\ref{lstline:kf_correct_inversion}) abhängt.
-\todo{Verweis auf Implementierungskapitel}
+(vgl. Gleichung~\ref{eq:kalman_S_inversion} und Listing~\ref{lst:matlab-kalman-correct}, Zeile~\ref{lstline:kf_correct_inversion}) abhängt. Hierauf wird in Abschnitt~\ref{sec:implementierung_filter}
+noch einmal eingegangen.
 
 \subsection{Indirektes Filter zur Schätzung der Orientierung}
 
@@ -120,7 +120,7 @@ was die Ermittlung der Orientierung durch rekursive Integration des Tensors erm�
 \hat{\underline{A}} &= \int \left( \underline{W} \cdot \underline{A} \right)
 \end{align*}
 
-Da die Linksrichtung $\vec{y}$ des Systems aus der Aufwärtsrichtung $\vec{z}$\footnote{Im Ruhestand aus dem Gravitationsvektor} und dem Vorwärtsvektor $\vec{x}$ 
+Da die Linksrichtung $\vec{y}$ des Systems aus der Aufwärtsrichtung $\vec{z}$\footnote{In Ruhelage aus dem Gravitationsvektor} und dem Vorwärtsvektor $\vec{x}$ 
 regeneriert werden kann, ist es nur notwendig, diese beiden letzteren zu bestimmen. 
 Zur Implementierung in den \gls{Kalman-Filter} kehren \cite{orientation_dcm} nun die Koeffizienten um und definieren eine Vorschrift
 
@@ -159,7 +159,7 @@ Ax*(-w)                  % Winkelgeschwindigkeit auf x-Vektor
 \subsubsection{Filterung des Aufwärtsvektors}
 
 Die Zustandsübergangsmatrix $\underline{A}$ und der Zustandsvektor $\vec{x}$, sowie die Prozess-Rauschmatrix $\underline{Q}$ des (diskreten) indirekten 
-\glslink{Kalman-Filter}{Kalman-Filters} ergeben sich hiermit als:
+\glslink{Kalman-Filter}{Kalman-Filters} ergeben sich mit Gleichung~\ref{eq:dcm_omega_x} als:
 
 \begin{align}
 \underline{A}_k \cdot \vec{x}_k &= 
@@ -186,7 +186,7 @@ z_x \\ z_y \\ z_z \\ \omega_x \\ \omega_y \\ \omega_z
 \end{align}
 
 Wobei $q_{\omega,x..z}$ für die Streuung der Winkelbeschleunigung auf den jeweiligen Komponenten steht.
-Es wird ersichtlich, dass die Winkelgeschwindigkeiten $\vec{\omega}$ vom Filter direkt geschätzt werden, da sie in der Matrix $\underline{Q}$ als variabel definiert wurden, 
+Es wird ersichtlich, dass die Winkelgeschwindigkeiten $\vec{\omega}$ vom Filter direkt geschätzt werden, da sie in der Matrix $\underline{Q}$ als variabel definiert sind, 
 während die Komponenten der Ausrichtung aufgrund ihrer Nichtexistenz in der Rauschmatrix als konstant angenommen werden\footnote{Das Auslassen einer Rauschkovarianz zwingt das
 Filter über die Zeit dazu, die zugehörige Komponente des Zustandsvektor als konvergiert anzunehmen, weswegen sie nicht weiter verändert würde. Die spätere Abweichung der Messung vom Zustand
 in Zusammenhang mit der Zustandskovarianzmatrix $\underline{P}$ führt jedoch dazu, die Werte zu variieren, was der indirekten Filterung entspricht.}. Die Zustandskovarianzmatrix $\underline{P}$ 
@@ -235,3 +235,8 @@ Dieser wird anstelle von $\vec{z}$ in Gleichung~\ref{eq:kalman_ax_z} verwendet u
 
 Zusätzlich kann der vom ersten Filter geschätzte Winkelgeschwindigkeitsvektor $\hat{\vec{\omega}}$ oder --- wenn verfügbar --- der korrigierte Vektor $\tilde{\vec{\omega}}$ in der 
 Messung verwendet werden (vgl. Gleichung~\ref{eq:kalman_hz_z}), um die Genauigkeit zu erhöhen.
+
+\subsubsection{Filterung des Linksvektors}
+
+Entsprechend dem \gls{triad}-Verfahren wird abschließend wie in Gleichung~\ref{eq:y_aus_mz} beschrieben der Linksvektor $\vec{y}$ neu erzeugt, wodurch die Orthogonalitätsbedingung
+der \gls{dcm} wieder erfüllt wird.
