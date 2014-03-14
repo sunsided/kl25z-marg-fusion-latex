@@ -8,6 +8,27 @@ Das \gls{frdm-kl25z} ist ein Evaluationsboard für die \gls{kl25z}-Serie \glspl{
 Das Board besitzt neben 54 \glspl{gpio}, einen USB-Controller, eine RGB-LED, einen kapazitiven Touch-Bereich, sowie einen Freescale MMA8451Q accelerometer.
 Der geringen Preis des Boards von ca. 12 EUR trug letztlich zur Kaufentscheidung bei.
 
+\begin{itemize}
+	\item Freescale KL25Z Kinetis KL2 MCU (MKL25Z128VLK4)
+	\begin{itemize}
+		\item High performance ARM® Cortex™-M0+ Core
+		\item 48MHz, 16KB RAM, 128KB FLASH
+		\item 2xSPI, 2xI2C, 3xUART, 6xPWM, 6xADC, Touch Sensor, GPIO
+	\end{itemize}
+	\item FRDM-KL25Z Onboard peripherals
+	\begin{itemize}
+		\item MMA8451Q - 3-axis accelerometer
+		\item PWM Controlled RGB LED
+		\item Capacitive touch sensor
+	\end{itemize}
+	\item Evalution Form factor
+	\begin{itemize}
+		\item 81mm x 53mm
+		\item 5V USB or 4.5-9V supply
+		\item Built-in USB drag 'n' drop FLASH programmer
+	\end{itemize}
+\end{itemize}
+
 \todo{Konfiguration des ARM-Cores!}
 
 Auf jedem Freescale Freedom-Entwicklungsboard ist weiterhin ein \gls{ocd} verbaut, welcher zusätzlich zum Debugging die 
@@ -15,11 +36,21 @@ Fähigkeit besitzt, die \gls{mcu} zu programmieren. Freescale nennt diese Einhei
 die zwar entgegen ihres Namens proprietärer Natur ist, jedoch die zusätzliche Beschaffung eines externen Programmers erspart.
 
 \begin{figure}[htbp]
+	\centering
+	\begin{subfigure}[b]{0.4\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{./images/kl25z.jpg}
-    \caption{Freescale FRDM-KL25Z}
-		Quelle: Freescale
-    \label{fig:kl25z}
+		\caption[Board]{Board \\Quelle: Freescale}
+	\end{subfigure}%
+	\quad
+	\begin{subfigure}[b]{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{./images/kl25z-pinout.jpg}
+		\caption[Pinout]{Pinout \\Quelle: mbed}
+	\end{subfigure}
+	
+	\caption[Freescale FRDM-KL25Z]{Freescale FRDM-KL25Z}
+	\label{fig:kl25z}
 \end{figure}
 
 \todo{Eingehen auf die BME, Stichwort Bit-Banging}
