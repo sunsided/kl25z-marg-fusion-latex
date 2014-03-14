@@ -1,4 +1,38 @@
-\chapter{Serielle Kommunikation}
+\chapter{Board und Hostinterface}
+
+\todo{Foto vom Board}
+\todo{Foto vom Board mit Logic Analyzer}
+\todo{Screenshot vom Logan}
+\todo{Detail vom Logan}
+
+\begin{figure}[htbp]
+	\begin{tikzpicture}[shorten >=1pt,node distance=4cm,on grid,auto] 
+		 \node[state,initial] (q_0)   {init}; 
+		 \node[state] (q_1) [right=of q_0] {idle}; 
+		 \node[state](q_3) [above=of q_1] {MPU6050};
+		 \node[state](q_4) [right=of q_1] {HMC5883L};
+		 \node[state] (q_2) [above=of q_4] {register};
+		 \node[state,accepting] (q_6) [below=of q_1] {correct};
+		 \node[state,accepting] (q_5) [right=of q_6] {predict};
+		 \node[state,accepting] (q_7) [left=of q_6] {output};
+			\path[->] 
+			(q_0) edge  node {} (q_1)
+			(q_1) edge  node  {IRQ} (q_3)
+						edge  node  {timer} (q_4)
+						edge  node  {registered} (q_5)
+						edge [bend left] node {data} (q_7)
+			(q_3) edge  node {} (q_2) 
+			(q_4) edge  node {} (q_2)
+			(q_2) edge  node {} (q_1)
+			(q_5) edge  node {} (q_6)
+			(q_6) edge  node {} (q_1)
+			(q_7) edge [bend left] node {} (q_1);
+	\end{tikzpicture}
+	\caption[Zustandsdiagramm der Datenverarbeitung]{Zustandsdiagramm der Datenverarbeitung}
+	\label{fig:processing_states}
+\end{figure}
+
+\todo{In Grafik oben "`timer"', da HMC5883L-Breakout keine Interrupt-Leitung besitzt.}
 
 \section{Serielle Übertragung}
 
