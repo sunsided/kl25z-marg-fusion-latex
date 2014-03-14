@@ -31,6 +31,42 @@ Der geringen Preis des Boards von ca. 12 EUR trug letztlich zur Kaufentscheidung
 
 \todo{Konfiguration des ARM-Cores!}
 
+\begin{table}
+\begin{tabularx}{\textwidth}{XllX} 
+\toprule
+	\multicolumn{4}{l}{Konfiguration der ARM Cortex-M0+-Cores}\\  
+\midrule 
+	Parameter & Verilog-Name & Wert & Beschreibung \\ 
+\midrule 
+	Arch Clock Gating  & ACG & 1 = Present & Implements architectural clock gating \\
+	DAP Slave Port Support & AHBSLV & 1 & Support any AHB debug access port (like the CM4 DAP) \\
+	DAP ROM Table Base & BASEADDR & \texttt{0xF000\_2003} & Base address for DAP ROM table \\
+	Endianess & BE & 0 & Little endian control for data transfers \\
+	Breakpoints & BKPT & 2 & Implements 2 breakpoints \\
+	Debug Support & DBG & 1 = Present & \\
+	Halt Event Support & HALTEV & 1 = Present & \\
+	I/O Port & IOP & 1 = Present & Implements single-cycle ld/st accesses to special addr space  \\
+	IRQ Mask Enable & IRQDIS & \texttt{0x00000000} & Assume (for now) all 32 IRQs are used (set if IRQ is disabled) \\
+	Debug Port Protocol & JTAGnSW & 0 = SWD & SWD protocol, not JTAG \\
+	Core Memory Protection & MPU & 0 = Absent & No MPU \\
+	Number of IRQs & NUMIRQ & 32 & Assume full NVIC request vector \\
+	Reset all regs & RAR & 0 = Standard & Do not force all registers to be async reset \\
+	Multiplier & SMUL & 0 = Fast Mul & Implements single-cycle multiplier \\
+	Multi-drop Support & SWMD & 0 = Absent & Do not include serial wire support for multi-drop \\
+	System Tick Timer & SYST & 1 = Present & Implements system tick timer (for CM4 compatibility) \\
+	DAP Target ID & TARGETID & 0 & \\
+	User/Privileged & USER & 1 = Present & Implements processor operating modes \\
+	Vector Table Offset Register & VTOR & 1 = Present & Implements relocation of exception vector table \\
+	WIC Support & WIC & 1 = Present & Implements WIC interface \\
+	WIC Requests & WICLINES & 34 & Exact number of wakeup IRQs is 34 \\
+	Watchpoints & WPT & 2 & Implements 2 watchpoints \\
+\bottomrule
+\end{tabularx}
+\caption[Konfiguration der ARM Cortex-M0+-Cores]{Konfiguration der ARM Cortex-M0+-Cores (\citealp{kl25z_sfrm})}
+\label{tab:core-configuration}
+\end{table}
+
+
 Auf jedem Freescale Freedom-Entwicklungsboard ist weiterhin ein \gls{ocd} verbaut, welcher zusätzlich zum Debugging die 
 Fähigkeit besitzt, die \gls{mcu} zu programmieren. Freescale nennt diese Einheit \gls{OpenSDA} (ganz im Sinne der "`Freedom"'-Benamung der Boards), 
 die zwar entgegen ihres Namens proprietärer Natur ist, jedoch die zusätzliche Beschaffung eines externen Programmers erspart.
