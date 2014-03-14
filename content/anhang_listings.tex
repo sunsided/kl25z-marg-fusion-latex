@@ -1,6 +1,26 @@
 \chapter{Weitere Listings}
 \label{chap:listings}
 
+\begin{lstlisting}[style=lolc,caption={Bit Manipulation Engine: \texttt{XOR}},label=lst:bme-xor]
+/* ueblicher C-Code */
+
+GPIOA_PDOR ^= 0x02; 
+// 0000005E 0x.... LDR R0,??DataTable6_5 ;; 0x400ff000 
+// 00000060 0x6800 LDR R0,[R0, #+0] 
+// 00000062 0x2102 MOVS R1,#+2 
+// 00000064 0x4041 EORS R1,R1,R0 
+// 00000066 0x.... LDR R0,??DataTable6_5 ;; 0x400ff000 
+// 00000068 0x6001 STR R1,[R0, #+0] 
+
+/* Verwendung der BME */
+#define BME_XOR_ADDR(ADDR) (*(volatile uint32_t *)(((uint32_t)ADDR) | (3<<26))) 
+
+BME_XOR_ADDR(&GPIOA_PDOR) = 0x02; 
+// 00000014 0x.... LDR R0,??DataTable6_6 ;; 0x4c0ff000 
+// 00000016 0x2102 MOVS R1,#+2 
+// 00000018 0x6001 STR R1,[R0, #+0] 
+\end{lstlisting}
+
 \begin{lstlisting}[style=lolmatlab,caption={Setup des \gls{p2pp}-Decoders in MATLAB},label=lst:matlab-p2ppdecoder-setup]
 function prepareProtocolDecode
         

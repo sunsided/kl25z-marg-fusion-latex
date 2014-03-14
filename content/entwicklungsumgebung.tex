@@ -4,72 +4,81 @@
 
 \section{Freescale FRDM-KL25Z}
 
-Das \gls{frdm-kl25z} ist ein Evaluationsboard für die \gls{kl25z}-Serie \glspl{mcu} von Freescale, welche auf dem ARM \gls{cortex-m0+}-Core basiert.
-Das Board besitzt neben 54 \glspl{gpio}, einen USB-Controller, eine RGB-LED, einen kapazitiven Touch-Bereich, sowie einen Freescale MMA8451Q accelerometer.
-Der geringen Preis des Boards von ca. 12 EUR trug letztlich zur Kaufentscheidung bei.
+Das \gls{frdm-kl25z} ist ein Evaluationsboard für die \gls{kl25z}-Serie \glspl{mcu} von Freescale, welche auf dem 
+ARM \gls{cortex-m0+}-Core basiert. Alle Controller der Kinetis L-Serie sind für mixed-signal-Anwendungen geeignet und bis 48 MHz taktbar.
+Das Board besitzt neben 54 \glspl{gpio}, einen USB-Controller, eine RGB-LED, einen kapazitiven Touch-Bereich, 
+sowie einen Freescale MMA8451Q-Accelerometer (vgl. Abbildung~\ref{fig:kl25z}); Letzterer wird in Abschnitt~\ref{sec:mma8451q} auf
+Seite~\pageref{sec:mma8451q} noch einmal erweiternd besprochen.
+Nicht zuletzt trug auch der geringen Preis des Boards von ca. 12 EUR zur Kaufentscheidung bei. 
+Freescale bietet ebenfalls ein etwas teureres Board --- das seit 2013 verfügbare FRDM-KL26Z\footnote{\cite{fs_howlong}} --- 
+für den KL26Z (MKL26Z128VLH4) an, welches zusätzlich zu einem Accelerometer einen Gyrosensor 
+(in Form der FXOS87000CQ-\gls{imu}), sowie einen zusätzlichen Lichtsensor bietet. 
+Es ist jedoch zu beachten, dass hierbei 17 \glspl{gpio} auf den Evaluationboard entfallen (\citealp{kl26z_qsg}).
+
+Der \gls{kl25z} ordnet sich im Mittelfeld zwischen den Varianten KL0 (16-48pin, 8-32KB), KL1x (32-80pin, 32-256KB), 
+KL3x (64-121pin, 64-256KB, Segment-LCD) und KL4x (64-121pin, 128-256KB, USB + Segment-LCD) ein. Eine kurze Übersicht der Konfiguration
+des \gls{frdm-kl25z} ist in der folgenden Auflistung\footnote{Dem mbed-Projekt (\url{www.mbed.org}) entnommen.} gegeben.
 
 \begin{itemize}
 	\item Freescale KL25Z Kinetis KL2 MCU (MKL25Z128VLK4)
 	\begin{itemize}
 		\item High performance ARM® Cortex™-M0+ Core
 		\item 48MHz, 16KB RAM, 128KB FLASH
-		\item 2xSPI, 2xI2C, 3xUART, 6xPWM, 6xADC, Touch Sensor, GPIO
+		\item 2xSPI, 2xI2C, 3xUART, 6xPWM, 6xADC, Touchsensor, \gls{gpio}
 	\end{itemize}
-	\item FRDM-KL25Z Onboard peripherals
+	\item FRDM-KL25Z Onboard-Peripherie
 	\begin{itemize}
-		\item MMA8451Q - 3-axis accelerometer
-		\item PWM Controlled RGB LED
-		\item Capacitive touch sensor
+		\item MMA8451Q - 3-Achsen-Accelerometer
+		\item PWM-gesteuerte RGB LED
+		\item Kapazitiver Touchsensor
 	\end{itemize}
-	\item Evalution Form factor
+	\item Board-Formfaktor
 	\begin{itemize}
 		\item 81mm x 53mm
-		\item 5V USB or 4.5-9V supply
-		\item Built-in USB drag 'n' drop FLASH programmer
+		\item 5V USB oder 4.5-9V supply
+		\item Eingebauter USB drag'n'drop FLASH programmer (austauschbar)
 	\end{itemize}
 \end{itemize}
 
-\todo{Konfiguration des ARM-Cores!}
+Die von Freescale verwendete Parametrierung des ARM-Cores kann Tabelle~\ref{tab:core-configuration} entnommen werden. 
+Es ist hierbei hervorzuheben, dass man sich sowohl für einen single-cycle-Multiplier (anstelle des alternativen 32-cycle-Multipliers), 
+als auch für single-cycle-Zugriff auf die \glspl{gpio} (über einen speziellen Addressraum) entschieden hat, was den Chip
+trotz der Ansiedlung am unteren Performanceende der \gls{Cortex}-Varianten für Signalverarbeitungsprobleme interessant macht.
 
 \begin{table}
-\begin{tabularx}{\textwidth}{XllX} 
+\begin{tabularx}{\textwidth}{llX} 
 \toprule
-	\multicolumn{4}{l}{Konfiguration der ARM Cortex-M0+-Cores}\\  
+	\multicolumn{3}{l}{Konfiguration der ARM Cortex-M0+-Cores}\\  
 \midrule 
-	Parameter & Verilog-Name & Wert & Beschreibung \\ 
+	Parameter & Wert & Beschreibung \\ 
 \midrule 
-	Arch Clock Gating  & ACG & 1 = Present & Implements architectural clock gating \\
-	DAP Slave Port Support & AHBSLV & 1 & Support any AHB debug access port (like the CM4 DAP) \\
-	DAP ROM Table Base & BASEADDR & \texttt{0xF000\_2003} & Base address for DAP ROM table \\
-	Endianess & BE & 0 & Little endian control for data transfers \\
-	Breakpoints & BKPT & 2 & Implements 2 breakpoints \\
-	Debug Support & DBG & 1 = Present & \\
-	Halt Event Support & HALTEV & 1 = Present & \\
-	I/O Port & IOP & 1 = Present & Implements single-cycle ld/st accesses to special addr space  \\
-	IRQ Mask Enable & IRQDIS & \texttt{0x00000000} & Assume (for now) all 32 IRQs are used (set if IRQ is disabled) \\
-	Debug Port Protocol & JTAGnSW & 0 = SWD & SWD protocol, not JTAG \\
-	Core Memory Protection & MPU & 0 = Absent & No MPU \\
-	Number of IRQs & NUMIRQ & 32 & Assume full NVIC request vector \\
-	Reset all regs & RAR & 0 = Standard & Do not force all registers to be async reset \\
-	Multiplier & SMUL & 0 = Fast Mul & Implements single-cycle multiplier \\
-	Multi-drop Support & SWMD & 0 = Absent & Do not include serial wire support for multi-drop \\
-	System Tick Timer & SYST & 1 = Present & Implements system tick timer (for CM4 compatibility) \\
-	DAP Target ID & TARGETID & 0 & \\
-	User/Privileged & USER & 1 = Present & Implements processor operating modes \\
-	Vector Table Offset Register & VTOR & 1 = Present & Implements relocation of exception vector table \\
-	WIC Support & WIC & 1 = Present & Implements WIC interface \\
-	WIC Requests & WICLINES & 34 & Exact number of wakeup IRQs is 34 \\
-	Watchpoints & WPT & 2 & Implements 2 watchpoints \\
+	Arch Clock Gating  & 1 = Present & Implements architectural clock gating \\
+	DAP Slave Port Support & 1 & Support any AHB debug access port (like the CM4 DAP) \\
+	DAP ROM Table Base & \texttt{0xF000\_2003} & Base address for DAP ROM table \\
+	Endianess & 0 & Little endian control for data transfers \\
+	Breakpoints & 2 & Implements 2 breakpoints \\
+	Debug Support & 1 = Present & \\
+	Halt Event Support & 1 = Present & \\
+	I/O Port & 1 = Present & Implements single-cycle ld/st accesses to special addr space  \\
+	IRQ Mask Enable & \texttt{0x00000000} & Assume (for now) all 32 IRQs are used (set if IRQ is disabled) \\
+	Debug Port Protocol & 0 = SWD & SWD protocol, not JTAG \\
+	Core Memory Protection & 0 = Absent & No MPU \\
+	Number of IRQs & 32 & Assume full NVIC request vector \\
+	Reset all regs & 0 = Standard & Do not force all registers to be async reset \\
+	Multiplier & 0 = Fast Mul & Implements single-cycle multiplier \\
+	Multi-drop Support & 0 = Absent & Do not include serial wire support for multi-drop \\
+	System Tick Timer & 1 = Present & Implements system tick timer (for CM4 compatibility) \\
+	DAP Target ID & 0 & \\
+	User/Privileged & 1 = Present & Implements processor operating modes \\
+	Vector Table Offset Register & 1 = Present & Implements relocation of exception vector table \\
+	WIC Support & 1 = Present & Implements WIC interface \\
+	WIC Requests & 34 & Exact number of wakeup IRQs is 34 \\
+	Watchpoints & 2 & Implements 2 watchpoints \\
 \bottomrule
 \end{tabularx}
 \caption[Konfiguration der ARM Cortex-M0+-Cores]{Konfiguration der ARM Cortex-M0+-Cores (\citealp{kl25z_sfrm})}
 \label{tab:core-configuration}
 \end{table}
-
-
-Auf jedem Freescale Freedom-Entwicklungsboard ist weiterhin ein \gls{ocd} verbaut, welcher zusätzlich zum Debugging die 
-Fähigkeit besitzt, die \gls{mcu} zu programmieren. Freescale nennt diese Einheit \gls{OpenSDA} (ganz im Sinne der "`Freedom"'-Benamung der Boards), 
-die zwar entgegen ihres Namens proprietärer Natur ist, jedoch die zusätzliche Beschaffung eines externen Programmers erspart.
 
 \begin{figure}[htbp]
 	\centering
@@ -89,9 +98,31 @@ die zwar entgegen ihres Namens proprietärer Natur ist, jedoch die zusätzliche 
 	\label{fig:kl25z}
 \end{figure}
 
-\todo{Eingehen auf die BME, Stichwort Bit-Banging}
+
+Auf jedem Freescale Freedom-Entwicklungsboard ist ein \gls{ocd} verbaut, welcher zusätzlich zum Debugging die 
+Fähigkeit besitzt, die \gls{mcu} zu programmieren. Freescale nennt diese Einheit \gls{OpenSDA} 
+(ganz im Sinne der "`Freedom"'-Benamung der Boards), die zwar entgegen ihres Namens proprietärer Natur ist, jedoch die 
+zusätzliche Beschaffung eines externen Programmers erspart. 
+Auf diesen wird in Abschnitt~\label{sec:opensda} noch einmal eingegangen.
+
+Der \gls{kl25z} bietet zusätzlich zum single-cycle-I/O eine \gls{bme} genannte Einheit (\citealp{fs_howlong}), welche eine Variation 
+des sog. \glslink{bit banding}{bit-bandings} (Abbildung~\ref{fig:bit-banding}) darstellt, wie sie in den \gls{Cortex}-M3 und -M4-Cores zur Verfügung steht.
+Diese ermöglicht es, in nur einem Taktzyklus Operationen wie Setzen, Löschen und Invertieren (\texttt{AND}, \texttt{OR}, \texttt{XOR}, \gls{bfi}) 
+auf einzelnen oder mehreren Bits einer Speicheradresse,
+sowie atomares Beziehen und Setzen (\gls{lac}, \gls{las}, \gls{ubfx}) durchzuführen. Da hierbei die sonst notwendigen
+fetch-Instruktionen entfallen, werden diese Befehle --- je nach Art --- in etwa der halben der sonst notwendigen Zeit (bzw. Instruktionszahl) ausgeführt. 
+Ein Beispiel zur Verwendung der \gls{bme} kann in Listing~\ref{lst:bme-xor} gefunden werden.
+
+
+\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=0.8\textwidth]{./images/bit_banding.png}
+    \caption[Bit-Banding]{Bit-Banding im \gls{Cortex}-M3\\Quelle: ARM}
+    \label{fig:bit-banding}
+\end{figure}
 
 \section{Freescale OpenSDA}
+\label{sec:opensda}
 
 Der \gls{OpenSDA}-Chip auf dem  kommuniziert dabei mit der im \gls{Cortex}-Kern integrierten \gls{CoreSight}-Einheit über das \gls{JTAG}-Protokoll.
 Der Chip selbst kann dabei mit einer alternativen Firmware geflasht werden (vgl. Abb. \ref{fig:opensda-block}), welche eine spezialisierte 
@@ -100,8 +131,7 @@ Der Chip selbst kann dabei mit einer alternativen Firmware geflasht werden (vgl.
 \begin{figure}[htbp]
 		\centering
 		\includegraphics{./images/opensda-block-diagram.png}
-    \caption[OpenSDA-Blockdiagramm]{OpenSDA-Blockdiagramm}
-		Quelle: \texttt{http://mcuoneclipse.com}
+    \caption[OpenSDA-Blockdiagramm]{OpenSDA-Blockdiagramm\\Quelle: \texttt{http://mcuoneclipse.com}}
     \label{fig:opensda-block}
 \end{figure}
 
