@@ -154,6 +154,15 @@ Im Gegensatz zur MPU6000 verzichtet die MPU6050 auf den bis zu 20 MHz schnellen 
 beschränkt\footnote{Dies entspricht dem sog. "`Fast Mode \gls{i2c}"', welcher bis 400 kbit/s spezifiziert ist.}; Stattdessen ist der Logiklevel über einen \texttt{VLOGIC}-Pin frei wählbar. 
 Diese vergleichsweise geringe Geschwindigkeit ist jedoch ausreichend, um den Sensor selbst bei voller Samplingrate auszulesen.
 
+\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=0.5\textwidth]{./images/mpu6050-gyro-accelerometer.jpg}
+		\caption[MPU6050 Breakout Board]{Verwendetes MPU6050 Breakout Board\\Quelle: Drotek}
+		\label{fig:mpu6050-breakout}
+\end{figure}
+
+Für die Entwicklung verwendet wurde ein Breakout-Board von Drotek (Abbildung~\ref{fig:mpu6050-breakout}), welches neben einem $5\volt$-Eingang, sowie der \gls{i2c}-Schnittstelle (auf dem Bild zu erkennen sind die Pins für den Slave-\gls{i2c}-Bus der \gls{imu}) einen $3.3\volt$-Ausgang, sowie einen Interrupt-Ausgang (\texttt{DRDY}) besitzt, welcher das Vorliegen neuer Messwerte signalisiert.
+
 \subsection{Treiber}
 
 Die Registerstruktur der MPU6050 ist bei weitem die komplexeste der verwendeten Sensoren, sie kann in Listing~\ref{lst:mpu6050-registers} gefunden werden, der verwendete Initialisierungcode dagegen in Listing~\ref{lst:mpu6050-registers}. Insbesondere soll dort auf Zeile~\ref{lstline:mpu6050_osc} hingewiesen werden, auf die im Abschnitt~\ref{subsec:mpu6050_lessonslearned} gesondert eingegangen wird.
@@ -364,9 +373,9 @@ fehlerhaften Zustand erneut herbei und konnte dann ebenso durch einen Reset aufg
 		\label{fig:logan-frenzy}
 \end{figure}
 
-Dieses Problem war erst dadurch zu beheben, dass zu Beginn der Konfiguration der \gls{imu} die interne Takteinheit vom Gyro-\gls{pll}-Modus in den Oszillatormodus geschaltet wurde, um sie dann im Zuge der folgenden 
-Konfiguration erneut auf den gewünschten Betriebsmodus zu stellen (vgl. dazu Listing~\ref{lst:mpu6050-registers}, Zeile~\ref{lstline:mpu6050_osc}). Das korrekte Verhalten kann in 
-Abbildung~\ref{fig:logan-full} gesehen werden.
+Dieses Problem war erst dadurch zu beheben, dass zu Beginn der Konfiguration der \gls{imu} die interne Takteinheit vom Gyro-\gls{pll}-Modus in den Oszillatormodus geschaltet wurde, 
+um sie dann im Zuge der folgenden Konfiguration erneut auf den gewünschten Betriebsmodus zu stellen (vgl. dazu Listing~\ref{lst:mpu6050-registers}, 
+Zeile~\ref{lstline:mpu6050_osc}). Das korrekte Verhalten kann in Abbildung~\ref{fig:logan-full} gesehen werden.
 
 
 
@@ -381,6 +390,17 @@ Abbildung~\ref{fig:logan-full} gesehen werden.
 Der HMC5883L von Honeywell liefert bei einer Auflösung von 12 Bit (inkl. Vorzeichen) Messwerte in einem Bereich von bis zu $\pm$8 Gauss, wodurch er für den Einsatz in Präsenz starker 
 lokaler Magnetfelder geeignet ist. Er arbeitet mit einer maximalen Samplingrate von 160 Hz und kann mit maximal 400 kHz über den \gls{i2c}-Bus ausgelesen 
 werden\footnote{Dies entspricht dem sog. "`Fast Mode \gls{i2c}"'', welcher bis 400 kbit/s spezifiziert ist.}.
+
+\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=0.65\textwidth]{./images/hmc5883l-magnetometer-compass-sensor.jpg}
+		\caption[HMC5883L Breakout Board]{Verwendetes HMC5883L Breakout Board\\Quelle: Drotek}
+		\label{fig:hmc5883l-breakout}
+\end{figure}
+
+Wie die MPU6050 besitzt auch der HMC5883L eine Interrupt-Leitung für das Vorliegen neuer Messwerte (\texttt{DRDY}). Das verwendete Breakout-Board von Drotek (Abbildung~\ref{fig:hmc5883l-breakout}) 
+führt diesen Pin jedoch nicht heraus, weswegen auf periodisches Pollen des Sensors ausgewichen werden musste. Hierzu wurde auf die Funktionalität des \gls{systick}-Interrupt 
+des ARM-Cores zurückgegriffen.
 
 \subsection{Treiber}
 

@@ -214,3 +214,5 @@ void fusion_update(register const fix16_t deltaT)
 
 Die Implementierung von \texttt{fusion\_update\_orientation()} ist dabei in Listing~\ref{lst:magnetometer_correct} zu finden, die zugehörige Hilfsfunktion \texttt{magnetometer\_project()}
 ergänzend in Listing~\ref{lst:magnetometer_project}.
+
+Zu erkennen ist, dass die Fusionsfunktionen eine Differenzzeit $\Delta t$ (\texttt{deltaT}) benötigen. Die hierfür notwendige Zeitmessung wurde über den \gls{systick}-Timer realisiert.
