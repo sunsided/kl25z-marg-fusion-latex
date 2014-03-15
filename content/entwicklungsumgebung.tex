@@ -113,6 +113,18 @@ sowie atomares Beziehen und Setzen (\gls{lac}, \gls{las}, \gls{ubfx}) durchzufü
 fetch-Instruktionen entfallen, werden diese Befehle --- je nach Art --- in etwa der halben der sonst notwendigen Zeit (bzw. Instruktionszahl) ausgeführt. 
 Ein Beispiel zur Verwendung der \gls{bme} kann in Listing~\ref{lst:bme-xor} gefunden werden.
 
+Entsprechend dem \gls{cmsis} stellt Freescale Treiber zur Verfügung, welche Teile dieser Funktionalitäten in Form der sog. Fast-Port-Register (IOPORT-Register des Cores) 
+zur Verfügung stellen. In Listing~\ref{lst:bme-set-clear} kann das Setzen und Löschen der Pins BTB8 und PTB9 nachvollzogen werden.
+
+\begin{lstlisting}[style=lolc,caption={Bit Manipulation Engine: Set und Clear mittels \gls{cmsis}-Treiber},label=lst:bme-set-clear]
+/* regulaerer GPIO (mittels BME) */
+PTB_BASE_PTR->PSOR  = 1 << 8; /*   set output register pin 8 */
+PTB_BASE_PTR->PCOR  = 1 << 9; /* clear output register pin 9 */
+
+/* Fast-GPIO (mittels BME) */
+FPTB_BASE_PTR->PSOR = 1 << 8; /*   set output register pin 8 */
+FPTB_BASE_PTR->PCOR = 1 << 9; /* clear output register pin 9 */
+\end{lstlisting}
 
 \begin{figure}[htbp]
 		\centering
@@ -146,7 +158,7 @@ Eine Gegenüberstellung der alternativen SDA-Firmwares ohne Anspruch auf Vollst�
 \begin{table}
 \begin{tabular}{lllll} 
 \toprule
-Gegenüberstellung von OpenSDA-Firmwares\\  
+\multicolumn{5}{l}{Gegenüberstellung von OpenSDA-Firmwares}\\  
 \midrule 
 Name & Art & Breakpoints & UART & MSD \\ 
 \midrule 
@@ -217,7 +229,10 @@ Eine Hürde bei der C-Entwicklung mit Visual Studio kann dabei der msvc-Compiler
 nicht\footnote{Siehe http://herbsutter.com/2012/05/03/reader-qa-what-about-vc-and-c99/} unterstützt. Einen Workaround dafür stellt die Kompilierung im 
 C++-Modus dar. Dies ist jedoch nur bei der Prototypen-Entwicklung (ohne VisualGDB) ein Ärgernis, da zur Compilierung für das Embedded-Target der arm-gcc-Compiler 
 verwendet wird. Dieser lag zum Zeitpunkt der Entwicklung in der Version 4.8.2 vor, wodurch die Verwendung von C++11-Features möglich wäre; Hierauf wurde 
-während der Entwicklung jedoch verzichtet.
+während der Entwicklung jedoch verzichtet. Ferner muss man sich an den Verzicht einiger IntelliSense-Funktionen gewöhnen, da dieses die gcc-spezifischen
+(und C99-spezifischen) Befehle nicht erkennt und in der Folge (ungültige) Fehler listet.
+
+Ein Tutorial zur Nutzung von VisualGDB mit dem FRDM-KL25Z findet sich unter \url{http://visualgdb.com/tutorials/arm/kinetis/kl25z-rgb-led/}.
 
 \begin{figure}[htbp]
 		\centering
