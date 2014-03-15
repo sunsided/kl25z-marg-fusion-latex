@@ -349,7 +349,7 @@ Eine Übersicht der unkalibrierten und kalibrierten Sensordaten ist in Abbildung
 \label{subsec:mpu6050_lessonslearned}
 
 Bei der Kommunikation mit der MPU6050 trat das Problem auf, dass bei aktiviertem Interrupt-Signal und reduzierter Samplingrate nach einem Kaltstart keinerlei nennenswerte 
-Verzögerung (d.h. nur wenige Millisekunden \todo{Verifizieren}) zwischen aufeinander folgenden Interruptsignalen festzustellen war. 
+Verzögerung (d.h. nur im Mikrosekundenbereich) zwischen aufeinander folgenden Interruptsignalen festzustellen war vgl. Abbildung~\ref{fig:logan-frenzy}). 
 Dies führte zu der Problematik, dass die durch den Interrupt-Handler freigeschaltete Routine zum Beziehen der Sensordaten über \gls{i2c} und die anschließende Verarbeitung 
 direkt durch einen erneuten Interrupt unterbrochen wurde. Da die serielle Ausgabe der Werte über die \gls{uart}-Schnittstelle nur mit deutlich geringerer Taktung laufen
 kann\footnote{Bis zu 230.4 kbaud konnten umgesetzt werden}, führte dies zu einem Engpass am vorgeschalteten Ausgabepuffer, wodurch die Verarbeitung deutlich blockiert wurde.
@@ -357,12 +357,16 @@ kann\footnote{Bis zu 230.4 kbaud konnten umgesetzt werden}, führte dies zu eine
 Wurde das System anschließend jedoch durch einen Reset (d.h. einen Warmstart) neu initialisiert, verlief die Kommunikation wie gewünscht. Ein weiterer Kaltstart führte den
 fehlerhaften Zustand erneut herbei und konnte dann ebenso durch einen Reset aufgelöst werden.
 
-\todo{Bild mit Freifeuer vom Logan}
+\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=0.8\textwidth]{./images/logan-freifeuer.png}
+		\caption[Fehlerhaftes IRQ-Signal in der MPU6050]{Fehlerhaftes Data Ready-Signal in der MPU6050 (vgl. Abbildung~\ref{fig:logan-full}). Pfeil: $3.07 \milli\second$, Interrupt-Pulsbreiten: $12.125 \micro\second$ ($82 \kilo\hertz$) bis $0.1 \milli\second$ ($10 \kilo\hertz$).}
+		\label{fig:logan-frenzy}
+\end{figure}
 
 Dieses Problem war erst dadurch zu beheben, dass zu Beginn der Konfiguration der \gls{imu} die interne Takteinheit vom PLL-Modus in den Oszillatormodus geschaltet wurde, um sie dann im Zuge der folgenden 
-Konfiguration erneut auf den gewünschten Betriebsmodus zu stellen (vgl. dazu Listing~\ref{lst:mpu6050-registers}, Zeile~\ref{lstline:mpu6050_osc}).
-
-\todo{Bild ohne Freifeuer vom Logan}
+Konfiguration erneut auf den gewünschten Betriebsmodus zu stellen (vgl. dazu Listing~\ref{lst:mpu6050-registers}, Zeile~\ref{lstline:mpu6050_osc}). Das korrekte Verhalten kann in 
+Abbildung~\ref{fig:logan-full} gesehen werden.
 
 
 

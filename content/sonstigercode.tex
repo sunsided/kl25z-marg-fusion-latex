@@ -27,8 +27,28 @@
 	\label{fig:fused-csharp}
 \end{figure}
 
-\todo{Screenshot vom Logan}
-\todo{Detail vom Logan}
+
+\begin{figure}[htbp]
+		\centering
+			\begin{subfigure}[b]{\textwidth}
+			\centering
+			\includegraphics[width=0.8\textwidth]{./images/logan-full-sample.png}
+			\caption{Übersicht der Kommunikation. Zu erkennen bei $1466$, $1479$ und $1495$ ms ist die timergesteuerte Abfrage an den HMC5883L. Deutlich ersichtlich bei $1467$ ms auch die adaptive Länge des Filter-Korrekturschrittes.}
+			\label{fig:logan-full}
+		\end{subfigure}
+
+	\begin{subfigure}[b]{\textwidth}
+			\centering
+			\includegraphics[width=0.8\textwidth]{./images/logan-irq-scl-sda-tx.png}
+			\caption{Detail der Kommunikation. Rot und orange: \gls{i2c}-Transfer zur MPU6050. Der Lesezugriff auf Register \texttt{0x3A} löscht den IRQ (Data Ready). Gelb: Serielle Übertragung im Modus \emph{44} (\texttt{0x2C} --- vgl. Seite~\pageref{subsubsec:quat-and-rpy})}
+			\label{fig:logan-detail}
+	\end{subfigure}
+	
+	\caption[Mitschnitt der Kommunikation durch den Logic Analyzer]{Mitschnitt der Kommunikation durch den Logic Analyzer.\\Lila (7): Data Ready-Signal von der MPU6050 (low-aktiv). Rot (2) und orange (3): \gls{i2c}-Transfer zu MPU6050 und HMC5883L. Schwarz (0) und braun (1): Prädiktions- und Korrekturphase des Filters. Gelb (4): UART-Sendetransfer mit 115200 baud.}
+\end{figure}
+
+
+
 
 \begin{figure}[htbp]
 	\begin{tikzpicture}[shorten >=1pt,node distance=4cm,on grid,auto] 
