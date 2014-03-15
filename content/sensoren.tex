@@ -11,12 +11,25 @@ verfügen darüberhinaus über Interrupt-Leitungen, welche das Vorliegen neuer M
 \end{figure}
 
 
-\section{MMA8451Q - Accelerometer}
+\section{MMA8451Q -- Accelerometer}
 \label{sec:mma8451q}
 
 Der Freescale MMA8451Q ist der auf dem Freedom-Board verbaute Beschleunigungssensor. Er bietet eine Auflösung von 8 oder 14 Bit (inklusive Vorzeichen) bei einer maximalen 
 Samplingrate von 800 Hz (\citealp{mma8451q}) und kann mit bis zu 2.25 MHz Taktung über den \gls{i2c}-Bus 
 ausgelesen werden\footnote{Dies entspricht dem sog. "`High Speed Mode \gls{i2c}"', welcher bis 3,4 Mbit/s spezifiziert ist.}.
+
+Zum Test der Interaktion mit dem Sensor wurde ein MATLAB-Skript zur Darstellung des Accelerometer-Vektors und eines virtuellen Horizontes geschrieben.
+Eine Ausgabe des Ergebnisses kann Abbildung~\ref{fig:matlab-video-virthorz} gefunden werden. Der MATLAB-Code zur Darstellung findet sich in Listing~\ref{lst:matlab-virthorz},
+die dazu verwendete Funktion zur Berechnung von Roll- und Pitch-Winkeln in Listing~\ref{lst:matlab-rollpitch}.
+
+Auf den hierbei verwendeten Übertragungsmechanismus wird in Kapitel~\ref{sec:serial_transmission} auf den Seiten~\pageref{subsubsec:firware_to_host}\,ff und~\pageref{subsec:p2pp_decoder}\,ff näher eingegangen.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{./images/matlab-initial-test-video-virthorz.jpg}
+	\caption{Virtueller Horizont mittels MMA8451Q in MATLAB}
+	\label{fig:matlab-video-virthorz}
+\end{figure}
 
 \subsection{Treiber}
 
@@ -124,7 +137,7 @@ Da der Sensor im weiteren Verlauf des Projektes nicht mehr verwendet wurde, soll
 
 
 
-\section{MPU6050 - Accelerometer, Gyro- und Temperatursensor}
+\section{MPU6050 -- Accelerometer, Gyro- und Temperatursensor}
 \label{sec:mpu6050}
 
 Die Invensense MPU6050 ist eine \gls{imu}, die einen 16 Bit genauen Beschleunigungs- und Drehratensensor mit einem Temperatursensor vereinigt (\citealp{mpu6050}). 
@@ -259,9 +272,9 @@ MPU6050_StoreConfiguration(configuration);
 \end{lstlisting}
 
 \subsection{Kalibrierung}
-\label{subsec:mma8451q_kalibrierung}
+\label{subsec:mpu6050_kalibrierung}
 
-Der Accelerometer der MPU6050 wurde wie in Abschnitt~\ref{subsec:mma8451q_kalibrierung} beschrieben durchgeführt. Die Kalibrierung des Gyrosensors erfolgte durch Auswertung
+Die Kalibrierung des Accelerometers der MPU6050 wurde wie in Abschnitt~\ref{subsec:mma8451q_kalibrierung} beschrieben durchgeführt. Die Kalibrierung des Gyrosensors erfolgte durch Auswertung
 der in Ruhelage gewonnenen Messwerte mittels einer linearen Regression, wobei die Arbeitstemperatur des Sensors als konstant und identisch zur Kalibrierungstemperatur angenommen wurde.
 Da die lineare Regression sowohl Anstieg, als auch Verschiebung der Regressionsgerade liefert, sind damit Offset und Drift (in Form einer Winkelbeschleunigung) bekannt.
 Nach erfolgter Regressionsbereinigung wurden die Messwertvarianzen ermittelt.
@@ -359,7 +372,7 @@ Konfiguration erneut auf den gewünschten Betriebsmodus zu stellen (vgl. dazu Li
 
 
 
-\section{HMC5883L - Magnetometer}
+\section{HMC5883L -- Magnetometer}
 
 Der HMC5883L von Honeywell liefert bei einer Auflösung von 12 Bit (inkl. Vorzeichen) Messwerte in einem Bereich von bis zu $\pm$8 Gauss, wodurch er für den Einsatz in Präsenz starker 
 lokaler Magnetfelder geeignet ist. Er arbeitet mit einer maximalen Samplingrate von 160 Hz und kann mit maximal 400 kHz über den \gls{i2c}-Bus ausgelesen 

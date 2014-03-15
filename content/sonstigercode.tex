@@ -20,6 +20,13 @@
 	\caption{Entwickelter Prototyp}
 \end{figure}
 
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.8\textwidth]{./images/fused-csharp-video.jpg}
+	\caption[Fusionierte Ausgabe mittels OpenGL]{Fusionierte Ausgabe mittels OpenGL mit aktiviertem Modus \emph{44} "`Quaternion und Roll-Pitch-Yaw"' (vgl. Seite~\pageref{subsubsec:quat-and-rpy}).}
+	\label{fig:fused-csharp}
+\end{figure}
+
 \todo{Screenshot vom Logan}
 \todo{Detail vom Logan}
 
@@ -53,6 +60,7 @@
 \todo{In Grafik oben "`timer"', da HMC5883L-Breakout keine Interrupt-Leitung besitzt.}
 
 \section{Serielle Übertragung}
+\label{sec:serial_transmission}
 
 \subsection{Streamingmodi}
 \label{subsec:streamingmodi}
@@ -99,6 +107,7 @@ Orientierungs-Quaternion übertragen, wobei die Komponenten im \gls{q16}-Format 
 Der zur Generierung des Quaternions verwendete Code kann in Listing~\ref{lst:quaternion_from_kalman} gefunden werden.
 
 \subsubsection{Orientierungs-Quaternion und Roll-Pitch-Yaw (Modus 44)}
+\label{subsubsec:quat-and-rpy}
 
 Dieser Modus (Prefix \emph{44\textsubscript{dec}}) ist eine Kombination aus den Modi 42 und 43 und kann verwendet werden, um die eigenständige Berechnung der \textsc{Euler}'schen Winkel
 auf dem Hostrechner zu ersparen.
@@ -119,6 +128,7 @@ Da die Firmware keine komplexen Befehle, sondern lediglich Moduswechsel kennt, b
 Diese Modi sind in Abschnitt~\ref{subsec:streamingmodi} (ab Seite~\pageref{subsec:streamingmodi}) definiert. Der vom Host zu sendende Wert entspricht dabei dem jeweiligen Prefix.
 
 \subsubsection{Übertragung Firmware zu Host}
+\label{subsubsec:firware_to_host}
 
 Hinsichtlich der seriellen Übertragung von der Firmware an den Hostrechner per \gls{uart} wurde ein Kommunikationsprotokoll (genannt \gls{p2pp}) entworfen,
 um die Nachsynchronisierbarkeit der Daten zu gewährleisten.
