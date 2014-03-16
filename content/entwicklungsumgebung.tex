@@ -177,7 +177,7 @@ Der Chip selbst kann dabei mit einer alternativen Firmware geflasht werden (vgl.
 \begin{figure}[htbp]
 		\centering
 		\includegraphics{./images/opensda-block-diagram.png}
-    \caption[OpenSDA-Blockdiagramm]{OpenSDA-Blockdiagramm\\Quelle: \texttt{http://mcuoneclipse.com}}
+    \caption[OpenSDA-Blockdiagramm]{OpenSDA-Blockdiagramm\\Quelle: \url{http://mcuoneclipse.com}}
     \label{fig:opensda-block}
 \end{figure}
 
@@ -252,7 +252,7 @@ auf Logiklevel, sowie Flanken ist dabei möglich.
 \begin{figure}[htbp]
 		\centering
 		\includegraphics[width=0.6\textwidth]{./images/saleae-logic.jpg}
-    \caption[Saleae logic]{Saleae logic\\Quelle: \url{play-zone.ch}}
+    \caption[Saleae logic]{Saleae logic\\Quelle: \url{http://play-zone.ch}}
     \label{fig:logan-bild}
 \end{figure}
 
@@ -266,13 +266,36 @@ existieren. Anleitungen hierzu finden sich im Netz\footnote{Etwa unter \url{http
 
 
 \section{Integrierte Entwicklungsumgebungen}
+Einige IDEs --- u.a. Keil MDK, CooCox CoIDE, IAR Embedded Workbench --- wurden zur Benutzung mit dem \gls{frdm-kl25z} ausprobiert, jedoch aus verschiedenen Gründen für nicht hilfreich befunden.
+Zwei der Verwendeten IDEs --- Freescale CodeWarrior und Microsoft Visual Studio --- werden im folgenden kurz beschrieben.
 
 \subsection{Freescale CodeWarrior}
 \label{subsec:codewarrior}
 
-\todo{Erwähnung von Processor Expert}
+Die CodeWarrior Development Studio ist eine von Freescale vertriebene, kommerzielle, Eclipse-basierte IDE zur Entwicklung von Firmware für Freescale-Controller (Abbildung~\ref{fig:codewarrior}).
+Sie ist in der Variante der "`Special Edition"' bei einer Codegrößenbeschränkung von 64KiB (bei Verwendung von Chips der Kinetis-L-Serie) kostenlos verwendbar.
+Ein Anheben der Codegröße auf maximal 128KiB (entspricht der Flash-Größe des \gls{kl25z}) erzwingt den Erwerb einer jährlich fälligen Lizenzgebühr um ca. \$400 (Stand: 2014).
+Ein Debugger ist integriert, setzt jedoch die Verwendung eines spezifischen Programmers oder der P\&Emicro-Firmware für OpenSDA voraus (vgl. Abschnitt~\ref{sec:opensda}). Die Verwendung
+von Breakpoints ist dabei auf die Anzahl der Hardware-Breakpoints des Cores limitiert.
 
-\lipsum[3]
+\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=0.8\textwidth]{./images/codewarrior.png}
+    \caption[CodeWarrior Development Studio]{CodeWarrior Development Studio}
+    \label{fig:codewarrior}
+\end{figure}
+
+
+Integriert in die IDE ist Freescales \gls{Processor Expert}, ein Konfigurationstool und Treibergenerator für die Peripherie der Freescale-Controller (Abbildung~\ref{fig:processorexpert}). 
+Anleitungen zum \gls{bare metal}-Betrieb der Controller sind spärlich gesät\footnote{Die von Freescale gelieferten Quick Start-Packages scheinen für alle IDEs CodeWarrior ausgelegt zu sein --- 
+ihre Verwendung ist mehr als umständlich.}, als ein guter Anlaufpunkt für Anleitungen im Allgemeinen stellte sich die Seite \url{http://mcuoneclipse.com/} heraus.
+
+\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=0.5\textwidth]{./images/generate-processor-expert-code.png}
+    \caption[Processor Expert in CodeWarrior]{Processor Expert in CodeWarrior. Code-Generator und definierte Peripherie.\\Quelle: \url{http://mcuoneclipse.com}}
+    \label{fig:processorexpert}
+\end{figure}
 
 \subsection{Microsoft Visual Studio mit SysProgs VisualGDB}
 
