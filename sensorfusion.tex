@@ -36,13 +36,13 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 \usepackage[ngerman]{babel}
 \usepackage{lmodern}
 
-%\PrerenderUnicode{ü}
-%\PrerenderUnicode{Ü}
-%\PrerenderUnicode{ä}
-%\PrerenderUnicode{Ä}
-%\PrerenderUnicode{ö}
-%\PrerenderUnicode{Ö}
-%\PrerenderUnicode{ß}
+\PrerenderUnicode{ü}
+\PrerenderUnicode{Ü}
+\PrerenderUnicode{ä}
+\PrerenderUnicode{Ä}
+\PrerenderUnicode{ö}
+\PrerenderUnicode{Ö}
+\PrerenderUnicode{ß}
 
 %% Falls die automatische Worttrennung in Wörtern mit Umlauten
 %% nicht funktionieren sollte oder der Text pixelig aussieht:
@@ -260,12 +260,27 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 \input{./content/einleitung.tex}
 
 \mainmatter						% Hauptteil
+
+%\setpartpreamble[u, r][6cm]{Dies ist ein Beispiel für eine Part-Präambel.}
+%\part[]{Hardware und Entwicklungsumgebung}
+
 \input{./content/entwicklungsumgebung.tex}
-\input{./content/sensoren.tex}
+
+%\setpartpreamble[u, r][6cm]{Dies ist ein Beispiel für eine Part-Präambel.}
+%\part[]{Implementierung}
+
 \input{./content/sonstigercode.tex}
+\input{./content/sensoren.tex}
+
+%\setchapterpreamble[u]{%
+%\dictum[Luhmann]{Die Klassiker sind Klassiker, weil sie Klassiker sind \dots}}
+%\part[]{Sensorfusion}
+
 \input{./content/algorithmus.tex}
 
 \appendix							% Beginn des Anhangs
+
+%\part[]{Anhang}
 
 \begin{appendices}
 \input{./content/anhang_bilder.tex}
