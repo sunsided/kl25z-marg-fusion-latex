@@ -69,6 +69,24 @@ nicht weiter eingegangen.
 	\label{fig:prototype}
 \end{figure}
 
+\subsection{Lessons Learned}
+\label{subsec:verarbeitung_lessonslearned}
+
+Wie in Abbildung~\ref{fig:codewarrior} bereits zu erkennen, war es notwendig, den Interrupt Handler der UART gesondert zu behandeln. Dieser überprüft, ob Sende- und Empfangsregister
+leer respektive voll sind und leitet dann entsprechende Aktionen auf dem Sende- und Empfangspuffer ein. Wann immer jedoch für den Compiler eine Optimierungsstufe größer als 
+\texttt{-O0} ("`keine Optimierung"') verwendet wurde, wurde das Timing der Operation so verändert, dass nach ausgelöstem \texttt{RDRF}-Interrupt (Receive Data Register Full, d.h. ein Datenempfang
+hat stattgefunden) das Empfangsregister \emph{leer} war. Ein Test mit einem längerem Datenstrom zeigte, dass nur das zweite Byte ders Stroms korrekt empfangen wurde.
+Dieses Problem war erst dadurch zu beheben, dass der (eigentlich zeitkritische) Interrupt-Handler von der Optimierung ausgenommen wurde.
+
+Dies wurde durch das Anbringen des gcc-spezifischen Attributs \texttt{optimize} erreicht, wie es in Listing~\ref{lst:unoptimized-irq} verdeutlicht ist.
+
+\begin{lstlisting}[style=lolc,caption={Deaktivieren der Optimierung für eine Interruptroutine},label=lst:unoptimized-irq]
+__attribute__((optimize("-O0")))
+void UART0_Handler()
+{
+	/* ... snip ... */
+}
+\end{lstlisting}
 
 \section{Serielle Übertragung}
 \label{sec:serial_transmission}
