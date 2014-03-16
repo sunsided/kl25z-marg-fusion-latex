@@ -78,6 +78,8 @@ typedef struct {
 } mma8451q_confreg_t;
 \end{lstlisting}
 
+\todo{Initialisierungscode}
+
 \begin{lstlisting}[style=lolc,caption={Initialisierungscode MMA8451Q},label=lst:mma8451q-init]
 /* Referenz auf statischen shared buffer */
 mpu6050_confreg_t *configuration = &config_buffer.mma8451q_configuration;
@@ -232,6 +234,8 @@ typedef struct __attribute__ ((__packed__))
 	const uint8_t WHO_AM_I; 	/* Identifikation */
 } mpu6050_confreg_t;
 \end{lstlisting}
+
+\todo{Initialisierungscode}
 
 \begin{lstlisting}[style=lolc,caption={Initialisierungscode MPU6050},label=lst:mpu6050-init]
 /* Referenz auf statischen shared buffer */
@@ -416,6 +420,7 @@ typedef struct {
 \end{lstlisting}
 
 Entsprechend überschaubar ist auch die Initialisierungsroutine (Listing~\ref{lst:hmc5883l-init}).
+\todo{Initialisierungscode}
 
 \begin{lstlisting}[style=lolc,caption={Initialisierungscode HMC5883L},label=lst:hmc5883l-init]
 /* Referenz auf statischen shared buffer */

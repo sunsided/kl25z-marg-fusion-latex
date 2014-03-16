@@ -217,3 +217,20 @@ Die Implementierung von \texttt{fusion\_update\_orientation()} ist dabei in List
 ergänzend in Listing~\ref{lst:magnetometer_project}.
 
 Zu erkennen ist, dass die Fusionsfunktionen eine Differenzzeit $\Delta t$ (\texttt{deltaT}) benötigen. Die hierfür notwendige Zeitmessung wurde über den \gls{systick}-Timer realisiert.
+
+
+\section{Test der Fusion}
+\label{sec:test_fusion}
+
+Um die korrekte Funktionsweise der Fusion zu überprüfen, wurde in C\# unter Zuhilfenahme von OpenGL eine Anwendung geschrieben, welche das in Abschnitt~\ref{sec:serial_transmission} beschriebene
+Übertragungsprotokoll implementiert (vgl. Decoder in Listing~\ref{lst:csharp-p2ppdecoder}) und die fusionierten bzw. unfusionierten Ergebnisse darstellt. Ein Foto eines Testlaufes ist
+in Abbildung~\ref{fig:fused-csharp} zu sehen\footnote{Ein Video des Testlaufes kann unter \url{http://youtu.be/tmC5kjQn-uA} gefunden werden.}.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.8\textwidth]{./images/fused-csharp-video.jpg}
+	\caption[Fusionierte Ausgabe mittels OpenGL]{Fusionierte Ausgabe mittels OpenGL mit aktiviertem Modus \emph{44} "`Quaternion und Roll-Pitch-Yaw"' (vgl. Seite~\pageref{subsubsec:quat-and-rpy}).}
+	\label{fig:fused-csharp}
+\end{figure}
+
+Auf die Implementierungsdetails der Testanwendung (OpenGL-Koordinaten\-trans\-formation, etc.) soll jedoch nicht weiter eingegangen werden, da es bei dieser nur um einen Nebenschauplatz der Entwicklung handelte.
