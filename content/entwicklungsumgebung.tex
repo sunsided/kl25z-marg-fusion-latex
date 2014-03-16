@@ -131,13 +131,6 @@ FPTB_BASE_PTR->PSOR = 1 << 8; /*   set output register pin 8 */
 FPTB_BASE_PTR->PCOR = 1 << 9; /* clear output register pin 9 */
 \end{lstlisting}
 
-\begin{figure}[htbp]
-		\centering
-		\includegraphics[width=0.8\textwidth]{./images/bit_banding.png}
-    \caption[Bit-Banding]{Bit-Banding im \gls{Cortex}-M3\\Quelle: ARM}
-    \label{fig:bit-banding}
-\end{figure}
-
 \subsection{$48 \mega\hertz$ mit dem Multi-Purpose Clock Generator}
 
 Eine Schwierigkeit bei der Nutzung des \gls{kl25z} stellt die Komplexität des \gls{mcg} dar. Zur Initialisierung wurde der vom \gls{Processor Expert} (siehe Abschnitt~\ref{subsec:codewarrior})
