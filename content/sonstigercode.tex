@@ -1,54 +1,8 @@
-\chapter{Board und Hostinterface}
+\chapter{Ablauf und Kommunikation}
 
+\section{Ablauf der Verarbeitung}
 
-\begin{figure}[htbp]
-		\centering
-			\begin{subfigure}[b]{\textwidth}
-			\centering
-			\includegraphics[width=0.8\textwidth]{./images/board.jpg}
-			\caption[FRDM-KL25Z mit externen Sensoren]{FRDM-KL25Z mit externen Sensoren: MPU6050 (blau) und HMC5883L (rot)}
-			\label{fig:board}
-		\end{subfigure}
-
-	\begin{subfigure}[b]{\textwidth}
-			\centering
-			\includegraphics[width=0.8\textwidth]{./images/board-mit-logan.jpg}
-			\caption[FRDM-KL25Z mit angeschlossenem Logic-Analyzer]{FRDM-KL25Z mit angeschlossenem Logic-Analyzer (rechts). Im Hintergrund links der verwendete UART-zu-USB-Transceiver.}
-			\label{fig:board-logan}
-	\end{subfigure}
-	
-	\caption{Entwickelter Prototyp}
-\end{figure}
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.8\textwidth]{./images/fused-csharp-video.jpg}
-	\caption[Fusionierte Ausgabe mittels OpenGL]{Fusionierte Ausgabe mittels OpenGL mit aktiviertem Modus \emph{44} "`Quaternion und Roll-Pitch-Yaw"' (vgl. Seite~\pageref{subsubsec:quat-and-rpy}).}
-	\label{fig:fused-csharp}
-\end{figure}
-
-
-\begin{figure}[htbp]
-		\centering
-			\begin{subfigure}[b]{\textwidth}
-			\centering
-			\includegraphics[width=0.8\textwidth]{./images/logan-full-sample.png}
-			\caption{Übersicht der Kommunikation. Zu erkennen bei $1466$, $1479$ und $1495$ ms ist die timergesteuerte Abfrage an den HMC5883L. Deutlich ersichtlich bei $1467$ ms auch die adaptive Länge des Filter-Korrekturschrittes.}
-			\label{fig:logan-full}
-		\end{subfigure}
-
-	\begin{subfigure}[b]{\textwidth}
-			\centering
-			\includegraphics[width=0.8\textwidth]{./images/logan-irq-scl-sda-tx.png}
-			\caption{Detail der Kommunikation. Rot und orange: \gls{i2c}-Transfer zur MPU6050. Der Lesezugriff auf Register \texttt{0x3A} löscht den IRQ (Data Ready). Gelb: Serielle Übertragung im Modus \emph{44} (\texttt{0x2C} --- vgl. Seite~\pageref{subsubsec:quat-and-rpy})}
-			\label{fig:logan-detail}
-	\end{subfigure}
-	
-	\caption[Mitschnitt der Kommunikation durch den Logic Analyzer]{Mitschnitt der Kommunikation durch den Logic Analyzer.\\Lila (7): Data Ready-Signal von der MPU6050 (low-aktiv). Rot (2) und orange (3): \gls{i2c}-Transfer zu MPU6050 und HMC5883L. Schwarz (0) und braun (1): Prädiktions- und Korrekturphase des Filters. Gelb (4): UART-Sendetransfer mit 115200 baud.}
-\end{figure}
-
-
-
+Die Realisierung der Firmware kann als Zustandsapparat verstanden werden, wie er Abbildung~\ref{fig:processing_states} entnommen werden kann.
 
 \begin{figure}[htbp]
 	\begin{tikzpicture}[shorten >=1pt,node distance=4cm,on grid,auto] 
@@ -77,7 +31,42 @@
 	\label{fig:processing_states}
 \end{figure}
 
-\todo{In Grafik oben "`timer"', da HMC5883L-Breakout keine Interrupt-Leitung besitzt.}
+Der \emph{idle}-Zustand ist dabei nicht notwendigerweise "`im Stillstand"': Da in den in den frühen Entwicklungsphasen --- nicht zuletzt wegen des in Abschnitt~\ref{subsec:mpu6050_lessonslearned} 
+beschriebenen Interruptproblems --- die Verwendung des \gls{wfi}-Befehls zum Betreten des Energiesparmodus zu Problemen führte, wurde ein reiner 
+Polling-Betrieb umgesetzt und auf die Verwendung der Energiespar- und Synchronisationsmechanismen \gls{wfi}, sowie \gls{wev}/\gls{sev} (mit Ausnahme der Realisierung des 
+UART-Treibers zur Synchronisation auf dem Ausgabepuffer.) verzichtet.
+
+Wie in Abschnitt~\ref{sec:mpu6050} beschrieben, signalisiert eine Veränderung auf der Data Ready-Leitung der MPU6050 das Vorliegen neuer Daten, woraufhin
+diese von der Hauptverarbeitungsschleife über den \gls{i2c}-Bus abgerufen werden. Analog (Abschnitt~\ref{sec:hmc5883l}) signalisiert der Ablauf einer definierten Zeit über den
+\gls{systick}-Timer das Vorhandensein neuer Daten auf dem HMC5883L.
+
+Liegen Daten eines dieser Sensoren vor, werden diese am Fusionstreiber registriert und anschließend weiterverarbeitet. Dies ist in Abschnitt~\ref{sec:impl_fusion} beschrieben.
+Anschließend an die Fusion werden die Daten zur Übertragung an den Host gesendet, wobei das in Abschnitt~\ref{sec:serial_transmission} beschriebene Protokoll zum Tragen kommt.
+Die serielle Übertragung wurde dabei Interruptgetrieben umgesetzt, so dass sie weitgehend asynchron zur restlichen Datenverarbeitung läuft (vgl. dazu Abbildung~\ref{fig:logan-detail}).
+
+Das System wurde auf einem Breadboard implementiert, wie es in Abbildung~\ref{fig:prototype} dargestellt ist. Technisch fragwürdig, aber hilfreich: Als nützlich stellten sich 
+Gummibänder zum Fixieren des FRDM-KL25Z, sowie lange USB-Kabel heraus, da auf diese Weise die korrekte Funktionsweise der Fusion einfach und einhändig überprüft werden konnte.
+
+\begin{figure}[htbp]
+		\centering
+	\begin{subfigure}[b]{\textwidth}
+		\centering
+		\includegraphics[width=0.8\textwidth]{./images/board.jpg}
+		\caption[FRDM-KL25Z mit externen Sensoren]{FRDM-KL25Z mit externen Sensoren: MPU6050 (blau) und HMC5883L (rot)}
+		\label{fig:board}
+	\end{subfigure}
+
+	\begin{subfigure}[b]{\textwidth}
+		\centering
+		\includegraphics[width=0.8\textwidth]{./images/board-mit-logan.jpg}
+		\caption[FRDM-KL25Z mit angeschlossenem Logic-Analyzer]{FRDM-KL25Z mit angeschlossenem Logic-Analyzer (rechts). Im Hintergrund links der verwendete UART-zu-USB-Transceiver.}
+		\label{fig:board-logan}
+	\end{subfigure}
+	
+	\caption{Prototyp auf dem Breadboard}
+	\label{fig:prototype}
+\end{figure}
+
 
 \section{Serielle Übertragung}
 \label{sec:serial_transmission}
