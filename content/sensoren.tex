@@ -492,7 +492,9 @@ Zur Gewinnung der Koeffizienten der affinen Korrekturmatrix wurde nun wie folgt 
 		\item Die Offset-Korrektur $\underline{T}$ wird angewandt.
 \end{enumerate}
 
-Die Orientierung wird dabei als Winkelkosinusmatrix $\underline{R}$ \todo{Referenz auf später!} zwischen Referenzsystem $\underline{E}$ und Eigenvektor $\underline{V}$ bezogen, so dass
+Das MATLAB-Skript zum Einpassen eines Ellipsoiden aus einer Punktmenge kann in Listing~\ref{lst:matlab-ellipsoid} und auf MATLAB File Exchange (\citealp{petrov_matlab}) gefunden werden.
+
+Die Orientierung wird dabei als Winkelkosinusmatrix $\underline{R}$ (dazu mehr in Abschnitt~\ref{subsec:herleitung_dcm}) zwischen Referenzsystem $\underline{E}$ und Eigenvektor $\underline{V}$ bezogen, so dass
 
 \begin{align}
 \underline{R} = \underline{E} \cdot \underline{V}

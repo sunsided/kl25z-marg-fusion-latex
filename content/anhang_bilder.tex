@@ -9,17 +9,24 @@
 \end{figure}
 
 \begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.8\textwidth]{./images/gimbal-lock.jpg}
+	\caption[Kardanischer Kreisel mit Gimbal Lock]{Kardanischer Kreisel mit \gls{Gimbal Lock} (rechts): Rotation ist nur noch in zwei Richtungen möglich, ein Freiheitsgrad ist verloren.\\Quelle: \url{around-the-corner.typepad.com}}
+	\label{fig:gimbal-lock-full}
+\end{figure}
+
+\begin{figure}[htbp]
 		\centering
 			\begin{subfigure}[b]{\textwidth}
 			\centering
-			\includegraphics[width=0.8\textwidth]{./images/logan-full-sample.png}
+			\includegraphics[width=\textwidth]{./images/logan-full-sample.png}
 			\caption{Übersicht der Kommunikation. Zu erkennen bei $1466$, $1479$ und $1495$ ms ist die timergesteuerte Abfrage an den HMC5883L. Deutlich ersichtlich bei $1467$ ms auch die adaptive Länge des Filter-Korrekturschrittes.}
 			\label{fig:logan-full}
 		\end{subfigure}
 
 	\begin{subfigure}[b]{\textwidth}
 			\centering
-			\includegraphics[width=0.8\textwidth]{./images/logan-irq-scl-sda-tx.png}
+			\includegraphics[width=\textwidth]{./images/logan-irq-scl-sda-tx.png}
 			\caption{Detail der Kommunikation. Rot und orange: \gls{i2c}-Transfer zur MPU6050. Der Lesezugriff auf Register \texttt{0x3A} löscht den IRQ (Data Ready). Gelb: Serielle Übertragung im Modus \emph{44} (\texttt{0x2C} --- vgl. Seite~\pageref{subsubsec:quat-and-rpy})}
 			\label{fig:logan-detail}
 	\end{subfigure}
@@ -32,13 +39,6 @@
 		\includegraphics[width=0.8\textwidth]{./images/bit_banding.png}
     \caption[Bit-Banding]{Bit-Banding im \gls{Cortex}-M3\\Quelle: ARM}
     \label{fig:bit-banding}
-\end{figure}
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.8\textwidth]{./images/gimbal-lock.jpg}
-	\caption[Kardanischer Kreisel mit Gimbal Lock]{Kardanischer Kreisel mit \gls{Gimbal Lock} (rechts): Rotation ist nur noch in zwei Richtungen möglich, ein Freiheitsgrad ist verloren.\\Quelle: \url{around-the-corner.typepad.com}}
-	\label{fig:gimbal-lock-full}
 \end{figure}
 
 \begin{figure}[htbp]

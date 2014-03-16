@@ -4,6 +4,7 @@
 
 
 \subsection{Herleitung der Winkelkosinusmatrix}
+\label{subsec:herleitung_dcm}
 
 Aus der Definition des vektoriellen Skalarproduktes ("`Punktprodukt"'),
 
@@ -13,12 +14,12 @@ Aus der Definition des vektoriellen Skalarproduktes ("`Punktprodukt"'),
 \end{align}
 
 ergibt sich, dass der von zwei sich kreuzenden Vektoren eingeschlossene Winkel durch den Arkuskosinus ermittelbar ist. Die \glslink{dcm}{Winkelkosinusmatrix} (DCM) 
-$\underline(A)$ nutzt diesen Zusammenhang zur Darstellung alle Winkelzusammenhänge zweier Systeme $\underline{S}_{\text{body}} = \left\{\vec{x}, \vec{y}, \vec{z} \right\}$, 
+$\underline(R)$ nutzt diesen Zusammenhang zur Darstellung alle Winkelzusammenhänge zweier Systeme $\underline{S}_{\text{body}} = \left\{\vec{x}, \vec{y}, \vec{z} \right\}$, 
 $\underline{S}_{\text{ref}} = \left\{\vec{X}, \vec{Y}, \vec{Z} \right\}$ 
 (orthonormaler $\mathbb{R}^3$), so dass
 
 \begin{align}
-\underline{A} &= \begin{bmatrix}
+\underline{R} &= \begin{bmatrix}
 \vec{x} \cdot \vec{X} & \vec{y} \cdot \vec{X} & \vec{z} \cdot \vec{X} \\
 \vec{x} \cdot \vec{Y} & \vec{y} \cdot \vec{Y} & \vec{z} \cdot \vec{Y} \\
 \vec{x} \cdot \vec{Z} & \vec{y} \cdot \vec{Z} & \vec{z} \cdot \vec{Z}
@@ -38,7 +39,7 @@ x_z & y_z & z_z
 kann mittels der in Gleichung~\ref{eq:dot_sum} genannten Summendarstellung ersehen werden, dass Gleichung~\ref{eq:dcm_long} auch als
 
 \begin{align}
-\underline{A} &= \begin{bmatrix}
+\underline{R} &= \begin{bmatrix}
 x_x & y_x & z_x \\
 x_y & y_y & z_y \\
 x_z & y_z & z_z
@@ -52,7 +53,7 @@ X_z & Y_z & Z_z
 formulierbar ist. Diese auch als
 
 \begin{align}
-\underline{A} &=
+\underline{R} &=
 \begin{bmatrix}
 \vec{x} \; \vdots \; \vec{y} \; \vdots \; \vec{z}\end{bmatrix} \cdot
 \begin{bmatrix}
@@ -75,10 +76,10 @@ Ein Vorteil dieser Methode wird direkt ersichtlich, wenn das Referenzsystem $\un
 \end{bmatrix}
 \end{align}
 
-In diesem Fall ergibt sich die \gls{dcm} $\underline{A}$ mittels Gleichung~\ref{eq:dcm_short} direkt als 
+In diesem Fall ergibt sich die \gls{dcm} $\underline{R}$ mittels Gleichung~\ref{eq:dcm_short} direkt als 
 
 \begin{align}
-\underline{A} &= \begin{bmatrix}
+\underline{R} &= \begin{bmatrix}
 x_x & y_x & z_x \\
 x_y & y_y & z_y \\
 x_z & y_z & z_z
@@ -168,10 +169,10 @@ sämtliche Singularitäten der \gls{tilt compensation} vermieden werden\footnote
 \subsection{Herleitung der Winkel aus der DCM}
 \label{subsec:herleitung_winkel_dcm}
 
-Werden die \textsc{Euler}'schen Winkel aus der \gls{dcm} $\underline{A}$ benötigt, können diese nach \cite{premeul} über die folgenden Zusammenhänge\footnote{Unter der Annahme der Tait-Bryan $X\text{--}Y\text{--}Z$-Folge} gewonnen werden.
+Werden die \textsc{Euler}'schen Winkel aus der \gls{dcm} $\underline{R}$ benötigt, können diese nach \cite{premeul} über die folgenden Zusammenhänge\footnote{Unter der Annahme der Tait-Bryan $X\text{--}Y\text{--}Z$-Folge} gewonnen werden.
 
 \begin{align}
-\theta_{\text{pitch}} &= -\sin^{-1} \underline{A}_{0,2} = z_x \label{eq:pitch_from_dcm} \\
-\phi_{\text{roll}}   &= \tan^{-1} \frac{\underline{A}_{1,2}}{\underline{A}_{2,2}} = \tan^{-1} \frac{z_y}{z_z} \\
-\psi_{\text{yaw}}   &= \tan^{-1} \frac{\underline{A}_{0,1}}{\underline{A}_{0,0}} = \tan^{-1} \frac{y_x}{x_x}
+\theta_{\text{pitch}} &= -\sin^{-1} \underline{R}_{0,2} = z_x \label{eq:pitch_from_dcm} \\
+\phi_{\text{roll}}   &= \tan^{-1} \frac{\underline{R}_{1,2}}{\underline{R}_{2,2}} = \tan^{-1} \frac{z_y}{z_z} \\
+\psi_{\text{yaw}}   &= \tan^{-1} \frac{\underline{R}_{0,1}}{\underline{R}_{0,0}} = \tan^{-1} \frac{y_x}{x_x}
 \end{align}
