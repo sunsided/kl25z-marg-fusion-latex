@@ -1,6 +1,6 @@
 \setpartpreamble[u, r][6cm]{Dies ist ein Beispiel für eine Part-Präambel.}
-\part[]{Entwicklungsumgebung}
-\chapter{Entwicklungsumgebung}
+\part[]{Hardware und Entwicklungsumgebung}
+\chapter{Hardware und Entwicklungsumgebung}
 
 \section{Freescale FRDM-KL25Z}
 
@@ -150,6 +150,23 @@ pll_init(xtal, LOW_POWER /* = 0 */, CRYSTAL /* = 1 */, divider, multiplier, MCGO
 
 Eine Übersicht der Clock-Einheit und der \gls{mcg}-Modi findet sich in den Abbildungen~\ref{fig:kl25z-clocking}, \ref{fig:kl25z-mcg} und~\ref{fig:kl25z-mcg-states}.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \section{Freescale OpenSDA}
 \label{sec:opensda}
 
@@ -220,6 +237,33 @@ sowie für die Interaktion mit dem \gls{OpenOCD}-Programmer/Debugger verwendet.
 Weiterhin stellt auch Segger eine \gls{OpenSDA}-Variante seines proprietären J-Link-Programmers/Debuggers zur Verfügung. Einer der wesentlichen Vorteile dieser
 Variante besteht in der hohen Programmiergeschwindigkeit, sowie der Unterstützung beliebig vieler Breakpoints über die Anzahl an Hardware-Breakpoints des Cores hinaus,
 sofern die Lizenzbedingungen (Entwicklung nur für nichtkommerzielle Produkte und auf Freescale-\glspl{mcu}s auf Evaluation-Boards).
+
+
+
+
+
+\section{Saleae Logic}
+\label{sec:logan}
+
+Zur Überprüfung der externen Interrupt-Signale und der Buskommunikation wurde der 8-Kanal Logic Analyzer \emph{logic} der Firma Saleae verwendet (Abbildung~\ref{fig:logan-bild}). 
+Dieser ist als digitales Speicheroszilloskop angelegt und in der Lage, bei Abtastraten von bis zu $24\mega\hertz$ bis zu 10 Milliarden Samples aufzunehmen. Triggerungen
+auf Logiklevel, sowie Flanken ist dabei möglich.
+
+\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=0.6\textwidth]{./images/saleae-logic.jpg}
+    \caption[Saleae logic]{Saleae logic\\Quelle: \url{play-zone.ch}}
+    \label{fig:logan-bild}
+\end{figure}
+
+Vorteilhaft ist die für alle gängigen Betriebssysteme verfügbare Software, welche Analyzer für übliche Protokolle (inklusive \gls{i2c}, \gls{spi}, \gls{can} und UART mit auto-bauding) bietet
+und einen Export in das \gls{csv}-Format, sowie das simulatorübliche \gls{vcd}-Format ermöglicht.
+
+Es ist anzumerken, dass die Hardware nahezu baugleich mit 8051-basierten Analyzern wie dem (teureren) \emph{USBee SX} ist und dass viele weitaus kostengünstigere Kopien der Hardware
+existieren. Anleitungen hierzu finden sich im Netz\footnote{Etwa unter \url{http://www.jwandrews.co.uk/2011/12/saleae-logic-analyser-clone-teardown-and-reprogramming/}.}.
+
+
+
 
 \section{Integrierte Entwicklungsumgebungen}
 
