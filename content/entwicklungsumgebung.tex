@@ -15,6 +15,8 @@ für den KL26Z (MKL26Z128VLH4) an, welches zusätzlich zu einem Accelerometer ei
 (in Form der FXOS87000CQ-\gls{imu}), sowie einen zusätzlichen Lichtsensor bietet. 
 Es ist jedoch zu beachten, dass hierbei 17 \glspl{gpio} auf den Evaluationboard entfallen (\citealp{kl26z_qsg}).
 
+\subsection{Features}
+
 Der \gls{kl25z} ordnet sich im Mittelfeld zwischen den Varianten KL0 (16-48pin, 8-32KB), KL1x (32-80pin, 32-256KB), 
 KL3x (64-121pin, 64-256KB, Segment-LCD) und KL4x (64-121pin, 128-256KB, USB + Segment-LCD) ein. Eine kurze Übersicht der Konfiguration
 des \gls{frdm-kl25z} ist in der folgenden Auflistung\footnote{Dem mbed-Projekt (\url{www.mbed.org}) entnommen.} gegeben.
@@ -98,12 +100,15 @@ trotz der Ansiedlung am unteren Performanceende der \gls{Cortex}-Varianten für 
 	\label{fig:kl25z}
 \end{figure}
 
+\subsection{On-Chip-Programmer/Debugger}
 
 Auf jedem Freescale Freedom-Entwicklungsboard ist ein \gls{ocd} verbaut, welcher zusätzlich zum Debugging die 
 Fähigkeit besitzt, die \gls{mcu} zu programmieren. Freescale nennt diese Einheit \gls{OpenSDA} 
 (ganz im Sinne der "`Freedom"'-Benamung der Boards), die zwar entgegen ihres Namens proprietärer Natur ist, jedoch die 
 zusätzliche Beschaffung eines externen Programmers erspart. 
-Auf diesen wird in Abschnitt~\label{sec:opensda} noch einmal eingegangen.
+Auf diesen wird in Abschnitt~\ref{sec:opensda} noch einmal eingegangen.
+
+\subsection{Bit Manipulation Engine}
 
 Der \gls{kl25z} bietet zusätzlich zum single-cycle-I/O eine \gls{bme} genannte Einheit (\citealp{fs_howlong}), welche eine Variation 
 des sog. \glslink{bit banding}{bit-bandings} (Abbildung~\ref{fig:bit-banding}) darstellt, wie sie in den \gls{Cortex}-M3 und -M4-Cores zur Verfügung steht.
@@ -132,6 +137,25 @@ FPTB_BASE_PTR->PCOR = 1 << 9; /* clear output register pin 9 */
     \caption[Bit-Banding]{Bit-Banding im \gls{Cortex}-M3\\Quelle: ARM}
     \label{fig:bit-banding}
 \end{figure}
+
+\subsection{$48 \mega\hertz$ mit dem Multi-Purpose Clock Generator}
+
+Eine Schwierigkeit bei der Nutzung des \gls{kl25z} stellt die Komplexität des \gls{mcg} dar. Zur Initialisierung wurde der vom \gls{Processor Expert} (siehe Abschnitt~\ref{subsec:codewarrior})
+erzeugte Code\footnote{Zu finden in Listing~\ref{lst:kl25z-pll-init}} verwendet und wie in Listing~\ref{lst:kl25z-pll-init-call} entnehmbar betrieben, um von der internen Referenzclock (\gls{fei})
+auf den \gls{pee}-Modus mit $48 \mega\hertz$ zu wechseln\footnote{Hilfreich war das unter \url{https://www.youtube.com/watch?v=uiSTB4jkxhw} zu findende Video.}.
+
+\begin{lstlisting}[style=lolc,caption={KL25Z: Aktivierung des 48MHz-\gls{pll}-Modus des \gls{mcg}},label=lst:kl25z-pll-init-call]
+// - core and platform clock are required to have 48 MHz or less
+// - for PBE (PLL engaged external) mode, xtal/divider must be in range 2..4 MHz
+
+const int xtal = XTAL_FREQ;                  /* FRDM-KL25Z hat einen 8 MHz xtal on-board */
+const int8_t divider = XTAL_PEE_DIVIDE;      /* Division durch 4 (8 MHz --> 2 MHz) */
+const int8_t multiplier = XTAL_PEE_UPSCALE;  /* Skalierung mit 24 (2 MHz --> 48 MHz) */
+
+pll_init(xtal, LOW_POWER /* = 0 */, CRYSTAL /* = 1 */, divider, multiplier, MCGOUT /* = 1 */);
+\end{lstlisting}
+
+Eine Übersicht der Clock-Einheit und der \gls{mcg}-Modi findet sich in den Abbildungen~\ref{fig:kl25z-clocking}, \ref{fig:kl25z-mcg} und~\ref{fig:kl25z-mcg-states}.
 
 \section{Freescale OpenSDA}
 \label{sec:opensda}
@@ -208,6 +232,8 @@ sofern die Lizenzbedingungen (Entwicklung nur für nichtkommerzielle Produkte un
 
 \subsection{Freescale CodeWarrior}
 \label{subsec:codewarrior}
+
+\todo{Erwähnung von Processor Expert}
 
 \lipsum[3]
 
