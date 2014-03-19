@@ -31,7 +31,7 @@ Die Realisierung der Firmware kann als Zustandsapparat verstanden werden, wie er
 	\label{fig:processing_states}
 \end{figure}
 
-Der \emph{idle}-Zustand ist dabei nicht notwendigerweise "`im Stillstand"': Da in den in den frühen Entwicklungsphasen --- nicht zuletzt wegen des in Abschnitt~\ref{subsec:mpu6050_lessonslearned} 
+Der \emph{idle}-Zustand ist dabei nicht notwendigerweise "`im Stillstand"': Da in den frühen Entwicklungsphasen --- nicht zuletzt wegen des in Abschnitt~\ref{subsec:mpu6050_lessonslearned} 
 beschriebenen Interruptproblems --- die Verwendung des \gls{wfi}-Befehls zum Betreten des Energiesparmodus zu Problemen führte, wurde ein reiner 
 Polling-Betrieb umgesetzt und auf die Verwendung der Energiespar- und Synchronisationsmechanismen \gls{wfi}, sowie \gls{wev}/\gls{sev} (mit Ausnahme der Realisierung des 
 UART-Treibers zur Synchronisation auf dem Ausgabepuffer.) verzichtet.
@@ -241,7 +241,7 @@ void P2PPE_TransmissionPrefixed(
 \end{lstlisting}
 
 Da das Paketende durch den \gls{eot}-Marker gesetzt ist, darf dieser Wert (sowie das Zeichen \gls{esc}) in den
-Nutzdaten nicht vorkommen. Tritt ein solcher Wert auf, wird das wird \gls{esc} (\texttt{0x1B}) eingefügt
+Nutzdaten nicht vorkommen. Tritt ein solcher Wert auf, wird das \gls{esc} (\texttt{0x1B}) eingefügt
 und der ursprüngliche Inhalt mit dem Wert \texttt{0x42} ver\textsc{xor}t übertragen.
 
 \begin{lstlisting}[style=lolc]
@@ -264,7 +264,7 @@ Decoder für das \gls{p2pp}-Protokoll wurden sowohl in MATLAB, als auch in C\# g
 Listings~\ref{lst:matlab-p2ppdecoder-setup} und \ref{lst:matlab-p2ppdecoder} gefunden werden, eine Implementierung für C\# findet sich in Listing~\ref{lst:csharp-p2ppdecoder}.
 
 Als wesentlich für den performanten Empfang von Daten über die serielle Schnittstelle in MATLAB stellten sich zwei Dinge heraus: Der Dekoder darf\footnote{Bis einschließlich MATLAB R2013b}
-nicht als Klasse implementiert sein. Dies bringt extreme Performanceeinbußen mit sich bringt, was der internen Handhabung von Klassen in MATLAB geschuldet ist.
+nicht als Klasse implementiert sein. Dies bringt extreme Performanceeinbußen mit sich, was der internen Handhabung von Klassen in MATLAB geschuldet ist.
 
 Zum anderen sollte die (üblicherweise empfohlene) Verwendung des \texttt{serial}-Objektes zum Lesen mittels \texttt{fread} vermieden werden, da diese Funktion für
 Parameter jenes Typs inperformant implementiert ist\footnote{Dies kann in MATLAB eingesehen werden.}. Um die (oft überflüssige, aber aufwendige) Konstruktion von Fehlerstrings und wiederkehrende

@@ -7,11 +7,11 @@ ARM \gls{cortex-m0+}-Core basiert. Alle Controller der Kinetis L-Serie sind für
 Das Board besitzt neben 54 \glspl{gpio}, einen USB-Controller, eine RGB-LED, einen kapazitiven Touch-Bereich, 
 sowie einen Freescale MMA8451Q-Accelerometer (vgl. Abbildung~\ref{fig:kl25z}); Letzterer wird in Abschnitt~\ref{sec:mma8451q} auf
 Seite~\pageref{sec:mma8451q} noch einmal erweiternd besprochen.
-Nicht zuletzt trug auch der geringen Preis des Boards von ca. 12 EUR zur Kaufentscheidung bei. 
+Nicht zuletzt trug auch der geringe Preis des Boards von ca. 12 EUR zur Kaufentscheidung bei. 
 Freescale bietet ebenfalls ein etwas teureres Board --- das seit 2013 verfügbare FRDM-KL26Z\footnote{\cite{fs_howlong}} --- 
 für den KL26Z (MKL26Z128VLH4) an, welches zusätzlich zu einem Accelerometer einen Gyrosensor 
 (in Form der FXOS87000CQ-\gls{imu}), sowie einen zusätzlichen Lichtsensor bietet. 
-Es ist jedoch zu beachten, dass hierbei 17 \glspl{gpio} auf den Evaluationboard entfallen (\citealp{kl26z_qsg}).
+Es ist jedoch zu beachten, dass hierbei 17 \glspl{gpio} auf das Evaluationsboard entfallen (\citealp{kl26z_qsg}).
 
 \subsection{Features}
 
@@ -168,7 +168,7 @@ Eine Übersicht der Clock-Einheit und der \gls{mcg}-Modi findet sich in den Abbi
 \section{Freescale OpenSDA}
 \label{sec:opensda}
 
-Der \gls{OpenSDA}-Chip auf dem  kommuniziert dabei mit der im \gls{Cortex}-Kern integrierten \gls{CoreSight}-Einheit über das \gls{JTAG}-Protokoll.
+Der \gls{OpenSDA}-Chip auf dem Entwicklungsboard kommuniziert dabei mit der im \gls{Cortex}-Kern integrierten \gls{CoreSight}-Einheit über das \gls{JTAG}-Protokoll.
 Der Chip selbst kann dabei mit einer alternativen Firmware geflasht werden (vgl. Abb. \ref{fig:opensda-block}), welche eine spezialisierte 
 (d.h. treiberspezifische) Ansteuerung der \gls{CoreSight}-Einheit ermöglicht.
 
@@ -180,7 +180,7 @@ Der Chip selbst kann dabei mit einer alternativen Firmware geflasht werden (vgl.
 \end{figure}
 
 Die Standard-Firmware (PEmicro OpenSDA MSD) repräsentiert sich dabei nach dem Verbinden mit dem USB-Host als \gls{msd} und ist in der Lage, die \gls{mcu}
-durch einfaches Drag \& Drop einer \gls{elf}-Datei programmiert werden. Debugging-Funktionalität bietet dieses Interface jedoch nicht, wodurch der
+durch einfaches Drag \& Drop einer \gls{elf}-Datei zu programmieren. Debugging-Funktionalität bietet dieses Interface jedoch nicht, wodurch der
 erste Schritt der Inbetriebnahme in den meisten Fällen darin bestehen wird, eine alternative Firmware (z.B. PEmicro OpenSDA DEBUG) zu flashen. Hierdurch
 verliert man zwar die Funktionalität des USB-\gls{msd} und ist somit auf eine Programmersoftware angewiesen, diese ist jedoch z.B. in Form der Toolchain
 der Freescale CodeWarrior-IDE (siehe Abschnitt~\ref{subsec:codewarrior} auf Seite~\pageref{subsec:codewarrior}) gegeben.
@@ -235,7 +235,7 @@ sowie für die Interaktion mit dem \gls{OpenOCD}-Programmer/Debugger verwendet.
 
 Weiterhin stellt auch Segger eine \gls{OpenSDA}-Variante seines proprietären J-Link-Programmers/Debuggers zur Verfügung. Einer der wesentlichen Vorteile dieser
 Variante besteht in der hohen Programmiergeschwindigkeit, sowie der Unterstützung beliebig vieler Breakpoints über die Anzahl an Hardware-Breakpoints des Cores hinaus,
-sofern die Lizenzbedingungen (Entwicklung nur für nichtkommerzielle Produkte und auf Freescale-\glspl{mcu}s auf Evaluation-Boards).
+sofern die Lizenzbedingungen (Entwicklung nur für nichtkommerzielle Produkte und auf Freescale-\glspl{mcu} auf Evaluation-Boards) eingehalten werden.
 
 
 
