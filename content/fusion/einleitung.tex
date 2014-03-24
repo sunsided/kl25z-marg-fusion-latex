@@ -60,8 +60,11 @@ Diese Arten von Filtern versuchen die nichtlinearen Zusammenhänge des Systems -
 mit einem Entwurf zur indirekten Schätzung der \gls{dcm} in einem regulären \gls{Kalman-Filter}. 
 Er zeigt auf, dass die Verwendung des regulären Filters zur indirekten Schätzung trotz der Nichtlinearitäten keine inhärenten Nachteile mit sich bringt, 
 sondern im Gegenteil mit der \gls{Quaternion}-Methode konkurrieren kann, weswegen dieser Algorithmus im Rahmen des Projektes umgesetzt wurde.
-\cite{Tsang} und \cite{Filieri} beschreiben in diesem Zusammenhang ein Fehlermodell zur Schätzung der Beschleunigungs- und Integrationsunsicherheiten, welches unterstützend auch 
-zur direkten Schätzung der Sensordrift angewendet werden kann. Dieser Aspekt wurde in MATLAB (erfolgreich) untersucht, jedoch nicht in der Firmware implementiert.
+Hierbei werden zwei separate \gls{Kalman-Filter} eingesetzt, um die Aspekte der Neigung und der horizontalen Auslenkung dezentral zu schätzen (vgl. \citealp{TiborKalman}), was zur
+Reduktion der Komplexität beiträgt.
+
+\cite{Tsang} und \cite{Filieri} beschreiben weiterhin ein Fehlermodell zur Schätzung der Beschleunigungs- und Integrationsunsicherheiten --- diese machen einen nicht unbeträchtlichen Teil der Unsicherheit aus --- 
+welches unterstützend auch zur direkten Schätzung der Sensordrift angewendet werden kann. Dieser Aspekt wurde in MATLAB erfolgreich untersucht, jedoch nicht in der Firmware implementiert.
 
 \begin{figure}[htbp]
 	\centering
