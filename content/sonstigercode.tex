@@ -96,7 +96,7 @@ void UART0_Handler()
 
 Die Firmware ist in der Lage, Sensor- und Fusionsdaten in verschiedenen Modi über die serielle Schnittstelle auszugeben. Zur Aktivierung dieser Modi siehe Abschnitt~\ref{subsubsec:transmission_host_to_client}.
 
-\subsubsection{Sensorrohdaten (Modus 0)}
+\subsubsection{Sensorrohdaten}{Sensorrohdaten (Modus 0)}
 
 Im Rohdatenmodus (Prefix \emph{0\textsubscript{dec}}) werden die ungefilterten Sensordaten des MPU6050-Accelerometers, sowie des HMC5883L-Magnetometers übertragen. Zur Unterstützung der Verarbeitung
 und um Unabhängigkeit von der Konfiguration zu erreichen, werden die Daten konvertiert in das \gls{q16}-Format übertragen.
@@ -111,7 +111,7 @@ und um Unabhängigkeit von der Konfiguration zu erreichen, werden die Daten konv
 
 Dieser Modus wird auch aktiv, wenn kein gültiger Modusbefehl erkannt wurde.
 
-\subsubsection{Roll-Pitch-Yaw (Modus 42)}
+\subsubsection{Roll-Pitch-Yaw}{Roll-Pitch-Yaw (Modus 42)}
 
 In diesem Modus (Prefix \emph{42\textsubscript{dec}}) werden die aus der \gls{dcm} extrahierten \textsc{Euler}'schen Winkel (Tait-Bryan $X\text{--}Y\text{--}Z$) übertragen (vgl. Abschnitt~\ref{subsec:herleitung_winkel_dcm}).
 Die Winkel liegen im \gls{q16}-Format vor, der zur Extraktion verwendete Code ist in Listing~\ref{lst:libfixmath_dcm_euler} dargestellt.
@@ -122,7 +122,7 @@ Die Winkel liegen im \gls{q16}-Format vor, der zur Extraktion verwendete Code is
 	\bitbox{4}{Roll $\theta$} & \bitbox{4}{Pitch $\phi$} & \bitbox{4}{Yaw $\psi$}
 \end{bytefield}
 
-\subsubsection{Orientierungs-Quaternion (Modus 43)}
+\subsubsection{Orientierungs-Quaternion}{Orientierungs-Quaternion (Modus 43)}
 
 In diesem Modus (Prefix \emph{43\textsubscript{dec}}) wird zur effizienten Übertragung der singularitätsfreien Orientierung anstelle der vollständigen \gls{dcm} ein
 Orientierungs-Quaternion übertragen, wobei die Komponenten im \gls{q16}-Format vorliegen.
@@ -135,7 +135,7 @@ Orientierungs-Quaternion übertragen, wobei die Komponenten im \gls{q16}-Format 
 
 Der zur Generierung des Quaternions verwendete Code kann in Listing~\ref{lst:quaternion_from_kalman} gefunden werden.
 
-\subsubsection{Orientierungs-Quaternion und Roll-Pitch-Yaw (Modus 44)}
+\subsubsection{Orientierungs-Quaternion und Roll-Pitch-Yaw}{Orientierungs-Quaternion und Roll-Pitch-Yaw (Modus 44)}
 \label{subsubsec:quat-and-rpy}
 
 Dieser Modus (Prefix \emph{44\textsubscript{dec}}) ist eine Kombination aus den Modi 42 und 43 und kann verwendet werden, um die eigenständige Berechnung der \textsc{Euler}'schen Winkel
