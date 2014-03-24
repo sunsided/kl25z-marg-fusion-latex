@@ -1,5 +1,19 @@
 \section{Einleitung}
 
+Das Problem der Orientierungserkennung besteht darin, dass jeder der üblicherweise verwendeten Sensoren nur einen Aspekt der Orientierungsfrage beantworten kann. So liefern
+Accelerometer (neben der Beschleunigung) nur eine Information über die Neigung des Sensors gegenüber der horizontalen ($X\mathrm{-}Y\mathrm{-}$)Ebene, Magnetometer (neben
+der Magnetfeldstärke) im besten Fall nur eine Abweichung von der Nordrichtung und Gyrosensoren nur eine Veränderung der Rotationsgeschwindigkeit um den Mittelpunkt des Sensors;
+Einen echten "`Orientierungssensor"' gibt es nicht. Um die Orientierung eines Systemes dennoch zu bestimmen, werden die Informationen verschiedener Sensoren kombiniert -- fusioniert --
+um so ein Gesamtbild zu erhalten.
+
+Dass dabei Informationen redundant vorliegen, ist ein erwünschter Nebeneffekt zur Erhöhung der Verlässlichkeit: So kann die Orientierung etwa aus Accelerometer und Magnetometer
+gewonnen werden, jedoch auch durch Integration der Winkelveränderungen aus dem Gyrosensor; Magnetometer und Accelerometer teilen sich jeweils eine Achse, etc.
+
+Spricht man über Orientierungen, ist es naheliegend, diese in Form von \textsc{Euler}'schen Winkeln zu beschreiben, da diese eine intuitive Beschreibung der Lage ermöglichen. 
+Wieso dies problembehaftet ist und welche Methoden man (alternativ und ergänzend) verwendet, soll im folgenden kurz umrissen werden.
+
+\subsection{Der "`Gimbal Lock"' -- Singularität \textsc{Euler}'scher Winkel}
+
 Allen Fusionsalgorithmen gemein ist die Problematik, dass die Verwendung \textsc{Euler}'scher Winkel --- trotz oder eben gerade wegen ihrer Einfachheit --- zu 
 nicht auflösbaren Singularitäten führt. Dieses Phänomen wird \gls{Gimbal Lock} genannt, nach dem englischen Namens des kardanischen Kreisel (siehe Abbildung~\ref{fig:kardanischer_kreisel}),
 bei dem dieser Effekt deutlich wird.
@@ -25,19 +39,22 @@ Die Auswirkungen dieses Effektes in der Praxis sind in Abbildung~\ref{fig:euler_
 über eine Zeit von ca. 40 Sekunden zweimal um jede seiner Achsen rotiert, wobei bei vorausgesetztem $Z\text{--}Y\text{--}X$-System\footnote{"`yaw-pitch-roll"'} 
 ein Nickwinkel (Pitch, Elevation) von $\theta = \pm 90^\circ$ zu einer Singularität auf den Achsen $\phi$ (Yaw, Azimuth) und $\psi$ (Roll) führte.
 
+\subsection{Ansätze zur Sensorfusion}
+
 Verschiedene Ansätze zur Orientierungserkennung unter Vermeidung \textsc{Euler}'scher Winkel werden daher in der Literatur behandelt. 
 \cite{madgwick_quat}, \cite{indirect_quaternion_kalman} und \cite{vecops} formulieren \gls{Quaternion}-basierte \gls{marg}-Fusionsalgorithmen.
 In der Quadrocopter-Bastlerszene großer Beliebtheit erfreut sich aufgrund seiner geringen Komplexität der von \cite{dcmdraft} vorgeschlagene 
 Fusionsalgorithmus auf Basis der Winkelkosinusmatrix (\gls{dcm}) in Kombination mit einem \gls{Komplementaerfilter}, wie er von \cite{mahony_comp_eucl}, 
 \cite{mahony_coupled} und \cite{mahony_compl} beschrieben wird. Das \gls{Komplementaerfilter} wird als sich im Frequenzband komplementierende Zusammenstellung von Hoch- und 
 Tiefpassfiltern implementiert, welche -- im vorliegenden Szenario -- die Vorteile der hohen Genauigkeit des Gyrosensors (ohne dessen Drift) mit jenen der hohen Dynamik des 
-Accelerometers (ohne dessen Streuung) kombinieren.
+Accelerometers (ohne dessen Streuung) kombinieren, wobei jedoch die Signal- und Prozessrauscheigenschaften nur statisch betrachtet werden können.
+\cite{comp_comp_kal} stellt jene Filter dem \gls{Kalman-Filter} gegenüber.
 
 Untersuchungen finden sich weiterhin zu den sog. Erweiterten \glslink{Kalman-Filter}{Kalman-Filtern} (z.B. \citealp{yadlin09} und \citealp{indirect_quaternion_kalman}), 
 sowie den Unscented \glslink{Kalman-Filter}{Kalman-Filtern}\footnote{Einer Variation des erweiterten \glslink{Kalman-Filter}{Kalman-Filters} unter Zuhilfenahme der 
 Unscented-Transformation, wodurch die Notwendigkeit der Linearisierung des Systems vermieden wird} (etwa \citealp{unscented}). Ferner existieren adaptive 
 Varianten des \glslink{Kalman-Filter}{Kalman-Filters}, wie etwa von \cite{liwang12} untersucht.
-Diese Arten von Filtern versuchen, die nichtlinearen Zusammenhänge des Systems --- allerdings auf Kosten der Komplexität des Filters --- direkt abzubilden. 
+Diese Arten von Filtern versuchen die nichtlinearen Zusammenhänge des Systems --- allerdings auf Kosten der Komplexität des Filters --- direkt abzubilden. 
 
 \cite{orientation_dcm} vergleichen eine \gls{Quaternion}-Methode in einem erweiterten \gls{Kalman-Filter}, sowie die (bekanntermaßen problembehaftete) direkte Bestimmung der \textsc{Euler}'schen Winkel
 mit einem Entwurf zur indirekten Schätzung der \gls{dcm} in einem regulären \gls{Kalman-Filter}. 
