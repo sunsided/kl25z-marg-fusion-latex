@@ -1,0 +1,22 @@
+\section{Saleae Logic}
+\label{sec:logan}
+
+Zur Überprüfung der externen Interrupt-Signale und der Buskommunikation wurde der 8-Kanal Logic Analyzer \emph{logic} der Firma Saleae verwendet (Abbildung~\ref{fig:logan-bild}). 
+Dieser ist als digitales Speicheroszilloskop angelegt und in der Lage, bei Abtastraten von bis zu $24\mega\hertz$ bis zu 10 Milliarden Samples aufzunehmen. Triggerungen
+auf Logiklevel, sowie Flanken ist dabei möglich.
+
+\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=0.6\textwidth]{./images/saleae-logic.jpg}
+    \caption[Saleae logic]{Saleae logic\\Quelle: \url{http://play-zone.ch}}
+    \label{fig:logan-bild}
+\end{figure}
+
+Vorteilhaft ist die für alle gängigen Betriebssysteme verfügbare Software, welche Analyzer für übliche Protokolle (inklusive \gls{i2c}, \gls{spi}, \gls{can} und UART mit auto-bauding) bietet
+und einen Export in das \gls{csv}-Format, sowie das simulatorübliche \gls{vcd}-Format ermöglicht.
+
+Es ist anzumerken, dass die Hardware nahezu baugleich mit 8051-basierten Analyzern wie dem (teureren) \emph{USBee SX} ist und dass viele weitaus kostengünstigere Kopien der Hardware
+existieren. Anleitungen hierzu finden sich im Netz\footnote{Etwa unter \url{http://www.jwandrews.co.uk/2011/12/saleae-logic-analyser-clone-teardown-and-reprogramming/}.}.
+
+
+

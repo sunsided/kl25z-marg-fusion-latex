@@ -1,4 +1,4 @@
-\chapter{Sensoren}
+\section{Sensoren}
 
 Alle in diesem Projekt verwendeten Sensoren verfügen über eine \gls{i2c}-Schnittstelle, über welche die Kommunikation abgewickelt wurde. Einige Module, wie die MPU6050 (siehe Abschnitt~\ref{sec:mpu6050})
 verfügen darüberhinaus über Interrupt-Leitungen, welche das Vorliegen neuer Messwerte signalisieren.
@@ -11,7 +11,7 @@ verfügen darüberhinaus über Interrupt-Leitungen, welche das Vorliegen neuer M
 \end{figure}
 
 
-\section{MMA8451Q -- Accelerometer}
+\subsection{MMA8451Q -- Accelerometer}
 \label{sec:mma8451q}
 
 Der Freescale MMA8451Q ist der auf dem Freedom-Board verbaute Beschleunigungssensor. Er bietet eine Auflösung von 8 oder 14 Bit (inklusive Vorzeichen) bei einer maximalen 
@@ -31,7 +31,7 @@ Auf den hierbei verwendeten Übertragungsmechanismus wird in Kapitel~\ref{sec:se
 	\label{fig:matlab-video-virthorz}
 \end{figure}
 
-\subsection{Treiber}
+\subsubsection{Treiber}
 
 Die im Treiber implementierte Registerstruktur des MMA8451Q kann in Listing~\ref{lst:mma8451q-registers} gefunden werden, der dazugehörige Initialisierungscode in Listing~\ref{lst:mma8451q-init}.
 
@@ -115,7 +115,7 @@ MMA8451Q_StoreConfiguration(configuration);
 MMA8451Q_EnterActiveMode();
 \end{lstlisting}
 
-\subsection{Kalibrierung}
+\subsubsection{Kalibrierung}
 \label{subsec:mma8451q_kalibrierung}
 
 Eine Möglichkeit zur Offsetkalibrierung der Beschleunigungssensoren besteht darin, diese in Ruhelage so zu positionieren, dass der gesamte Betrag der durch die Gravitation bedingten
@@ -139,7 +139,7 @@ Da der Sensor im weiteren Verlauf des Projektes nicht mehr verwendet wurde, soll
 
 
 
-\section{MPU6050 -- Accelerometer, Gyro- und Temperatursensor}
+\subsection{MPU6050 -- Accelerometer, Gyro- und Temperatursensor}
 \label{sec:mpu6050}
 
 Die Invensense MPU6050 ist eine \gls{imu}, die einen 16 Bit genauen Beschleunigungs- und Drehratensensor mit einem Temperatursensor vereinigt (\citealp{mpu6050}). 
@@ -165,7 +165,7 @@ Diese vergleichsweise geringe Geschwindigkeit ist jedoch ausreichend, um den Sen
 
 Für die Entwicklung verwendet wurde ein Breakout-Board von Drotek (Abbildung~\ref{fig:mpu6050-breakout}), welches neben einem $5\volt$-Eingang, sowie der \gls{i2c}-Schnittstelle (auf dem Bild zu erkennen sind die Pins für den Slave-\gls{i2c}-Bus der \gls{imu}) einen $3.3\volt$-Ausgang, sowie einen Interrupt-Ausgang (\texttt{DRDY}) besitzt, welcher das Vorliegen neuer Messwerte signalisiert.
 
-\subsection{Treiber}
+\subsubsection{Treiber}
 
 Die Registerstruktur der MPU6050 ist bei weitem die komplexeste der verwendeten Sensoren, sie kann in Listing~\ref{lst:mpu6050-registers} gefunden werden, der verwendete Initialisierungcode dagegen in Listing~\ref{lst:mpu6050-registers}. Insbesondere soll dort auf Zeile~\ref{lstline:mpu6050_osc} hingewiesen werden, auf die im Abschnitt~\ref{subsec:mpu6050_lessonslearned} gesondert eingegangen wird.
 
@@ -284,7 +284,7 @@ MPU6050_SetSleepMode(configuration, MPU6050_SLEEP_DISABLED);
 MPU6050_StoreConfiguration(configuration);
 \end{lstlisting}
 
-\subsection{Kalibrierung}
+\subsubsection{Kalibrierung}
 \label{subsec:mpu6050_kalibrierung}
 
 Die Kalibrierung des Accelerometers der MPU6050 wurde wie in Abschnitt~\ref{subsec:mma8451q_kalibrierung} beschrieben durchgeführt. Die Kalibrierung des Gyrosensors erfolgte durch Auswertung
@@ -358,7 +358,7 @@ Eine Übersicht der unkalibrierten und kalibrierten Sensordaten ist in Abbildung
 		\label{fig:mpu6050_calib}
 \end{figure}
 
-\subsection{Lessons Learned}
+\subsubsection{Lessons Learned}
 \label{subsec:mpu6050_lessonslearned}
 
 Bei der Kommunikation mit der MPU6050 trat das Problem auf, dass bei aktiviertem Interrupt-Signal und reduzierter Samplingrate nach einem Kaltstart keinerlei nennenswerte 
@@ -389,7 +389,7 @@ Zeile~\ref{lstline:mpu6050_osc}). Das korrekte Verhalten kann in Abbildung~\ref{
 
 
 
-\section{HMC5883L -- Magnetometer}
+\subsection{HMC5883L -- Magnetometer}
 \label{sec:hmc5883l}
 
 Der HMC5883L von Honeywell liefert bei einer Auflösung von 12 Bit (inkl. Vorzeichen) Messwerte in einem Bereich von bis zu $\pm$8 Gauss, wodurch er für den Einsatz in Präsenz starker 
@@ -407,7 +407,7 @@ Wie die MPU6050 besitzt auch der HMC5883L eine Interrupt-Leitung für das Vorlie
 führt diesen Pin jedoch nicht heraus, weswegen auf periodisches Pollen des Sensors ausgewichen werden musste. Hierzu wurde auf die Funktionalität des \gls{systick}-Interrupt 
 des ARM-Cores zurückgegriffen.
 
-\subsection{Treiber}
+\subsubsection{Treiber}
 
 Im Gegensatz zu den anderen verwendeten Sensoren fällt die Registerstruktur beim HMC5885L überaus knapp aus (Listing~\ref{lst:hmc5883l-registers}).
 
@@ -450,7 +450,7 @@ HMC5883L_SetOperatingMode(configuration, HMC5883L_MD_CONT);
 HMC5883L_StoreConfiguration(configuration);
 \end{lstlisting}
 
-\subsection{Kalibrierung}
+\subsubsection{Kalibrierung}
 \label{subsec:hmc5883l_kalibrierung}
 
 Auf das magnetische Feld wirken zwei Effekte, denen hinsichtlich der Auswertung und Kalibrierung der Sensordaten besondere Aufmerksamkeit geschenkt werden muss. 
@@ -581,7 +581,7 @@ des \gls{Thumb2}-Befehlssatzes effizient verarbeitet werden kann (vgl. \citealp{
 
 
 
-\subsection{Lessons Learned}
+\subsubsection{Lessons Learned}
 
 Bei der Auswertung der Sensordaten des HMC5883L traten zweierlei Komplikationen auf. Eines dieser Probleme lag in der Ansteuerung des Sensors, das andere dagegen in der Interpretation der Messwerte begründet.
 
