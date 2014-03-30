@@ -12,6 +12,26 @@
 		\centering
 			\begin{subfigure}[b]{\textwidth}
 			\centering
+			\includegraphics[width=\textwidth]{./images/sensors/gyro_unsaturated_2000dgs.png}
+			\caption{Auflösung von $200^\circ/\second$. Sensordaten wie erwartet.}
+			\label{fig:gyro-unsaturated}
+		\end{subfigure}
+
+	\begin{subfigure}[b]{\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{./images/sensors/gyro_saturated_250dgs.png}
+			\caption{Auflösung von $25^\circ/\second$. Sättigung wird erreicht, integrierter Winkel fällt zu gering aus.}
+			\label{fig:gyro-saturated}
+	\end{subfigure}
+	
+	\caption[Gyrosensor: Betrieb im Sättigungsbereich]{Gyrosensor bei Normalbetrieb und im Sättigungsbereich bei vergleichbarer Rotation. Darstellung von integriertem Winkel (blau, linke Achse) und Winkelgeschwindigkeit (grün, rechte Achse). Da die Rotationen manuell durchgeführt wurden, sind sie nicht exakt deckungsgleich.}
+	\label{fig:gyro-sat-unsat}
+\end{figure}
+
+\begin{figure}[htbp]
+		\centering
+			\begin{subfigure}[b]{\textwidth}
+			\centering
 			\includegraphics[width=\textwidth]{./images/logan-full-sample.png}
 			\caption{Übersicht der Kommunikation. Zu erkennen bei $1466$, $1479$ und $1495$ ms ist die timergesteuerte Abfrage an den HMC5883L. Deutlich ersichtlich bei $1467$ ms auch die adaptive Länge des Filter-Korrekturschrittes.}
 			\label{fig:logan-full}
