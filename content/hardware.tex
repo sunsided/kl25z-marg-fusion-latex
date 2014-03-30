@@ -2,27 +2,27 @@
 
 \section{Freescale FRDM-KL25Z}
 
-Das \gls{frdm-kl25z} ist ein Evaluationsboard für die \gls{kl25z}-Serie \glspl{mcu} von Freescale, welche auf dem 
-ARM \gls{cortex-m0+}-Core basiert. Alle Controller der Kinetis L-Serie sind für mixed-signal-Anwendungen geeignet und bis 48 MHz taktbar.
+Das \gls{frdm-kl25z} ist ein Evaluationsboard fÃ¼r die \gls{kl25z}-Serie \glspl{mcu} von Freescale, welche auf dem 
+ARM \gls{cortex-m0+}-Core basiert. Alle Controller der Kinetis L-Serie sind fÃ¼r mixed-signal-Anwendungen geeignet und bis 48 MHz taktbar.
 Das Board besitzt neben 54 \glspl{gpio}, einen USB-Controller, eine RGB-LED, einen kapazitiven Touch-Bereich, 
 sowie einen Freescale MMA8451Q-Accelerometer (vgl. Abbildung~\ref{fig:kl25z}); Letzterer wird in Abschnitt~\ref{sec:mma8451q} auf
 Seite~\pageref{sec:mma8451q} noch einmal erweiternd besprochen.
 Nicht zuletzt trug auch der geringe Preis des Boards von ca. 12 EUR zur Kaufentscheidung bei. 
-Freescale bietet ebenfalls ein etwas teureres Board --- das seit 2013 verfügbare FRDM-KL26Z\footnote{\cite{fs_howlong}} --- 
-für den KL26Z (MKL26Z128VLH4) an, welches zusätzlich zu einem Accelerometer einen Gyrosensor 
-(in Form der FXOS87000CQ-\gls{imu}), sowie einen zusätzlichen Lichtsensor bietet. 
+Freescale bietet ebenfalls ein etwas teureres Board --- das seit 2013 verfÃ¼gbare FRDM-KL26Z\footnote{\cite{fs_howlong}} --- 
+fÃ¼r den KL26Z (MKL26Z128VLH4) an, welches zusÃ¤tzlich zu einem Accelerometer einen Gyrosensor 
+(in Form der FXOS87000CQ-\gls{imu}), sowie einen zusÃ¤tzlichen Lichtsensor bietet. 
 Es ist jedoch zu beachten, dass hierbei 17 \glspl{gpio} auf dem Evaluationsboard entfallen (\citealp{kl26z_qsg}).
 
 \subsection{Features}
 
 Der \gls{kl25z} ordnet sich im Mittelfeld zwischen den Varianten KL0 (16-48pin, 8-32KB), KL1x (32-80pin, 32-256KB), 
-KL3x (64-121pin, 64-256KB, Segment-LCD) und KL4x (64-121pin, 128-256KB, USB + Segment-LCD) ein. Eine kurze Übersicht der Konfiguration
+KL3x (64-121pin, 64-256KB, Segment-LCD) und KL4x (64-121pin, 128-256KB, USB + Segment-LCD) ein. Eine kurze Ãœbersicht der Konfiguration
 des \gls{frdm-kl25z} ist in der folgenden Auflistung\footnote{Dem mbed-Projekt (\url{www.mbed.org}) entnommen.} gegeben.
 
 \begin{itemize}
 	\item Freescale KL25Z Kinetis KL2 MCU (MKL25Z128VLK4)
 	\begin{itemize}
-		\item High performance ARM® Cortex™-M0+ Core
+		\item High performance ARMÂ® Cortexâ„¢-M0+ Core
 		\item 48MHz, 16KB RAM, 128KB FLASH
 		\item 2xSPI, 2xI2C, 3xUART, 6xPWM, 6xADC, Touchsensor, \gls{gpio}
 	\end{itemize}
@@ -41,9 +41,9 @@ des \gls{frdm-kl25z} ist in der folgenden Auflistung\footnote{Dem mbed-Projekt (
 \end{itemize}
 
 Die von Freescale verwendete Parametrierung des ARM-Cores kann Tabelle~\ref{tab:core-configuration} entnommen werden. 
-Es ist hierbei hervorzuheben, dass man sich sowohl für einen single-cycle-Multiplier (anstelle des alternativen 32-cycle-Multipliers), 
-als auch für single-cycle-Zugriff auf die \glspl{gpio} (über einen speziellen Addressraum) entschieden hat, was den Chip
-trotz der Ansiedlung am unteren Performanceende der \gls{Cortex}-Varianten für Signalverarbeitungsprobleme interessant macht.
+Es ist hierbei hervorzuheben, dass man sich sowohl fÃ¼r einen single-cycle-Multiplier (anstelle des alternativen 32-cycle-Multipliers), 
+als auch fÃ¼r single-cycle-Zugriff auf die \glspl{gpio} (Ã¼ber einen speziellen Addressraum) entschieden hat, was den Chip
+trotz der Ansiedlung am unteren Performanceende der \gls{Cortex}-Varianten fÃ¼r Signalverarbeitungsprobleme interessant macht.
 
 \begin{table}
 \begin{tabularx}{\textwidth}{llX} 
@@ -100,24 +100,24 @@ trotz der Ansiedlung am unteren Performanceende der \gls{Cortex}-Varianten für S
 
 \subsection{On-Chip-Programmer/Debugger}
 
-Auf jedem Freescale Freedom-Entwicklungsboard ist ein \gls{ocd} verbaut, welcher zusätzlich zum Debugging die 
-Fähigkeit besitzt, die \gls{mcu} zu programmieren. Freescale nennt diese Einheit \gls{OpenSDA} 
-(ganz im Sinne der "`Freedom"'-Benamung der Boards), die zwar entgegen ihres Namens proprietärer Natur ist, jedoch die 
-zusätzliche Beschaffung eines externen Programmers erspart. 
+Auf jedem Freescale Freedom-Entwicklungsboard ist ein \gls{ocd} verbaut, welcher zusÃ¤tzlich zum Debugging die 
+FÃ¤higkeit besitzt, die \gls{mcu} zu programmieren. Freescale nennt diese Einheit \gls{OpenSDA} 
+(ganz im Sinne der "`Freedom"'-Benamung der Boards), die zwar entgegen ihres Namens proprietÃ¤rer Natur ist, jedoch die 
+zusÃ¤tzliche Beschaffung eines externen Programmers erspart. 
 Auf diesen wird in Abschnitt~\ref{sec:opensda} noch einmal eingegangen.
 
 \subsection{Bit Manipulation Engine}
 
-Der \gls{kl25z} bietet zusätzlich zum single-cycle-I/O eine \gls{bme} genannte Einheit (\citealp{fs_howlong}), welche eine Variation 
-des sog. \glslink{bit banding}{bit-bandings} (Abbildung~\ref{fig:bit-banding}) darstellt, wie sie in den \gls{Cortex}-M3 und -M4-Cores zur Verfügung steht.
-Diese ermöglicht es, in nur einem Taktzyklus Operationen wie Setzen, Löschen und Invertieren (\texttt{AND}, \texttt{OR}, \texttt{XOR}, \gls{bfi}) 
+Der \gls{kl25z} bietet zusÃ¤tzlich zum single-cycle-I/O eine \gls{bme} genannte Einheit (\citealp{fs_howlong}), welche eine Variation 
+des sog. \glslink{bit banding}{bit-bandings} (Abbildung~\ref{fig:bit-banding}) darstellt, wie sie in den \gls{Cortex}-M3 und -M4-Cores zur VerfÃ¼gung steht.
+Diese ermÃ¶glicht es, in nur einem Taktzyklus Operationen wie Setzen, LÃ¶schen und Invertieren (\texttt{AND}, \texttt{OR}, \texttt{XOR}, \gls{bfi}) 
 auf einzelnen oder mehreren Bits einer Speicheradresse,
-sowie atomares Beziehen und Setzen (\gls{lac}, \gls{las}, \gls{ubfx}) durchzuführen. Da hierbei die sonst notwendigen
-fetch-Instruktionen entfallen, werden diese Befehle --- je nach Art --- in etwa der halben der sonst notwendigen Zeit (bzw. Instruktionszahl) ausgeführt. 
+sowie atomares Beziehen und Setzen (\gls{lac}, \gls{las}, \gls{ubfx}) durchzufÃ¼hren. Da hierbei die sonst notwendigen
+fetch-Instruktionen entfallen, werden diese Befehle --- je nach Art --- in etwa der halben der sonst notwendigen Zeit (bzw. Instruktionszahl) ausgefÃ¼hrt. 
 Ein Beispiel zur Verwendung der \gls{bme} kann in Listing~\ref{lst:bme-xor} gefunden werden.
 
-Entsprechend dem \gls{cmsis} stellt Freescale Treiber zur Verfügung, welche Teile dieser Funktionalitäten in Form der sog. Fast-Port-Register (IOPORT-Register des Cores) 
-zur Verfügung stellen. In Listing~\ref{lst:bme-set-clear} kann das Setzen und Löschen der Pins BTB8 und PTB9 nachvollzogen werden.
+Entsprechend dem \gls{cmsis} stellt Freescale Treiber zur VerfÃ¼gung, welche Teile dieser FunktionalitÃ¤ten in Form der sog. Fast-Port-Register (IOPORT-Register des Cores) 
+zur VerfÃ¼gung stellen. In Listing~\ref{lst:bme-set-clear} kann das Setzen und LÃ¶schen der Pins BTB8 und PTB9 nachvollzogen werden.
 
 \begin{lstlisting}[style=lolc,caption={Bit Manipulation Engine: Set und Clear mittels \gls{cmsis}-Treiber},label=lst:bme-set-clear]
 /* regulaerer GPIO (mittels BME) */
@@ -131,7 +131,7 @@ FPTB_BASE_PTR->PCOR = 1 << 9; /* clear output register pin 9 */
 
 \subsection{$48 \mega\hertz$ mit dem Multi-Purpose Clock Generator}
 
-Eine Schwierigkeit bei der Nutzung des \gls{kl25z} stellt die Komplexität des \gls{mcg} dar. Zur Initialisierung wurde der vom \gls{Processor Expert} (siehe Abschnitt~\ref{subsec:codewarrior})
+Eine Schwierigkeit bei der Nutzung des \gls{kl25z} stellt die KomplexitÃ¤t des \gls{mcg} dar. Zur Initialisierung wurde der vom \gls{Processor Expert} (siehe Abschnitt~\ref{subsec:codewarrior})
 erzeugte Code\footnote{Zu finden in Listing~\ref{lst:kl25z-pll-init}} verwendet und wie in Listing~\ref{lst:kl25z-pll-init-call} entnehmbar betrieben, um von der internen Referenzclock (\gls{fei})
 auf den \gls{pee}-Modus mit $48 \mega\hertz$ zu wechseln\footnote{Hilfreich war das unter \url{https://www.youtube.com/watch?v=uiSTB4jkxhw} zu findende Video.}.
 
@@ -146,7 +146,7 @@ const int8_t multiplier = XTAL_PEE_UPSCALE;  /* Skalierung mit 24 (2 MHz --> 48 
 pll_init(xtal, LOW_POWER /* = 0 */, CRYSTAL /* = 1 */, divider, multiplier, MCGOUT /* = 1 */);
 \end{lstlisting}
 
-Eine Übersicht der Clock-Einheit und der \gls{mcg}-Modi findet sich in den Abbildungen~\ref{fig:kl25z-clocking}, \ref{fig:kl25z-mcg} und~\ref{fig:kl25z-mcg-states}.
+Eine Ãœbersicht der Clock-Einheit und der \gls{mcg}-Modi findet sich in den Abbildungen~\ref{fig:kl25z-clocking}, \ref{fig:kl25z-mcg} und~\ref{fig:kl25z-mcg-states}.
 
 
 
@@ -168,9 +168,9 @@ Eine Übersicht der Clock-Einheit und der \gls{mcg}-Modi findet sich in den Abbil
 \subsection{Freescale OpenSDA}
 \label{sec:opensda}
 
-Der \gls{OpenSDA}-Chip auf dem Entwicklungsboard kommuniziert dabei mit der im \gls{Cortex}-Kern integrierten \gls{CoreSight}-Einheit über das \gls{JTAG}-Protokoll.
+Der \gls{OpenSDA}-Chip auf dem Entwicklungsboard kommuniziert dabei mit der im \gls{Cortex}-Kern integrierten \gls{CoreSight}-Einheit Ã¼ber das \gls{JTAG}-Protokoll.
 Der Chip selbst kann dabei mit einer alternativen Firmware geflasht werden (vgl. Abb. \ref{fig:opensda-block}), welche eine spezialisierte 
-(d.h. treiberspezifische) Ansteuerung der \gls{CoreSight}-Einheit ermöglicht.
+(d.h. treiberspezifische) Ansteuerung der \gls{CoreSight}-Einheit ermÃ¶glicht.
 
 \begin{figure}[htbp]
 		\centering
@@ -179,29 +179,29 @@ Der Chip selbst kann dabei mit einer alternativen Firmware geflasht werden (vgl.
     \label{fig:opensda-block}
 \end{figure}
 
-Die Standard-Firmware (PEmicro OpenSDA MSD) repräsentiert sich dabei nach dem Verbinden mit dem USB-Host als \gls{msd} und ist in der Lage, die \gls{mcu}
-durch einfaches Drag \& Drop einer \gls{elf}-Datei zu programmieren. Debugging-Funktionalität bietet dieses Interface jedoch nicht, wodurch der
-erste Schritt der Inbetriebnahme in den meisten Fällen darin bestehen wird, eine alternative Firmware (z.B. PEmicro OpenSDA DEBUG) zu flashen. Hierdurch
-verliert man zwar die Funktionalität des USB-\gls{msd} und ist somit auf eine Programmersoftware angewiesen, diese ist jedoch z.B. in Form der Toolchain
+Die Standard-Firmware (PEmicro OpenSDA MSD) reprÃ¤sentiert sich dabei nach dem Verbinden mit dem USB-Host als \gls{msd} und ist in der Lage, die \gls{mcu}
+durch einfaches Drag \& Drop einer \gls{elf}-Datei zu programmieren. Debugging-FunktionalitÃ¤t bietet dieses Interface jedoch nicht, wodurch der
+erste Schritt der Inbetriebnahme in den meisten FÃ¤llen darin bestehen wird, eine alternative Firmware (z.B. PEmicro OpenSDA DEBUG) zu flashen. Hierdurch
+verliert man zwar die FunktionalitÃ¤t des USB-\gls{msd} und ist somit auf eine Programmersoftware angewiesen, diese ist jedoch z.B. in Form der Toolchain
 der Freescale CodeWarrior-IDE (siehe Abschnitt~\ref{subsec:codewarrior} auf Seite~\pageref{subsec:codewarrior}) gegeben.
 
-Eine Gegenüberstellung der alternativen SDA-Firmwares ohne Anspruch auf Vollständigkeit kann Tabelle \ref{tab:opensda-options} entnommen werden.
+Eine GegenÃ¼berstellung der alternativen SDA-Firmwares ohne Anspruch auf VollstÃ¤ndigkeit kann Tabelle \ref{tab:opensda-options} entnommen werden.
 
 \begin{table}
 \begin{tabular}{lllll} 
 \toprule
-\multicolumn{5}{l}{Gegenüberstellung von OpenSDA-Firmwares}\\  
+\multicolumn{5}{l}{GegenÃ¼berstellung von OpenSDA-Firmwares}\\  
 \midrule 
 Name & Art & Breakpoints & UART & MSD \\ 
 \midrule 
-PEmicro MSD\footnote{\url{https://www.pemicro.com/opensda/}} & proprietär & (kein Debugging) & ja & ja\\
-PEmicro DEBUG & proprietär & hardware & ja & nein \\
-Keil CMSIS-DAP\footnote{\url{http://www.keil.com/appnotes/docs/apnt_232.asp} (Application Note 232)} & proprietär & hardware & nein & nein \\
+PEmicro MSD\footnote{\url{https://www.pemicro.com/opensda/}} & proprietÃ¤r & (kein Debugging) & ja & ja\\
+PEmicro DEBUG & proprietÃ¤r & hardware & ja & nein \\
+Keil CMSIS-DAP\footnote{\url{http://www.keil.com/appnotes/docs/apnt_232.asp} (Application Note 232)} & proprietÃ¤r & hardware & nein & nein \\
 mbed\footnote{\url{http://mbed.org/handbook/Firmware-FRDM-KL25Z}} & open source & (kein Debugging) & ja & ja \\
-Segger J-Link\footnote{\url{http://www.segger.com/opensda.html}} & proprietär & unbegrenzt & nein & nein \\ 
+Segger J-Link\footnote{\url{http://www.segger.com/opensda.html}} & proprietÃ¤r & unbegrenzt & nein & nein \\ 
 \bottomrule
 \end{tabular}
-\caption{Gegenüberstellung von OpenSDA-Firmwares}
+\caption{GegenÃ¼berstellung von OpenSDA-Firmwares}
 \label{tab:opensda-options}
 \end{table}
 
@@ -210,7 +210,7 @@ Segger J-Link\footnote{\url{http://www.segger.com/opensda.html}} & proprietär & 
 
 Beachtet werden muss, dass die \gls{msd}-Schnittstelle der \gls{OpenSDA}-Firmware unter Windows 8.1 nicht korrekt funktioniert! Dies ist der strengeren Handhabung
 der USB Device-Deskriptoren unter der neueren Windows-Version geschuldet, wodurch die Antwort der OpenSDA-Firmware abgelehnt wird, was zu abbrechenden
-Dateitransfers und damit fehlerhaft geflashter Firmware führt.
+Dateitransfers und damit fehlerhaft geflashter Firmware fÃ¼hrt.
 
 Um den \gls{msd}-Modus zum Programmieren zu verwenden oder die Firmware selbst umzuflashen muss demnach wahlweise Windows 7 oder niedriger oder ein Linux-basiertes System
 verwendet werden, um das Laufwerk zu mounten. Die Verwendung einer virtuellen Maschine zum umprogrammieren der \gls{OpenSDA}-Firmware wurde versucht,
@@ -220,8 +220,8 @@ Eine Beschreibung des Vorgehens zur Umprogrammierung des \gls{OpenSDA}-Chips unt
 
 \subsection{CMSIS-DAP}
 
-Eine alternative (und quelloffene) Firmware für den \gls{OpenSDA}-Chip ist die \gls{cmsis-dap}-Firmware. Diese wird unter anderem für das \gls{mbed}-Projekt, 
-sowie für die Interaktion mit dem \gls{OpenOCD}-Programmer/Debugger verwendet.
+Eine alternative (und quelloffene) Firmware fÃ¼r den \gls{OpenSDA}-Chip ist die \gls{cmsis-dap}-Firmware. Diese wird unter anderem fÃ¼r das \gls{mbed}-Projekt, 
+sowie fÃ¼r die Interaktion mit dem \gls{OpenOCD}-Programmer/Debugger verwendet.
 
 \begin{figure}[htbp]
 		\centering
@@ -233,6 +233,6 @@ sowie für die Interaktion mit dem \gls{OpenOCD}-Programmer/Debugger verwendet.
 
 \subsection{Segger J-Link}
 
-Weiterhin stellt auch Segger eine \gls{OpenSDA}-Variante seines proprietären J-Link-Programmers/Debuggers zur Verfügung. Einer der wesentlichen Vorteile dieser
-Variante besteht in der hohen Programmiergeschwindigkeit, sowie der Unterstützung beliebig vieler Breakpoints über die Anzahl an Hardware-Breakpoints des Cores hinaus,
-sofern die Lizenzbedingungen (Entwicklung nur für nichtkommerzielle Produkte und auf Freescale-\glspl{mcu} auf Evaluation-Boards) eingehalten werden.
+Weiterhin stellt auch Segger eine \gls{OpenSDA}-Variante seines proprietÃ¤ren J-Link-Programmers/Debuggers zur VerfÃ¼gung. Einer der wesentlichen Vorteile dieser
+Variante besteht in der hohen Programmiergeschwindigkeit, sowie der UnterstÃ¼tzung beliebig vieler Breakpoints Ã¼ber die Anzahl an Hardware-Breakpoints des Cores hinaus,
+sofern die Lizenzbedingungen (Entwicklung nur fÃ¼r nichtkommerzielle Produkte und auf Freescale-\glspl{mcu} auf Evaluation-Boards) eingehalten werden.
