@@ -381,6 +381,11 @@ Dieses Problem war erst dadurch zu beheben, dass zu Beginn der Konfiguration der
 um sie dann im Zuge der folgenden Konfiguration erneut auf den gewünschten Betriebsmodus zu stellen (vgl. dazu Listing~\ref{lst:mpu6050-registers}, 
 Zeile~\ref{lstline:mpu6050_osc}). Das korrekte Verhalten kann in Abbildung~\ref{fig:logan-full} gesehen werden.
 
+Eine initiale (zu geringe) Einschätzung über die möglichen Rotationsgeschwindigkeiten führte zu einem Betrieb des Gyrosensors im Sättigungsbereich, was die Fusion deutlich beeinträchtigte;
+Da den Gyrosensordaten in der Fusion i.a. mehr Vertrauen geschenkt wird als den vergleichsweise ungenaueren Accelerometerdaten wird die (fusionierte) Rotation vorzeitig stark verlangsamt,
+da die Winkelgeschwindigkeiten nicht hoch genug gemeldet werden können. Dies resultiert in einem schleppenden (d.h. mehrsekündigem) "`Nachziehen"' der Orientierung, während das Filter
+die eigene Schätzung mit den Accelerometerdaten in Übereinstimmung bringt. Eine Darstellung des Sättigungseffektes bei einer schnellen Rotation aus der Hand findet sich in Abbildung \ref{fig:gyro-sat-unsat}.
+Der Betrieb des Gyrosensors im $2000^\circ/\second$-Modus löste das Problem instantan. Für Anwendungen mit geringeren Dynamikanforderungen muss die Auflösung entsprechend angepasst werden.
 
 
 
