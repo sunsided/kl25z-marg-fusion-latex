@@ -26,3 +26,23 @@ es, ein Maß für die Ausrichtung des Systemes im Raum zu ermitteln, welches
 Hierbei wird ein reguläres \gls{Kalman-Filter} zum Einsatz auf einem \gls{cortex-m0} entwickelt, welches adaptiv auf vorliegende
 Messwerte reagiert und für den Echtzeiteinsatz geeignet ist. Die Implementierung erfolgt hierbei auf einem \gls{kl25z},
 einem Mikrocontroller der Kinetis-Serie von Freescale auf Basis des ARM Cortex-M0+.
+
+\begin{figure}[htbp]
+		\centering
+	\begin{subfigure}[b]{\textwidth}
+		\centering
+		\includegraphics[width=0.8\textwidth]{./images/board.jpg}
+		\caption[FRDM-KL25Z mit externen Sensoren]{FRDM-KL25Z mit externen Sensoren: MPU6050 (blau) und HMC5883L (rot)}
+		\label{fig:board}
+	\end{subfigure}
+
+	\begin{subfigure}[b]{\textwidth}
+		\centering
+		\includegraphics[width=0.8\textwidth]{./images/board-mit-logan.jpg}
+		\caption[FRDM-KL25Z mit angeschlossenem Logic-Analyzer]{FRDM-KL25Z mit angeschlossenem Logic-Analyzer (rechts). Im Hintergrund links der verwendete UART-zu-USB-Transceiver.}
+		\label{fig:board-logan}
+	\end{subfigure}
+	
+	\caption{Prototyp auf dem Breadboard}
+	\label{fig:prototype}
+\end{figure}

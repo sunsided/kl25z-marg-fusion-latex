@@ -1,0 +1,42 @@
+\chapter{Fazit}
+
+\section{Bewertung}
+
+Die Autoren empfanden die Ergebnisse der Fusion als beeindruckend, da eine Reduktion des Orientierungsfehlers von mehreren Dekagrad pro Achse auf wenige Zentigrad erreicht werden konnte.
+Dieser Effekt ist intuitiv assoziierbar mit starker Tiefpassfilterung, wobei die Dynamik des Systemes jedoch erhalten bleibt. Hierbei ist insbesondere zu bedenken, dass die 
+Implementierung auf einem Low-End-Prozessor ohne erweiterte Signalverarbeitungsfähigkeiten oder komplexe \gls{mac}-Befehle umgesetzt wurde, wie sie
+etwa im Cortex-M4 oder im NEON-Befehlssatz der Cortex-A-Serie vorhanden sind.
+
+Die Verwendung einer \gls{q16}-Fixed Point-Bibliothek führte zu einer effizienten Ausnutzung der 32bit-Architektor des Prozessors, wobei insbesondere die \gls{conditional execution}-Funktionalität
+des \gls{Thumb2}-Befehlssatzes eine effiziente Implementierung vieler Funktionen ermöglicht. Ein prominentes Beispiel hierfür ist die Funktion zur Addition oder Subtraktion zweier Matrizen,
+welche Code der Spielart \texttt{wenn ADDIERE then ADD(a,b) else SUB(a,b)} in einer Schleife erlaubt, ohne Performanceeinbrüche durch Branching befürchten zu müssen.
+
+Wünschenswert wäre die Möglichkeit der Verwendung eines Q24/Q23-Formates gewesen, welches den notwendigen Wertebereich der Systemzustände besser abgebildet hätte, da selbst bei nicht-normalisierten
+Daten im Gradmaß keine Werte außerhalb $\pm$ unit{180}{\degree} auftreten können. Eine Portierung der beiden verwendeten Libraries wurde nicht vorgenommen, wenngleich dies zweifelsfrei möglich ist.
+Ebenso war es schade, die in \emph{libfixmath} vorgesehenen look-up-Tables für trigonometrische Funktionen nicht nutzen zu können, da diese für die Verwendung mit dem auf dem \gls{kl25z} 
+verfügbaren Speicher viel zu groß dimensioniert und aufgrund ihrer dynamischen Berechnung zur Laufzeit nicht \gls{romable} sind.
+
+Schwierigkeiten ergaben sich zuletzt bei Verwendung der arm-gcc-Toolchain 4.8.2 in Verbindung mit link-time und/oder whole program optimization. Obzwar diese deutliche Geschwindigkeitssteigerungen
+versprechen, stellte sich ein extrem gegenteiliger Effekt ein, welcher das System effektiv unnutzbar machte. Entsprechend wurde auf diese automatischen Optimierungsmechanismen verzichtet.
+
+\section{Ausblick}
+
+Obschon die umgesetzte Fusion bereits sehr beeindruckende Ergebnisse zeigte, ist die implementierte Konfiguration eher für Anwendungen mit hoher Bewegungsdynamik geeignet, als für solche
+mit hohen Genauigkeitsanforderungen auch in Ruhelage, wie sie etwa bei der Positionierung von Teleskopen in der Astronomie benötigt wäre. Damit der Algorithmus in solchen Fällen 
+ausgezeichnete Ergebnisse liefert, können einige Veränderungen vorgenommen werden, welche hier kurz umrissen werden sollen.
+
+Unter der Annahme geringerer Anforderungen an die Dynamik können die Sensoren auf einen kleineren Messwertebereich konfiguriert werden, was die Genauigkeit der Messwerte 
+aufgrund der besseren Wertequantisierung signifikant erhöht. Da nur die \glspl{lsb} vom Rauschen betroffen sind, hat dies weiterhin eine positive Auswirkung auf die Varianzen (und Kovarianzen) der Messwerte.
+Alle verwendeten Sensoren mit Ausnahme des HMC5883L besitzen die Möglichkeit zum rauscharmen Betrieb (auf Kosten der Dynamik), sowie zuschaltbare Tiefpassfilter.
+Dies reduziert u.U. die Notwendigkeit der hochfrequenten Aufrufe des Fusionsalgorithmus (welcher ja implizit eine Passfilterung durchführt), was sich ebenfalls positiv im 
+Energieverbrauch auswirkt, zumal nun längere Zeiten im low power-Mode des Controllers verbracht werden können.
+
+Abschließend ist zu sagen, dass die Implementierung asynchroner \gls{i2c}-Transfers, sowie die Verwendung unterschiedlicher \gls{i2c}-Ports je Sensor bei erhöhten
+Dynamikanforderungen förderlich sind. Dies wurde aufgrund der (im Vergleich zur trivialen Implementierung einer interruptgesteuerten \gls{uart}) nicht umgesetzt, da die Kommunikation auf
+dem \gls{i2c}-Bus sensor- und anwendungsspezifisch erfolgen muss, was eine erweiterte Logik erfordert. Eine Möglichkeit wäre die Verwendung eines Ringpuffers zur Speicherung von Kommando- und
+Datentoken (z.B. write-to, read-from, disable ACK, re-initialize), welche in Interrupt-Handler abgearbeitet werden; Dieser könnte etwa als Zustandsautomat implementiert sein.
+
+Eine Verwendung von mehreren Rechenkernen etwa im erscheint insbesondere hinsichtlich der dezentralen Filterstruktur als förderlich, ist jedoch eher dann zu empfehlen, wenn der Controller
+neben der Filterung noch weitere Aufgaben komplexerer Natur übernehmen soll. Als wesentlich interessanter erscheint die Implementierung einer dedizierten, schleifenfreien Variante der Filteralgorithmen,
+welche die Eigenarten der oft symmetrischen und dünnbesetzten Matrizen effizient ausnutzt, was eine Performancesteigerung um mehrere Dekaden bewirken dürfte. Dies wurde nur aufgrund der prinzipbedingt
+experimentellen Natur des durchgeführten Projektes nicht durchgeführt.

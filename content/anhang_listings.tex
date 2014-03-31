@@ -321,20 +321,7 @@ void kalman_gravity_demo()
 }
 \end{lstlisting}
 
-\begin{lstlisting}[style=lolc,caption={Fusion: \textsc{Euler}'sche Winkel aus \gls{dcm}},label=lst:libfixmath_dcm_euler]
-void sensor_dcm2rpy(
-	const mf16 *RESTRICT const dcm, 
-	fix16_t *RESTRICT const roll, 
-	fix16_t *RESTRICT const pitch, 
-	fix16_t *RESTRICT const yaw)
-{
-    *pitch = -fix16_asin(dcm->data[0][2]);
-    *roll  = fix16_atan2(dcm->data[1][2], dcm->data[2][2]);
-    *yaw   = fix16_atan2(dcm->data[0][1], dcm->data[0][0]);
-}
-\end{lstlisting}
-
-\begin{lstlisting}[style=lolc,caption={Fusion: Ermittlung des Quaternions aus den fusionierten Datem},label=lst:quaternion_from_kalman]
+\begin{lstlisting}[style=lolc,caption={Fusion: Ermittlung des Quaternions aus den fusionierten Daten mittels libfixmatrix/libfixmath},label=lst:quaternion_from_kalman]
 HOT NONNULL LEAF
 static void fetch_quaternion_opt2(register qf16 *RESTRICT const quat)
 {
@@ -453,6 +440,19 @@ static void fetch_quaternion_opt2(register qf16 *RESTRICT const quat)
 
 	// normalizify
 	qf16_normalize(quat, quat);
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=lolc,caption={Fusion: \textsc{Euler}'sche Winkel aus \gls{dcm}},label=lst:libfixmath_dcm_euler]
+void sensor_dcm2rpy(
+	const mf16 *RESTRICT const dcm, 
+	fix16_t *RESTRICT const roll, 
+	fix16_t *RESTRICT const pitch, 
+	fix16_t *RESTRICT const yaw)
+{
+    *pitch = -fix16_asin(dcm->data[0][2]);
+    *roll  = fix16_atan2(dcm->data[1][2], dcm->data[2][2]);
+    *yaw   = fix16_atan2(dcm->data[0][1], dcm->data[0][0]);
 }
 \end{lstlisting}
 
