@@ -11,6 +11,7 @@ verfügen darüberhinaus über Interrupt-Leitungen, welche das Vorliegen neuer M
 \end{figure}
 
 
+\clearpage
 \subsection{MMA8451Q -- Accelerometer}
 \label{sec:mma8451q}
 
@@ -19,21 +20,22 @@ Samplingrate von 800 Hz (\citealp{mma8451q}) und kann mit bis zu 2.25 MHz Taktun
 ausgelesen werden\footnote{Dies entspricht dem sog. "`High Speed Mode \gls{i2c}"', welcher bis 3,4 Mbit/s spezifiziert ist.}.
 
 \begin{table}[htbp]
+	\centering
 		\begin{tabular}{ll}
 		\toprule
-		\multicolumn{2}{l}{Eigenschaften des Freescale MMA8451} \\
+		\multicolumn{2}{l}{Eigenschaften des Freescale MMA8451Q} \\
 		\midrule
 		Messbereich &  ±2g, ±4g oder ±8g \\
 		Samplingrate &  \unit{1,56}{\hertz} bis \unit{800}{\hertz}\\
 		Auflösung & 8-Bit oder 14-Bit \\
-		Rauschen & \unit{99}{\micro\gram/\sqrt\hertz} \\
+		Rauschen & \unit{99}{\micro\gram/\sqrt{\hertz}} \\
 		Versorgungsspannung & \unit{1,95}{\volt} bis \unit{3,6}{\volt} \\
 		Schnittstellenspannung & \unit{1,6}{\volt} bis \unit{3,6}{\volt} \\
 		Stromverbrauch & \unit{6}{\micro\ampere} bis \unit{165}{\micro\ampere} \\
 		Betriebstemperatur & \unit{-40}{\celsius} bis \unit{+85}{\celsius} \\
 		\bottomrule
 		\end{tabular}
-	\caption{Eigenschaften des Freescale MMA8451}
+	\caption{Eigenschaften des Freescale MMA8451Q}
 	\label{tab:MMA8451Eigenschaften}
 \end{table}
 
@@ -156,13 +158,14 @@ Da der Sensor im weiteren Verlauf des Projektes nicht mehr verwendet wurde, soll
 
 
 
-
+\clearpage
 \subsection{MPU6050 -- Accelerometer, Gyro- und Temperatursensor}
 \label{sec:mpu6050}
 
 Die Invensense MPU6050 ist eine \gls{imu}, die einen 16 Bit genauen Beschleunigungs- und Drehratensensor mit einem Temperatursensor vereinigt (\citealp{mpu6050}). 
 
 \begin{table}[htbp]
+	\centering
 		\begin{tabular}{ll}
 		\toprule
 		\multicolumn{2}{l}{Eigenschaften der Invensense MPU6050} \\
@@ -176,14 +179,14 @@ Die Invensense MPU6050 ist eine \gls{imu}, die einen 16 Bit genauen Beschleunigu
 		\midrule
 		Messbereich & \unit{±250, ±500, ±1000, und ±2000}{\degree/\second} \\
 		Samplingrate & \unit{4}{\hertz} bis \unit{8}{\kilo\hertz} \\
-		Rauschen & \unit{0,005}{\degree/second/\sqrt\hertz} \\
+		Rauschen & \unit{0,005}{\degree/\second/\sqrt{\hertz}} \\
 		Stromverbrauch & \unit{3,6}{\milli\ampere} (Standby \unit{5}{\micro\ampere}) \\
 		\midrule
 		\multicolumn{2}{l}{Eigenschaften des Accelerometers} \\
 		\midrule
 		Messbereich & ±2g, ±4g, ±8g und ±16g \\
 		Samplingrate & \unit{4}{\hertz} bis \unit{1}{\kilo\hertz} \\
-		Rauschen & \unit{400}{\micro\gram/\sqrt\hertz} \\
+		Rauschen & \unit{400}{\micro\gram/\sqrt{\hertz}} \\
 		Stromverbrauch & \unit{10}{\micro\ampere} bis \unit{500}{\micro\ampere} \\		
 		\bottomrule
 		\end{tabular}
@@ -438,6 +441,7 @@ Der Betrieb des Gyrosensors im $2000^\circ/\second$-Modus löste das Problem ins
 
 
 
+\clearpage
 \subsection{HMC5883L -- Magnetometer}
 \label{sec:hmc5883l}
 
@@ -446,11 +450,12 @@ lokaler Magnetfelder geeignet ist. Er arbeitet mit einer maximalen Samplingrate 
 werden\footnote{Dies entspricht dem sog. "`Fast Mode \gls{i2c}"'', welcher bis 400 kbit/s spezifiziert ist.}.
 
 \begin{table}[htbp]
+	\centering
 		\begin{tabular}{ll}
 		\toprule
 		\multicolumn{2}{l}{Eigenschaften des Honeywell HMC5883L} \\
 		\midrule
-		Messbereich &  ±8 \gauss \\
+		Messbereich &  $\pm$ \unit{8}{\gauss}\footnote{Gauss} \\
 		Samplingrate &  \unit{160}{\hertz} \\
 		Auflösung & 12-Bit\\
 		Grundrauschen & \unit{2}{\milli\gauss} \\
@@ -652,7 +657,7 @@ des \gls{Thumb2}-Befehlssatzes effizient verarbeitet werden kann (vgl. \citealp{
 
 Bei der Auswertung der Sensordaten des HMC5883L traten zweierlei Komplikationen auf. Eines dieser Probleme lag in der Ansteuerung des Sensors, das andere dagegen in der Interpretation der Messwerte begründet.
 
-\subsubsection{Reihenfolge der Messwerte}
+\paragraph{Reihenfolge der Messwerte}
 \label{subsec:hmc5885l_reihenfolge}
 
 Während in anderen getesteten Sensoren die Messwerte in üblicher $X,Y,Z$-Reihenfolge vorlagen, speichert der HMC5883L die Messwerte in der Reihenfolge $X,Z,Y$. 
@@ -660,7 +665,7 @@ Dies ist aus dem Datenblatt (\citealp{hmc5883l}) nur dann ersichtlich, wenn die 
 Im Gegensatz zu der dort aufgeführten korrekten Reihenfolge, benennen sämtliche übrigen Stellen des Datenblattes (insbesondere im Abschnitt Data Output Registers, S. 15) die reguläre Anordnung.
 Dieser Fehler allein wäre schnell aufgefallen, überlagerte sich jedoch mit der auf Seite~\pageref{subsec:hmc5885l_interpretation} beschriebenen Interpretationsproblematik.
 
-\subsubsection{Interpretation der unkalibrierten Messergebnisse}
+\paragraph{Interpretation der unkalibrierten Messergebnisse}
 \label{subsec:hmc5885l_interpretation}
 
 Das zweite Problem bei der Verarbeitung der Magnetometerdaten bestand in der Verweigerung des Erdmagnetfeldes, die erwartete Form anzunehmen.
