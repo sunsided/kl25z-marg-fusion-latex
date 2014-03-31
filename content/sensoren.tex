@@ -3,15 +3,6 @@
 Alle in diesem Projekt verwendeten Sensoren verfügen über eine \gls{i2c}-Schnittstelle, über welche die Kommunikation abgewickelt wurde. Einige Module, wie die MPU6050 (siehe Abschnitt~\ref{sec:mpu6050})
 verfügen darüberhinaus über Interrupt-Leitungen, welche das Vorliegen neuer Messwerte signalisieren.
 
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=\textwidth]{./images/sensors/uncalibrated.png}
-	\caption[Sensordaten in Ruhelage]{10-Minuten-Aufnahme der Sensordaten in Ruhelage}
-	\label{fig:sensors_unagitated}
-\end{figure}
-
-
-\clearpage
 \subsection{MMA8451Q -- Accelerometer}
 \label{sec:mma8451q}
 
@@ -25,10 +16,10 @@ ausgelesen werden\footnote{Dies entspricht dem sog. "`High Speed Mode \gls{i2c}"
 		\toprule
 		\multicolumn{2}{l}{Eigenschaften des Freescale MMA8451Q} \\
 		\midrule
-		Messbereich &  ±2g, ±4g oder ±8g \\
+		Messbereich &  $\pm2g$, $\pm4g$ oder $\pm8g$ \\
 		Samplingrate &  \unit{1,56}{\hertz} bis \unit{800}{\hertz}\\
 		Auflösung & 8-Bit oder 14-Bit \\
-		Rauschen & \unit{99}{\micro\gram/\sqrt{\hertz}} \\
+		Rauschen & \unit{99}{\micro g/\sqrt{\hertz}} \\
 		Versorgungsspannung & \unit{1,95}{\volt} bis \unit{3,6}{\volt} \\
 		Schnittstellenspannung & \unit{1,6}{\volt} bis \unit{3,6}{\volt} \\
 		Stromverbrauch & \unit{6}{\micro\ampere} bis \unit{165}{\micro\ampere} \\
@@ -99,6 +90,8 @@ typedef struct {
 } mma8451q_confreg_t;
 \end{lstlisting}
 
+Der Sensor wurde während des Testlaufes auf eine Empfindlichkeit von $\pm 2g$ (d.h. $\pm 2\times\unit{9,81}{\meter/\second^2}$ peak-to-peak) bei einer Samplingrate von \unit{100}{\hertz} eingestellt.
+Die Triggerung der Verbarbeitung wurde über eine der Interruptleitungen vorgenommen, welche auf open drain, active low im \emph{data ready}-Modus geschaltet wurde.
 
 \begin{lstlisting}[style=lolc,caption={Initialisierungscode MMA8451Q},label=lst:mma8451q-init]
 /* Referenz auf statischen shared buffer */
@@ -283,6 +276,14 @@ typedef struct __attribute__ ((__packed__))
 } mpu6050_confreg_t;
 \end{lstlisting}
 
+Der Accelerometer wurde auf eine Empfindlichkeit von $\pm 4g$ (d.h. $\pm 4\times\unit{9,81}{\meter/\second^2}$ peak-to-peak) eingestellt,
+der Gyrosensor auf $\pm$ \unit{2000}{\degree/\second}. Letzterem liegt die Annahme zugrunde, dass eine schnelle Handbewegung eine Rotation um \unit{180}{\degree} 
+innerhalb von \unit{100}{\milli\second} bewirken kann, was einer Winkelgeschwindigkeit von \unit{1800}{\degree/\second} entspräche (siehe dazu auch Abschnitt~\ref{subsec:mpu6050_lessonslearned} auf
+Seite~\pageref{lessonslearned:drehrate}). 
+Beide Sensoren wurden für eine Samplerate von \unit{200}{\hertz} konfiguriert, was einen Kompromiss zwischen Datenaktualität und Verarbeitungsgeschwindigkeit bildet. Während des Debuggings
+wurde diese Geschwindigkeit auf \unit{100}{\hertz} begrenzt.
+Die Triggerung der Verbarbeitung wurde auch hier über eine Interruptleitung vorgenommen, welche auf open drain, active low geschaltet wurde, wobei das Zurücksetzen des Interrupts beim Auslesen
+des Statusregisters geschieht.
 
 \begin{lstlisting}[style=lolc,caption={Initialisierungscode MPU6050},label=lst:mpu6050-init]
 /* Referenz auf statischen shared buffer */
@@ -408,7 +409,7 @@ Eine Übersicht der unkalibrierten und kalibrierten Sensordaten ist in Abbildung
 \subsubsection{Lessons Learned}
 \label{subsec:mpu6050_lessonslearned}
 
-Bei der Kommunikation mit der MPU6050 trat das Problem auf, dass bei aktiviertem Interrupt-Signal und reduzierter Samplingrate nach einem Kaltstart keinerlei nennenswerte 
+\paragraph{Fehler bei Kaltstart} Bei der Kommunikation mit der MPU6050 trat das Problem auf, dass bei aktiviertem Interrupt-Signal und reduzierter Samplingrate nach einem Kaltstart keinerlei nennenswerte 
 Verzögerung (d.h. nur im Mikrosekundenbereich) zwischen aufeinander folgenden Interruptsignalen festzustellen war vgl. Abbildung~\ref{fig:logan-frenzy}). 
 Dies führte zu der Problematik, dass die durch den Interrupt-Handler freigeschaltete Routine zum Beziehen der Sensordaten über \gls{i2c} und die anschließende Verarbeitung 
 direkt durch einen erneuten Interrupt unterbrochen wurde. Da die serielle Ausgabe der Werte über die \gls{uart}-Schnittstelle nur mit deutlich geringerer Taktung laufen
@@ -428,8 +429,8 @@ Dieses Problem war erst dadurch zu beheben, dass zu Beginn der Konfiguration der
 um sie dann im Zuge der folgenden Konfiguration erneut auf den gewünschten Betriebsmodus zu stellen (vgl. dazu Listing~\ref{lst:mpu6050-registers}, 
 Zeile~\ref{lstline:mpu6050_osc}). Das korrekte Verhalten kann in Abbildung~\ref{fig:logan-full} gesehen werden.
 
-Eine initiale (zu geringe) Einschätzung über die möglichen Rotationsgeschwindigkeiten führte zu einem Betrieb des Gyrosensors im Sättigungsbereich, was die Fusion deutlich beeinträchtigte;
-Da den Gyrosensordaten in der Fusion i.a. mehr Vertrauen geschenkt wird als den vergleichsweise ungenaueren Accelerometerdaten wird die (fusionierte) Rotation vorzeitig stark verlangsamt,
+\paragraph{Sättigung der Drehraten} Eine\label{lessonslearned:drehrate} initiale (zu geringe) Einschätzung über die möglichen Rotationsgeschwindigkeiten führte zu einem Betrieb des Gyrosensors im Sättigungsbereich, was die Fusion deutlich beeinträchtigte;
+Da den Gyrosensordaten in der Fusion i.Allg. mehr Vertrauen geschenkt wird als den (oft ungenaueren) Accelerometerdaten (vgl. Abschnitt~\ref{subsec:calibrationdata}) wird die fusionierte Rotation vorzeitig stark verlangsamt,
 da die Winkelgeschwindigkeiten nicht hoch genug gemeldet werden können. Dies resultiert in einem schleppenden (d.h. mehrsekündigem) "`Nachziehen"' der Orientierung, während das Filter
 die eigene Schätzung mit den Accelerometerdaten in Übereinstimmung bringt. Eine Darstellung des Sättigungseffektes bei einer schnellen Rotation aus der Hand findet sich in Abbildung \ref{fig:gyro-sat-unsat}.
 Der Betrieb des Gyrosensors im $2000^\circ/\second$-Modus löste das Problem instantan. Für Anwendungen mit geringeren Dynamikanforderungen muss die Auflösung entsprechend angepasst werden.
@@ -690,24 +691,6 @@ Ein Vergleich mit der korrekten und kalibrierten Anordnung der Messwerte in Abbi
 
 \begin{figure}[htbp]
 		\centering
-		\begin{subfigure}[b]{0.5\textwidth}
-			\centering
-			\includegraphics[width=\textwidth]{./images/earth_magnetic_field_poles_shutterstock.jpg}
-			\caption{Populistische Darstellung \\ Quelle: Shutterstock}
-		\end{subfigure}%
-		~
-		\begin{subfigure}[b]{0.5\textwidth}
-			\centering
-			\includegraphics[width=\textwidth]{./images/Dipole_field_wikibooks.jpg}
-			\caption{Vereinfachte realistische Darstellung \\ Quelle: Wikibooks}
-		\end{subfigure}%
-		\caption[Darstellungen des Erdmagnetfeldes]{Darstellungen des Erdmagnetfeldes.\\Links: Die Feldlinien treffen sich an den Polen.\\Rechts: Die Feldlinien durchdringen den Erdmantel.}
-		\label{fig:magnetfeld_erde_hmpf}
-\end{figure}
-
-
-\begin{figure}[htbp]
-		\centering
 		\begin{subfigure}[b]{\textwidth}
 			\begin{subfigure}[b]{0.5\textwidth}
 				\centering
@@ -754,4 +737,69 @@ Ein Vergleich mit der korrekten und kalibrierten Anordnung der Messwerte in Abbi
 		\caption[HMC5883L: Messungen einzelner Rotationen]{HMC5883L: Unkalibrierte (links) und kalibrierte Sensordaten (rechts). Jeweils normale und inverse Orientierung des Sensors überlagert.}
 		\label{fig:hmc5883l_calib_raw}
 \end{figure}
+
+\subsection{Kalibrierungsdaten}
+\label{subsec:calibrationdata}
+
+Die Ausgabe der in MATLAB gewonnenen Kalibrierungsdaten (vgl. Abbildung~\ref{fig:sensors_unagitated}) sind in Listing~\ref{lst:sensor-calibration-data} zu finden.
+Zu erkennen sind die aus dem Ellipsoid-Fitting ermittelten affinen Transformationsmatrizen, sowie die Varianzen der Messwerte. 
+
+Die vergleichsweise hohe Varianz der Messdaten des Gyrosensors ist hierbei (wortwörtlich) differenziert zu betrachten, da sie die Varianz der Winkel\emph{geschwindigkeiten}, d.h. der Differentiale der Winkel beschreibt.
+Eine Analyse der Definitionen der Integrale der Kosinus- und Sinusfunktionen (Gleichungen~\ref{eq:intcos} und~\ref{eq:intsine}) zeigt, dass jede überlagerte Schwingung einer Frequenz $f > \unit{1}{\hertz}$
+bei der Integration um den Faktor $2 \pi f$ gedämpft wird. 
+
+\begin{align}
+\int cos(2 \pi f t) &= \quad \frac{1}{2 \pi f} sin(2 \pi f t) \label{eq:intcos} \\
+\int sin(2 \pi f t) &= -\frac{1}{2 \pi f} cos(2 \pi f t) \label{eq:intsine}
+\end{align}
+
+Dies ist auch die Begründung für die starke Drift der Messwerte eines Gyrosensors: Analog zur obigen Betrachtung bewirken Schwingungen (d.h. Bewegungen mit) einer Frequenz $f < \unit{1}{\hertz}$ 
+bei der Integration eine Verstärkung derselben Schwingung, was sich als langsame Offsetveränderung der Messwerte äußert.
+
+Ein weiterer Aspekt ist, dass Accelerometer trotz ihrer guten Performance in Ruhelage entsprechend ihrer Natur sehr sensibel gegenüber Bewegungen sind, was die Hauptursache für den "`Messfehler"'
+ausmacht. Gyrosensoren sind aufgrund ihrer nichtlinearen Natur von diesem Problem (bei linearen Bewegungen) nicht betroffen; Nicht zuletzt, sie auch mit deutlich höheren Sampleraten betrieben 
+werden können als Accelerometer, wobei dieser Vorteil jedoch im Projekt nicht ausgenutzt wurde.
+
+\begin{lstlisting}[style=lolmatlab,caption={Ausgabe des Kalibrierungsskriptes},label=lst:sensor-calibration-data]
+Loading magnetometer calibration data.
+ 
+Affine hard- and soft-iron correction matrix:
+  0.98308   0.0025144     0.02777   0.0064502
+0.0025144     0.92661   -0.043022     0.10543
+  0.02777   -0.043022      1.1128   -0.020258
+        0           0           0           1
+Calculated axis variances: 
+2.0347e-06  1.9233e-06  2.3021e-06
+
+Loading accelerometer calibration data.
+ 
+Affine correction matrix from ellipsoid fitting:
+    1.0062   0.0034341  -0.0027532     -0.0164
+ 0.0034341      1.0008  -0.0056162   -0.016173
+-0.0027532  -0.0056162      0.9931     0.02059
+         0           0           0           1
+Calculated axis variances: 
+9.8036e-06  9.6462e-06  2.4831e-05
+
+Loading gyroscope calibration data.
+ 
+Affine correction matrix:
+1           0           0     -4.5446
+0           1           0   -0.048858
+0           0           1     -1.1197
+0           0           0           1
+Calculated axis variances: 
+0.016307   0.0084706      0.0129
+Calculated axis offsets: 
+4.5446    0.048858      1.1197
+\end{lstlisting}
+
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{./images/sensors/uncalibrated.png}
+	\caption[Sensordaten in Ruhelage]{10-Minuten-Aufnahme der Sensordaten in Ruhelage}
+	\label{fig:sensors_unagitated}
+\end{figure}
+
 \clearpage
