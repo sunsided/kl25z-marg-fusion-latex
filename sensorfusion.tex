@@ -149,14 +149,14 @@ fleqn,								% Ausgabe von Gleichungen linksbündig
 %\usepackage[nonumberlist,acronym,toc,section]{glossaries}
 \usepackage[acronym]{glossaries}
 
-%% Stichwortverzeichnis anfordern %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\makeindex
-
-%% Glossar anfordern %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\makeglossaries
-
 % Glossar einbinden
 \input{./glossary/glossar.tex}
+\input{./glossary/symbole.tex}
+
+
+\makeindex				% Stichwortverzeichnis
+\makeglossaries 	% Glossar
+
 
 %% PDF-spezifische Einstellungen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \hypersetup{

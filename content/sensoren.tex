@@ -141,7 +141,7 @@ Beschleunigungskraft von nur einer Sensorachse gemessen wird. In dieser Lage wer
 Richtung wiederholt, so dass Messwerte für positive und negative Halbachsen vorliegen. Da die beiden jeweils nicht von der Gravitation beeinträchtigten Achsen nun mittelwertfrei sein müssen,
 lässt sich aus den Messwerten direkt der Offsetfehler, sowie Drift und Varianz ablesen.
 
-Da für jede Achse nun zwei Varianzmessungen vorliegen, können diese mittels der "`pooled"'-Varianzmethode als erwartungstreu gewichtete Mittelung zusammengeführt werden, so dass
+Da für jede Achse nun zwei Varianzmessungen vorliegen, können diese mittels der \glslink{pooled variance}{"`pooled"'-Varianzmethode} als erwartungstreu gewichtete Mittelung zusammengeführt werden, so dass
 
 \begin{align}
 \mathrm{Var} \left[s_p \mid s_1, s_1\right] = \frac{(n_1 - 1)\mathrm{Var} \left[s_1\right] + (n_2 - 1)\mathrm{Var} \left[s_2\right]}{n_1 + n_2 - 2} \label{eq:pooled_variance}

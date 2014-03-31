@@ -23,9 +23,9 @@ wobei der Messupdate-Schritt wie folgt definiert ist:
 \end{align}
 
 Dabei entsprechen die in Gleichungen~\ref{eq:kalman_x_est} und~\ref{eq:kalman_P_est} ermittelten Werte $\hat{\vec{x}}_{k+1}$ und $\hat{\underline{P}}_{k+1}$ den 
-geschätzten Zuständen im Folgezeittakt $k+1$, und die in Gleichungen~\ref{eq:kalman_x_corr} und~\ref{eq:kalman_P_corr} ermittelten Werte $\tilde{\vec{x}}_{k}$ und
-$\tilde{\underline{P}}_{k}$ den mittels vorliegender Messwerte $\vec{z}_k$ korrigierten Schätzungen aus dem vorherigen Zeittakt. 
-$\underline{E}$ entspricht der Einheitsmatrix, wobei diese von derselben Dimensionen der Matrix $\underline{A}$ (bzw. $\underline{P}$) sein muss.
+geschätzten Zuständen im Folgezeittakt $k+1$, und die in Gleichungen~\ref{eq:kalman_x_corr} und~\ref{eq:kalman_P_corr} ermittelten Werte \glslink{symb:xk}{$\tilde{\vec{x}}_{k}$} und
+\glslink{symb:P}{$\tilde{\underline{P}}_{k}$} den mittels vorliegender Messwerte $\vec{z}_k$ korrigierten Schätzungen aus dem vorherigen Zeittakt. 
+\glslink{symb:E}{$\underline{E}$} entspricht der Einheitsmatrix, wobei diese von derselben Dimensionen der Matrix \glslink{symb:A}{$\underline{A}$} (bzw. \glslink{symb:P}{$\underline{P}$}) sein muss.
 
 \cite{bht_som_adf} beschreibt in Zusammenhang mit Gleichung~\ref{eq:kalman_P_est} eine Tuning-Variable $\lambda$ zur Vereinfachung der oft nur ungenau oder
 empirisch benennbaren Prozessrauschmatrix $\underline{Q}$, so dass
@@ -67,7 +67,7 @@ noch einmal eingegangen.
 \label{subsec:indir_filt_est_orient}
 
 Ähnlich dem von \cite{suh} vorgeschlagenen Kalman-Filter zur indirekten Schätzung eines Quaternions, verwendet der hier (abgewandelt) umgesetzte
-Filter von \cite{orientation_dcm} eine indirekte Schätzmethode der \gls{dcm}. Während der direkte \gls{Kalman-Filter} die gesuchten Parameter als Zustände $\vec{x}$ formuliert und deren
+Filter von \cite{orientation_dcm} eine indirekte Schätzmethode der \gls{dcm}. Während der direkte \gls{Kalman-Filter} die gesuchten Parameter als Zustände \glslink{symb:xk}{$\vec{x}$} formuliert und deren
 Veränderung in der Zustandsübergangsmatrix $\underline{A}$ beschreibt, platziert der hier implementierte Filter die gesuchten Zustände direkt in der
 Matrix $\underline{A}$ und überlässt dem Algorithmus die Anpassung der dazugehörigen Zustände, ohne eine direkte Vorschrift hierfür zu liefern.
 
@@ -77,9 +77,9 @@ Orthogonalitätsbedingung der (indirekt geschätzten) \gls{dcm} verletzt wird, w
 in Abschnitt~\ref{subsec:herleitung_vektorbeobachtungen} aufgezeigten \gls{triad}-Verfahren notwendig ist. Eine weitere Besonderheit stellt die durch die 
 indirekte Schätzung drastisch verlangsamte Dynamik (d.h. Konvergenzgeschwindigkeit) des Filters dar. Da die verwendeten
 Gyrometer-Sensordaten jedoch nur über einen verhältnismäßig langen Zeitraum als driftbehaftet --- d.h. für kurze Zeiträume sehr exakt --- anzunehmen sind,
-kann diesem Problem durch geeignete Parametrierung der Mess- und Prozessrauschmatrizen $\underline{H}$ und $\underline{Q}$ gegengesteuert werden.
+kann diesem Problem durch geeignete Parametrierung der Mess- und Prozessrauschmatrizen \glslink{symb:H}{$\underline{H}$} und \glslink{symb:Q}{$\underline{Q}$} gegengesteuert werden.
 
-Kern des Filters ist der Winkelgeschwindigkeits-Tensor, welcher unter Annahme des \gls{wnu}-Koordinatensystems wie folgt gegeben ist,
+Kern des Filters ist der \glslink{symb:W}{Winkelgeschwindigkeits-Tensor $\underline{W}$}, welcher unter Annahme des \gls{wnu}-Koordinatensystems wie folgt gegeben ist,
 
 \begin{align}
 \underline{W} &= \begin{pmatrix}
@@ -89,7 +89,7 @@ Kern des Filters ist der Winkelgeschwindigkeits-Tensor, welcher unter Annahme de
 \end{pmatrix} \label{eq:omega_tensor}
 \end{align}
 
-wobei die skalaren Komponenten $\omega_{x,y,z}$ den Messungen des Gyrosensors entsprechen. 
+wobei die skalaren Komponenten \glslink{symb:omega}{$\omega_{x,y,z}$} den Messungen des Gyrosensors entsprechen. 
 
 Es ist zu beachten, dass \cite{orientation_dcm} den Filter derart formulieren, dass eine in der Luftfahrt übliche Koordinatentransformation von \gls{enu} nach 
 \gls{ecef} vorgenommen wird, auf die in dieser Implementierung jedoch der Übersicht halber verzichtet wurde.
@@ -102,7 +102,7 @@ Eine schematische Darstellung der \gls{enu}- und \gls{ecef}-Koordinatensysteme i
 	\label{fig:enu_ecef}
 \end{figure}
 
-Der in Gleichung~\ref{eq:omega_tensor} beschriebene Tensor entspricht einer schiefsymmetrischen Matrix, welche dem Verhalten des $\vec{\omega}\times$-Operators entspricht, so dass
+Der in Gleichung~\ref{eq:omega_tensor} beschriebene Tensor entspricht einer schiefsymmetrischen Matrix, welche dem Verhalten des \glslink{symb:omegatimes}{$\vec{\omega}\times$}-Operators entspricht, so dass
 für einen beliebigen Vektor $\vec{r}$ gilt:
 
 \begin{align*}
@@ -121,7 +121,7 @@ was die Ermittlung der Orientierung durch rekursive Integration des Tensors erm�
 \hat{\underline{R}} &= \int \left( \underline{W} \cdot \underline{R} \right)
 \end{align*}
 
-Da die Linksrichtung $\vec{y}$ des Systems aus der Aufwärtsrichtung $\vec{z}$\footnote{In Ruhelage aus dem Gravitationsvektor} und dem Vorwärtsvektor $\vec{x}$ 
+Da die Linksrichtung \glslink{symb:xyz}{$\vec{y}$} des Systems aus der Aufwärtsrichtung \glslink{symb:xyz}{$\vec{z}$}\footnote{In Ruhelage aus dem Gravitationsvektor} und dem Vorwärtsvektor \glslink{symb:xyz}{$\vec{x}$}
 regeneriert werden kann, ist es nur notwendig, diese beiden letzteren zu bestimmen. 
 Zur Implementierung in den \gls{Kalman-Filter} kehren \cite{orientation_dcm} nun die Koeffizienten um und definieren eine Vorschrift
 
@@ -159,7 +159,7 @@ Ax*(-w)                  % Winkelgeschwindigkeit auf x-Vektor
 
 \subsubsection{Filterung des Aufwärtsvektors}
 
-Die Zustandsübergangsmatrix $\underline{A}$ und der Zustandsvektor $\vec{x}$, sowie die Prozess-Rauschmatrix $\underline{Q}$ des (diskreten) indirekten 
+Die Zustandsübergangsmatrix \glslink{symb:A}{$\underline{A}$} und der Zustandsvektor \glslink{symb:xk}{$\vec{x}$}, sowie die Prozess-Rauschmatrix \glslink{symb:Q}{$\underline{Q}$} des (diskreten) indirekten 
 \glslink{Kalman-Filter}{Kalman-Filters} ergeben sich mit Gleichung~\ref{eq:dcm_omega_x} als:
 
 \begin{align}
@@ -193,7 +193,7 @@ Filter über die Zeit dazu, die zugehörige Komponente des Zustandsvektor als ko
 in Zusammenhang mit der Zustandskovarianzmatrix $\underline{P}$ führt jedoch dazu, die Werte zu variieren, was der indirekten Filterung entspricht.}. Die Zustandskovarianzmatrix $\underline{P}$ 
 wird entsprechend der Varianzen der Sensoren initialisiert.
 
-Die Messübergangsmatrix $\underline{H}$, sowie der Messvektor $\vec{z}$ und die Messrauschmatrix $\underline{R}$ sind für den Aufwärtsvektor $\vec{z}$ wie folgt gegeben.
+Die Messübergangsmatrix \glslink{symb:H}{$\underline{H}$}, sowie der Messvektor \glslink{symb:zk}{$\vec{z}$} und die Messrauschmatrix \glslink{symb:Rk}{$\underline{R}$} sind für den Aufwärtsvektor $\vec{z}$ wie folgt gegeben.
 
 \begin{align}
 \underline{H}_k \cdot \vec{z}_k &= 
@@ -226,7 +226,7 @@ als funktional erwies.
 
 \subsubsection{Filterung des Vorwärtsvektors}
 
-Das Filter für den Vorwärtsvektor $\vec{x}$ wurde analog dem Filter für den Aufwärtsvektor $\vec{z}$ entworfen. Zugunsten
+Das Filter für den Vorwärtsvektor \glslink{symb:xyz}{$\vec{x}$} wurde analog dem Filter für den Aufwärtsvektor \glslink{symb:xyz}{$\vec{z}$} entworfen. Zugunsten
 der Performance\footnote{Aufgrund der sonst kubisch ansteigenden Komplexität.} wurde hierbei auf die Erweiterung des bestehenden Filters verzichtet und stattdessen ein zweites
 Filter implementiert.
 

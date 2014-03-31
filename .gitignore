@@ -48,3 +48,7 @@
 *.tps
 *.lol
 *.tmp
+
+*.slg
+*.syg
+*.syi

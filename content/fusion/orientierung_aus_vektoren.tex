@@ -14,7 +14,7 @@ Aus der Definition des vektoriellen Skalarproduktes ("`Punktprodukt"'),
 \end{align}
 
 ergibt sich, dass der von zwei sich kreuzenden Vektoren eingeschlossene Winkel durch den Arkuskosinus ermittelbar ist. Die \glslink{dcm}{Winkelkosinusmatrix} (DCM) 
-$\underline(R)$ nutzt diesen Zusammenhang zur Darstellung alle Winkelzusammenhänge zweier Systeme $\underline{S}_{\text{body}} = \left\{\vec{x}, \vec{y}, \vec{z} \right\}$, 
+\glslink{symb:R}{$\underline(R)$} nutzt diesen Zusammenhang zur Darstellung alle Winkelzusammenhänge zweier Systeme $\underline{S}_{\text{body}} = \left\{\vec{x}, \vec{y}, \vec{z} \right\}$, 
 $\underline{S}_{\text{ref}} = \left\{\vec{X}, \vec{Y}, \vec{Z} \right\}$ 
 (orthonormaler $\mathbb{R}^3$), so dass
 
@@ -26,7 +26,7 @@ $\underline{S}_{\text{ref}} = \left\{\vec{X}, \vec{Y}, \vec{Z} \right\}$
 \end{bmatrix} \label{eq:dcm_long}
 \end{align}
 
-Wird das Koordinatensystem  $\underline{S}$ in Matrixform definiert, so dass
+Wird das Koordinatensystem \glslink{symb:xxxyxz}{$\underline{S}$} in Matrixform definiert, so dass
 
 \begin{align}
 \underline{S} &= \begin{bmatrix}
@@ -61,7 +61,7 @@ formulierbar ist. Diese auch als
 \end{align}
 
 bekannte Formulierung bildet den Kern des als \gls{triad}-Methode (vgl. \citealp{triad}) durch das Apollo-Programm bekannt gewordenen Algorithmus zur 
-Orientierungserkennung aus drei\footnote{Hieraus ergibt sich der Name des Algorithmus.} Vektorbeobachtungen $\vec{x}, \vec{y}, \vec{z}$. 
+Orientierungserkennung aus drei\footnote{Hieraus ergibt sich der Name des Algorithmus.} Vektorbeobachtungen \glslink{symb:xyz}{$\vec{x}, \vec{y}, \vec{z}$}. 
 Während das o.g. Beispiel orthonormale (oder bereits orthonormalisierte)
 Vektoren voraussetzt, beschreibt \gls{triad} die Vorgehensweise unter Annahme nicht-orthonormaler Vektoren\footnote{Einen im Apollo-Programm als Sicherheitsmaßnahme umgesetzten Alternativalgorithmus bildet die \gls{quest}-Methode. Dessen Erweiterung, \gls{request}, wird u.a. von \cite{vecops} beschrieben.}, wie sie im 
 Rahmen des Projektes vorliegen.
