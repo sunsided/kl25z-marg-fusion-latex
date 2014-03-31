@@ -18,6 +18,25 @@ Der Freescale MMA8451Q ist der auf dem Freedom-Board verbaute Beschleunigungssen
 Samplingrate von 800 Hz (\citealp{mma8451q}) und kann mit bis zu 2.25 MHz Taktung über den \gls{i2c}-Bus 
 ausgelesen werden\footnote{Dies entspricht dem sog. "`High Speed Mode \gls{i2c}"', welcher bis 3,4 Mbit/s spezifiziert ist.}.
 
+\begin{table}[htbp]
+		\begin{tabular}{ll}
+		\toprule
+		\multicolumn{2}{l}{Eigenschaften des Freescale MMA8451} \\
+		\midrule
+		Messbereich &  ±2g, ±4g oder ±8g \\
+		Samplingrate &  \unit{1,56}{\hertz} bis \unit{800}{\hertz}\\
+		Auflösung & 8-Bit oder 14-Bit \\
+		Rauschen & \unit{99}{\micro\gram/\sqrt\hertz} \\
+		Versorgungsspannung & \unit{1,95}{\volt} bis \unit{3,6}{\volt} \\
+		Schnittstellenspannung & \unit{1,6}{\volt} bis \unit{3,6}{\volt} \\
+		Stromverbrauch & \unit{6}{\micro\ampere} bis \unit{165}{\micro\ampere} \\
+		Betriebstemperatur & \unit{-40}{\celsius} bis \unit{+85}{\celsius} \\
+		\bottomrule
+		\end{tabular}
+	\caption{Eigenschaften des Freescale MMA8451}
+	\label{tab:MMA8451Eigenschaften}
+\end{table}
+
 Zum Test der Interaktion mit dem Sensor wurde ein MATLAB-Skript zur Darstellung des Accelerometer-Vektors und eines virtuellen Horizontes geschrieben.
 Eine Ausgabe des Ergebnisses kann in Abbildung~\ref{fig:matlab-video-virthorz} gefunden werden. Der MATLAB-Code zur Darstellung findet sich in Listing~\ref{lst:matlab-virthorz},
 die dazu verwendete Funktion zur Berechnung von Roll- und Pitch-Winkeln steht in Listing~\ref{lst:matlab-rollpitch}.
@@ -78,7 +97,6 @@ typedef struct {
 } mma8451q_confreg_t;
 \end{lstlisting}
 
-\todo{Initialisierungscode}
 
 \begin{lstlisting}[style=lolc,caption={Initialisierungscode MMA8451Q},label=lst:mma8451q-init]
 /* Referenz auf statischen shared buffer */
@@ -144,7 +162,34 @@ Da der Sensor im weiteren Verlauf des Projektes nicht mehr verwendet wurde, soll
 
 Die Invensense MPU6050 ist eine \gls{imu}, die einen 16 Bit genauen Beschleunigungs- und Drehratensensor mit einem Temperatursensor vereinigt (\citealp{mpu6050}). 
 
-\todo{8 kHz Gyro etc.}
+\begin{table}[htbp]
+		\begin{tabular}{ll}
+		\toprule
+		\multicolumn{2}{l}{Eigenschaften der Invensense MPU6050} \\
+		\midrule
+		Versorgungsspannung (VDD) & \unit{2,375}{\volt} bis \unit{3,46}{\volt} \\
+		Schnittstellenspannung & \unit{1,71}{\volt} bis VDD \\
+		Auflösung & 16-Bit \\
+		Betriebstemperatur & \unit{-40}{\celsius} bis \unit{+85}{\celsius} \\
+		\midrule
+		\multicolumn{2}{l}{Eigenschaften des Gyrosensors} \\
+		\midrule
+		Messbereich & \unit{±250, ±500, ±1000, und ±2000}{\degree/\second} \\
+		Samplingrate & \unit{4}{\hertz} bis \unit{8}{\kilo\hertz} \\
+		Rauschen & \unit{0,005}{\degree/second/\sqrt\hertz} \\
+		Stromverbrauch & \unit{3,6}{\milli\ampere} (Standby \unit{5}{\micro\ampere}) \\
+		\midrule
+		\multicolumn{2}{l}{Eigenschaften des Accelerometers} \\
+		\midrule
+		Messbereich & ±2g, ±4g, ±8g und ±16g \\
+		Samplingrate & \unit{4}{\hertz} bis \unit{1}{\kilo\hertz} \\
+		Rauschen & \unit{400}{\micro\gram/\sqrt\hertz} \\
+		Stromverbrauch & \unit{10}{\micro\ampere} bis \unit{500}{\micro\ampere} \\		
+		\bottomrule
+		\end{tabular}
+	\caption{Eigenschaften der Invensense MPU6050}
+	\label{tab:MPU6050Eigenschaften}
+\end{table}
 
 Die \gls{mpu} bietet zusätzlich die Möglichkeit, über einen als slave betriebenen, zusätzlichen \gls{i2c}-Bus weitere Sensoren zu verarbeiten, wodurch Aufwand 
 vom Hauptcontroller abfällt. Der \gls{mpu} zugeschaltet ist ein sog. \gls{dmp}, welcher die internen Daten, sowie die über den slave-Bus bezogenen externen Daten fusionieren kann. 
@@ -235,7 +280,6 @@ typedef struct __attribute__ ((__packed__))
 } mpu6050_confreg_t;
 \end{lstlisting}
 
-\todo{Initialisierungscode}
 
 \begin{lstlisting}[style=lolc,caption={Initialisierungscode MPU6050},label=lst:mpu6050-init]
 /* Referenz auf statischen shared buffer */
@@ -401,6 +445,25 @@ Der HMC5883L von Honeywell liefert bei einer Auflösung von 12 Bit (inkl. Vorzei
 lokaler Magnetfelder geeignet ist. Er arbeitet mit einer maximalen Samplingrate von 160 Hz und kann mit maximal 400 kHz über den \gls{i2c}-Bus ausgelesen 
 werden\footnote{Dies entspricht dem sog. "`Fast Mode \gls{i2c}"'', welcher bis 400 kbit/s spezifiziert ist.}.
 
+\begin{table}[htbp]
+		\begin{tabular}{ll}
+		\toprule
+		\multicolumn{2}{l}{Eigenschaften des Honeywell HMC5883L} \\
+		\midrule
+		Messbereich &  ±8 \gauss \\
+		Samplingrate &  \unit{160}{\hertz} \\
+		Auflösung & 12-Bit\\
+		Grundrauschen & \unit{2}{\milli\gauss} \\
+		Versorgungsspannung (VDD) & \unit{2,16}{\volt} bis \unit{3,6}{\volt} \\
+		Schnittstellenspannung & \unit{1,71}{\volt} bis \unit{VDD}{\volt} \\
+		Stromverbrauch & \unit{100}{\micro\ampere} (Idle \unit{2}{\micro\ampere})\\
+		Betriebstemperatur & \unit{-30}{\celsius} bis \unit{+85}{\celsius} \\
+		\bottomrule
+		\end{tabular}
+	\caption{Eigenschaften des Honeywell HMC5883L}
+	\label{tab:HMC5883LEigenschaften}
+\end{table}
+
 \begin{figure}[htbp]
 		\centering
 		\includegraphics[width=0.65\textwidth]{./images/hmc5883l-magnetometer-compass-sensor.jpg}
@@ -425,7 +488,6 @@ typedef struct {
 \end{lstlisting}
 
 Entsprechend überschaubar ist auch die Initialisierungsroutine (Listing~\ref{lst:hmc5883l-init}).
-\todo{Initialisierungscode}
 
 \begin{lstlisting}[style=lolc,caption={Initialisierungscode HMC5883L},label=lst:hmc5883l-init]
 /* Referenz auf statischen shared buffer */
@@ -687,3 +749,4 @@ Ein Vergleich mit der korrekten und kalibrierten Anordnung der Messwerte in Abbi
 		\caption[HMC5883L: Messungen einzelner Rotationen]{HMC5883L: Unkalibrierte (links) und kalibrierte Sensordaten (rechts). Jeweils normale und inverse Orientierung des Sensors überlagert.}
 		\label{fig:hmc5883l_calib_raw}
 \end{figure}
+\clearpage
