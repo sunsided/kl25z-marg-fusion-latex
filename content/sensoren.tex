@@ -523,6 +523,60 @@ HMC5883L_SetOperatingMode(configuration, HMC5883L_MD_CONT);
 HMC5883L_StoreConfiguration(configuration);
 \end{lstlisting}
 
+Eine Unschönheit bei der Verwendung des HMC5883L ist die Anordnung der \gls{i2c}-Register; So existiert zwar ein Register, welches das Vorliegen neuer Sensordaten signalisiert, dieses ist jedoch nicht
+effizient verwendbar. Tabelle~\ref{tab:HMC5883LRgister} zeigt die Auflistung der Register und ihre Adressen.
+
+\begin{table}[htbp]
+	\centering
+		\begin{tabular}{ll}
+		\toprule
+		\multicolumn{2}{l}{\gls{i2c}-Register des Honeywell HMC5883L} \\
+		\midrule
+		$00$ & Configuration Register A \\
+		$01$ & Configuration Register B \\
+		$02$ & Mode Register \\
+		\midrule
+		$03$ & Data Output X MSB Register \\
+		$04$ & Data Output X LSB Register \\
+		$05$ & Data Output Y MSB Register \\
+		$06$ & Data Output Y LSB Register \\
+		$07$ & Data Output Z MSB Register \\
+		$08$ & Data Output Z LSB Register \\
+		\midrule
+		$09$ & Status Register \\
+		$10$ & Identification Register A \\
+		$11$ & Identification Register B \\
+		$12$ & Identification Register C \\
+		\bottomrule
+		\end{tabular}
+	\caption{\gls{i2c}-Register des Honeywell HMC5883L}
+	\label{tab:HMC5883LRgister}
+\end{table}
+
+Das Handbuch des HMC5883L (\citealp{hmc5883l}) formuliert dazu:
+
+\begin{quote}
+To minimize the communication between the master and this device, the address pointer updated automatically without master intervention. This automatic address pointer update has two additional features. 
+First when address 12 or higher is accessed the pointer updates to address 00 and secondly when address 08 is reached, the pointer rolls back to address 03.
+\end{quote}
+
+Dass diese "`feature"' zur Minimierung der Kommunikation einen gegenteiligen Effekt haben, wird deutlich, wenn man die tatsächlich notwendige Kommunikation auf dem \gls{i2c}-Bus betrachtet:
+
+Ein kontinuierlicher Lesevorgang ab Register \emph{03} führt dazu, dass das Statusregister nicht ausgewertet werden kann, da ab Register \emph{08} ein Sprung zurück auf Register \emph{03} erfolgt.
+Wird der Lesevorgang an Register \emph{09} (dem Statusregister) gestartet, dauert es jedoch 8 Lesezyklen, bis das erste Datenregister erreicht ist (durch den Sprung ab Register \emph{12}).
+
+Der implementierte Mechanismus ist daher, einen Lesezugriff auf Register \emph{09} zu initiieren, was den Kommandos \texttt{0x3C, 0x0C, 0x3D, 0x00}\footnote{\texttt{0x3C} enspricht einem Write-Befehl mit der Gerätekennung \texttt{0x1E} des Sensors auf dem \gls{i2c}-Bus, \texttt{0x3D} entsprechend dem Read.} entspricht, wobei das letzte Byte lediglich die
+\gls{i2c}-Clock treibt. Hiernach wird (abhängig vom Registerinhalt) ein \emph{restart} ausgelöst, ohne den Bus freizugeben, und der Lesezeiger auf Register \emph{03} gesetzt, was den Kommandos
+\texttt{0x3C, 0x03, 0x3D, 0x00,...} entspricht.
+
+Über die zugrundeliegenden Entscheidungen zum Design des Registerlayouts seitens des Herstellers lässt sich nur spekulieren, jedoch erscheint eine Anordnung des Statusregisters vor den 
+Datenregistern (d.h. zwischen Register \emph{02} und \emph{03}) deutlich sinnvoller. Das Verwerfen der Information des Statusregisters ist ob der infrequenten Aktualisierung der Messwerte
+gefährlich, da die maximale Samplerate nur \unit{75}{\hertz} bei Verwendung der "`schnellsten"' Einstellung\footnote{\texttt{DO2..0 = 0b110} im Configuration Register A.} beträgt. 
+Für die angegebene, maximale Samplerate von \unit{160}{\hertz} soll der externe Interrupt beobachtet werden (welcher jedoch auf dem Breakout Board nicht zur Verfügung steht.) 
+Inwiefern dies mit der Modusbeschreibung in Einklang zu bringen ist, geht aus dem Handbuch nicht hervor.
+
+
+
 \subsubsection{Kalibrierung}
 \label{subsec:hmc5883l_kalibrierung}
 
@@ -687,7 +741,7 @@ Gravitations- und Magnetfeldvektor beträgt dort nur knapp $45^\circ$.
 
 In Verbindung mit dem im Abschnitt~\ref{subsec:hmc5885l_reihenfolge} beschriebenen Achsenproblem fiel es schwer, aus den so gewonnenen Messdaten (siehe Abbildung~\ref{fig:hmc5883l_idiotenmessung}) Nutzen zu gewinnen, da sowohl die Orientierung, als auch der erwartete Radius des Messwertkreises aus dem Rahmen fielen.
 
-Ein Vergleich mit der korrekten und kalibrierten Anordnung der Messwerte in Abbildung~\ref{fig:hmc5883l_calib_raw} zeigt den Ist- und Soll-Zustand. In beiden Fällen wurden die Messungen einmal in normaler (d.h. aufrechter) Ausrichtung des Sensors, sowie in inverser Ausrichtung desselben ("`auf dem Kopf"') ausgemessen.
+Ein Vergleich mit der korrekten und kalibrierten Anordnung der Messwerte in Abbildung~\ref{fig:hmc5883l_calib_raw} zeigt den Ist- und Soll-Zustand. In beiden Fällen wurden die Messungen einmal in normaler (d.h. aufrechter) Ausrichtung des Sensors, sowie in inverser Ausrichtung desselben ("`auf dem Kopf stehend"') ausgemessen.
 
 \begin{figure}[htbp]
 		\centering

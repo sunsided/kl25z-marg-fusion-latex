@@ -2,17 +2,19 @@
 
 \section{Bewertung}
 
-Die Autoren empfanden die Ergebnisse der Fusion als beeindruckend, da eine Reduktion des Orientierungsfehlers von mehreren Dekagrad pro Achse auf wenige Zentigrad erreicht werden konnte.
-Dieser Effekt ist intuitiv assoziierbar mit starker Tiefpassfilterung, wobei die Dynamik des Systemes jedoch erhalten bleibt. Hierbei ist insbesondere zu bedenken, dass die 
+Die Autoren empfanden die Ergebnisse der Fusion als beeindruckend. Eine Reduktion des Orientierungsfehlers von mehreren Dekagrad pro Achse auf wenige Zentigrad konnte erreicht werden.
+
+Dieser Effekt war intuitiv assoziierbar mit einer starken Tiefpassfilterung, wobei jedoch die Dynamik des Systemes jedoch erhalten blieb. Hierbei ist insbesondere zu bedenken, dass die 
 Implementierung auf einem Low-End-Prozessor ohne erweiterte Signalverarbeitungsfähigkeiten oder komplexe \gls{mac}-Befehle umgesetzt wurde, wie sie
 etwa im Cortex-M4 oder im NEON-Befehlssatz der Cortex-A-Serie vorhanden sind.
 
-Die Verwendung einer \gls{q16}-Fixed Point-Bibliothek führte zu einer effizienten Ausnutzung der 32bit-Architektor des Prozessors, wobei insbesondere die \gls{conditional execution}-Funktionalität
+Die Verwendung einer \gls{q16}-Fixed Point-Bibliothek führte zu einer effizienten Ausnutzung der 32bit-Architektur des Prozessors, wobei insbesondere die \gls{conditional execution}-Funktionalität
 des \gls{Thumb2}-Befehlssatzes eine effiziente Implementierung vieler Funktionen ermöglicht. Ein prominentes Beispiel hierfür ist die Funktion zur Addition oder Subtraktion zweier Matrizen,
 welche Code der Spielart \texttt{wenn ADDIERE then ADD(a,b) else SUB(a,b)} in einer Schleife erlaubt, ohne Performanceeinbrüche durch Branching befürchten zu müssen.
 
 Wünschenswert wäre die Möglichkeit der Verwendung eines Q24/Q23-Formates gewesen, welches den notwendigen Wertebereich der Systemzustände besser abgebildet hätte, da selbst bei nicht-normalisierten
-Daten im Gradmaß keine Werte außerhalb $\pm$ unit{180}{\degree} auftreten können. Eine Portierung der beiden verwendeten Libraries wurde nicht vorgenommen, wenngleich dies zweifelsfrei möglich ist.
+Daten im Gradmaß keine Werte außerhalb $\pm$ \unit{180}{\degree} auftreten können. Eine Portierung der beiden verwendeten Libraries wurde nicht vorgenommen, wenngleich dies zweifelsfrei möglich ist.
+
 Ebenso war es schade, die in \emph{libfixmath} vorgesehenen look-up-Tables für trigonometrische Funktionen nicht nutzen zu können, da diese für die Verwendung mit dem auf dem \gls{kl25z} 
 verfügbaren Speicher viel zu groß dimensioniert und aufgrund ihrer dynamischen Berechnung zur Laufzeit nicht \gls{romable} sind.
 

@@ -116,7 +116,8 @@ mittels des Ausschlussverfahrens, da auf dem Gerät keine hardwareseitige Except
 Trigger für neue Messergebnisse, noch bevor diese verarbeitet werden konnten.
 
 Zusätzlich müssen ggf. die in \emph{libfixmatrix} verfügbaren Lookup-Tabellen für trigonometrische Funktion deaktiviert werden, da sie sehr groß sind, gleichzeitig aber zur Laufzeit
-befüllt werden und daher nicht als Kandidaten für den ROM gelten können.
+befüllt werden und daher nicht als Kandidaten für den ROM gelten können (d.h. nicht \gls{romable} sind). Die Berechnung der Sinus- und Kosinusfunktionen erfolgt dann bei jedem Aufruf 
+wahlweise\footnote{Dies wird durch das Preprozessorflag \texttt{FIXMATH\_FAST\_SIN} gesteuert.} über eine drei- oder fünfstufige Taylorapproximation.
 
 Die verwendeten Settings zum Setzen der maximalen Matrixgröße, Deaktivieren der Funktionen für Filter mit Steuereingängen\footnote{Dies ist nicht nötig, reduziert aber auch ohne Optimierungen die Codegröße.}
 und Deaktivierung der Look-up-Tabellen finden sich in Listing~\ref{lst:libfixkalman-defines} (vgl. Abbildung~\ref{fig:visualgd_makefile}).
