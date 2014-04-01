@@ -4,7 +4,7 @@
 
 Die Autoren empfanden die Ergebnisse der Fusion als beeindruckend. Eine Reduktion des Orientierungsfehlers von mehreren Dekagrad pro Achse auf wenige Zentigrad konnte erreicht werden.
 
-Dieser Effekt war intuitiv assoziierbar mit einer starken Tiefpassfilterung, wobei jedoch die Dynamik des Systemes jedoch erhalten blieb. Hierbei ist insbesondere zu bedenken, dass die 
+Dieser Effekt war intuitiv assoziierbar mit einer starken Tiefpassfilterung, wobei die Dynamik des Systems jedoch erhalten blieb. Hierbei ist insbesondere zu bedenken, dass die 
 Implementierung auf einem Low-End-Prozessor ohne erweiterte Signalverarbeitungsfähigkeiten oder komplexe \gls{mac}-Befehle umgesetzt wurde, wie sie
 etwa im Cortex-M4 oder im NEON-Befehlssatz der Cortex-A-Serie vorhanden sind.
 
@@ -38,7 +38,7 @@ Dynamikanforderungen förderlich sind. Dies wurde aufgrund der (im Vergleich zur
 dem \gls{i2c}-Bus sensor- und anwendungsspezifisch erfolgen muss, was eine erweiterte Logik erfordert. Eine Möglichkeit wäre die Verwendung eines Ringpuffers zur Speicherung von Kommando- und
 Datentoken (z.B. write-to, read-from, disable ACK, re-initialize), welche in Interrupt-Handler abgearbeitet werden; Dieser könnte etwa als Zustandsautomat implementiert sein.
 
-Eine Verwendung von mehreren Rechenkernen etwa im erscheint insbesondere hinsichtlich der dezentralen Filterstruktur als förderlich, ist jedoch eher dann zu empfehlen, wenn der Controller
+Eine Verwendung von mehreren Rechenkernen erscheint insbesondere hinsichtlich der dezentralen Filterstruktur als förderlich, ist jedoch eher dann zu empfehlen, wenn der Controller
 neben der Filterung noch weitere Aufgaben komplexerer Natur übernehmen soll. Als wesentlich interessanter erscheint die Implementierung einer dedizierten, schleifenfreien Variante der Filteralgorithmen,
 welche die Eigenarten der oft symmetrischen und dünnbesetzten Matrizen effizient ausnutzt, was eine Performancesteigerung um mehrere Dekaden bewirken dürfte. Dies wurde nur aufgrund der prinzipbedingt
 experimentellen Natur des durchgeführten Projektes nicht durchgeführt.
