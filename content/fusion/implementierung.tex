@@ -2,6 +2,7 @@
 \label{sec:implementierung_filter}
 
 \subsection{Entwicklung der Library kalman-clib}
+\label{subsec:kalman-clib}
 
 Um die Funktionalität des \glslink{Kalman-Filter}{Kalman-Filters} zu testen wurde eine Bibliothek in C implementiert. Diese wurde im Verlauf des Projektes 
 unter dem Namen \emph{kalman-clib} auf GitHub veröffentlicht\footnote{\url{https://github.com/sunsided/kalman-clib}}.
@@ -75,7 +76,7 @@ Eine Ausgabe des Filters bei Verwendung des \texttt{float}-Datentyps findet sich
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=\textwidth]{./images/981.png}
-	\caption[kalman-clib in Aktion]{kalman-clib in Aktion: Ausgabe des Codes in Listing~\ref{lst:kalman-clib} nach 15 Iterationen}
+	\caption[kalman-clib in Aktion]{kalman-clib in Aktion: Ausgabe des Codes in Listing~\ref{lst:kalman-clib} zur Schätzung der Gravitationskonstante nach 15 Iterationen}
 	\label{fig:kalman-clib}
 \end{figure}
 
@@ -101,6 +102,7 @@ matrix_mult(temp_PHt, Sinv, K, aux);        // K = temp*Sinv
 \end{lstlisting}
 
 \subsection{Portierung von kalman-clib auf libfixmatrix}
+\label{subsec:libfixkalman}
 
 Da eine Entwicklung in C++ vermieden werden sollte, der \gls{kl25z} jedoch aufgrund seines \gls{cortex-m0+}-Cores keine \gls{fpu} besitzt, 
 wurde eine Portierung der \emph{kalman-clib} auf eine \gls{q16}-Bibliothek namens \emph{libfixmatrix}\footnote{\url{https://github.com/PetteriAimonen/libfixmatrix}} durchgeführt.

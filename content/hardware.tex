@@ -1,6 +1,7 @@
 \chapter{Hardware und Entwicklungsumgebung}
 
 \section{Freescale FRDM-KL25Z}
+\label{sec:frdmkl25z}
 
 Das \gls{frdm-kl25z} ist ein Evaluationsboard für die \gls{kl25z}-Serie \glspl{mcu} von Freescale, welche auf dem 
 ARM \gls{cortex-m0+}-Core basiert. Alle Controller der Kinetis L-Serie sind für mixed-signal-Anwendungen geeignet und bis 48 MHz taktbar.
@@ -130,6 +131,7 @@ FPTB_BASE_PTR->PCOR = 1 << 9; /* clear output register pin 9 */
 \end{lstlisting}
 
 \subsection{$48 \mega\hertz$ mit dem Multi-Purpose Clock Generator}
+\label{subsec:48mcg}
 
 Eine Schwierigkeit bei der Nutzung des \gls{kl25z} stellt die Komplexität des \gls{mcg} dar. Zur Initialisierung wurde der vom \gls{Processor Expert} (siehe Abschnitt~\ref{subsec:codewarrior})
 erzeugte Code\footnote{Zu finden in Listing~\ref{lst:kl25z-pll-init}} verwendet und wie in Listing~\ref{lst:kl25z-pll-init-call} entnehmbar betrieben, um von der internen Referenzclock (\gls{fei})
